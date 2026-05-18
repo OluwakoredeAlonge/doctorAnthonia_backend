@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Dr. A.Y. Soje</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:         '#0F2444',
+            'primary-light': '#1C3A5E',
+            'primary-dark':  '#081526',
+            gold:            '#C9922A',
+            'gold-light':    '#D4A847',
+            cream:           '#FDF9F4',
+            sage:            '#2E7D63',
+          },
+          fontFamily: {
+            serif: ['Playfair Display','Georgia','serif'],
+            sans:  ['Inter','system-ui','sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body { font-family:'Inter',sans-serif; }
+    .font-serif { font-family:'Playfair Display',serif !important; }
+
+    /* Sidebar */
+    #sidebar { transition: width .3s ease; }
+    #sidebar.collapsed { width: 72px; }
+    #sidebar.collapsed .sidebar-label,
+    #sidebar.collapsed .sidebar-section-label,
+    #sidebar.collapsed .sidebar-brand-text { display: none; }
+    #sidebar.collapsed .sidebar-nav-item { justify-content: center; padding-left: 0; padding-right: 0; }
+
+    .sidebar-nav-item {
+      transition: background .2s ease, color .2s ease;
+    }
+    .sidebar-nav-item.active {
+      background: rgba(201,146,42,.12);
+      color: #C9922A;
+    }
+    .sidebar-nav-item.active .nav-icon { color: #C9922A; }
+    .sidebar-nav-item:hover:not(.active) { background: rgba(255,255,255,.06); }
+
+    /* Panels */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #F3F4F6; }
+    ::-webkit-scrollbar-thumb { background: #C9922A; border-radius: 3px; }
+
+    /* Table rows */
+    tbody tr { transition: background .15s ease; }
+    tbody tr:hover { background: #FAFAFA; }
+
+    /* Modal */
+    #modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    #modal-overlay.open { display: flex; }
+
+    /* Badge */
+    .badge-new    { background:#EFF6FF; color:#2563EB; }
+    .badge-read   { background:#F0FDF4; color:#16A34A; }
+    .badge-pub    { background:#F0FDF4; color:#16A34A; }
+    .badge-draft  { background:#FFF7ED; color:#EA580C; }
+    .badge-approved  { background:#F0FDF4; color:#16A34A; }
+    .badge-pending   { background:#FFF7ED; color:#EA580C; }
+
+    @keyframes fadein { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
+    .fadein { animation: fadein .4s ease forwards; }
+
+    .stat-card { transition: transform .25s ease, box-shadow .25s ease; }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,.08); }
+
+    /* Mobile sidebar overlay */
+    #mob-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:30; }
+    #mob-overlay.open { display:block; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex">
+
+<!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
+<div id="mob-overlay" onclick="closeMobileSidebar()"></div>
+
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-primary-dark flex flex-col z-40 -translate-x-full lg:translate-x-0 transition-transform duration-300" style="transition:transform .3s ease,width .3s ease;">
+
+  <!-- Brand -->
+  <div class="flex items-center gap-3 px-5 py-5 border-b border-white/8">
+    <div class="w-9 h-9 rounded-xl bg-gold flex items-center justify-center flex-shrink-0">
+      <i data-lucide="shield-check" class="w-4.5 h-4.5 text-white w-5 h-5"></i>
+    </div>
+    <div class="sidebar-brand-text overflow-hidden">
+      <p class="font-serif text-white text-sm font-bold leading-tight">Dr. A.Y. Soje</p>
+      <p class="text-white/35 text-xs">Admin Portal</p>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+
+    <p class="sidebar-section-label text-white/25 text-xs font-semibold uppercase tracking-widest px-3 mb-2 mt-1">Main</p>
+
+    <button onclick="showPanel('dashboard')" class="sidebar-nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white text-sm font-medium">
+      <i data-lucide="layout-dashboard" class="nav-icon w-5 h-5 flex-shrink-0 text-gold"></i>
+      <span class="sidebar-label">Dashboard</span>
+    </button>
+
+    <button onclick="showPanel('posts')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium">
+      <i data-lucide="file-text" class="nav-icon w-5 h-5 flex-shrink-0"></i>
+      <span class="sidebar-label">Blog Posts</span>
+      <span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">12</span>
+    </button>
+
+    <button onclick="showPanel('testimonials')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium">
+      <i data-lucide="message-square" class="nav-icon w-5 h-5 flex-shrink-0"></i>
+      <span class="sidebar-label">Testimonials</span>
+    </button>
+
+    <button onclick="showPanel('messages')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium">
+      <i data-lucide="mail" class="nav-icon w-5 h-5 flex-shrink-0"></i>
+      <span class="sidebar-label">Messages</span>
+      <span class="sidebar-label ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">3</span>
+    </button>
+
+    <button onclick="showPanel('books')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium">
+      <i data-lucide="book-open" class="nav-icon w-5 h-5 flex-shrink-0"></i>
+      <span class="sidebar-label">Books</span>
+    </button>
+
+    <p class="sidebar-section-label text-white/25 text-xs font-semibold uppercase tracking-widest px-3 mb-2 mt-5">Settings</p>
+
+    <button onclick="showPanel('settings')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium">
+      <i data-lucide="settings" class="nav-icon w-5 h-5 flex-shrink-0"></i>
+      <span class="sidebar-label">Settings</span>
+    </button>
+
+    <a href="../index.html" target="_blank" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium">
+      <i data-lucide="external-link" class="nav-icon w-5 h-5 flex-shrink-0"></i>
+      <span class="sidebar-label">View Portfolio</span>
+    </a>
+  </nav>
+
+  <!-- User + logout -->
+  <div class="px-3 py-4 border-t border-white/8">
+    <div class="flex items-center gap-3 px-2 mb-3">
+      <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
+        <i data-lucide="user" class="w-4 h-4 text-white/50"></i>
+      </div>
+      <div class="sidebar-label overflow-hidden">
+        <p class="text-white text-xs font-semibold truncate">Dr. A.Y. Soje</p>
+        <p class="text-white/35 text-xs truncate">Administrator</p>
+      </div>
+    </div>
+    <a href="login.html" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 text-sm font-medium hover:bg-red-500/10">
+      <i data-lucide="log-out" class="nav-icon w-5 h-5 flex-shrink-0"></i>
+      <span class="sidebar-label">Sign Out</span>
+    </a>
+  </div>
+</aside>
+
+
+<!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
+<div class="flex-1 flex flex-col min-h-screen lg:ml-64 transition-all duration-300" id="main-content">
+
+  <!-- Top bar -->
+  <header class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
+    <div class="flex items-center gap-4">
+      <button onclick="toggleMobileSidebar()" class="lg:hidden text-gray-400 hover:text-primary transition-colors">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+      <button onclick="toggleSidebar()" class="hidden lg:block text-gray-400 hover:text-primary transition-colors">
+        <i data-lucide="panel-left-close" class="w-5 h-5" id="sidebar-toggle-icon"></i>
+      </button>
+      <div>
+        <h1 class="text-gray-800 font-semibold text-sm" id="page-title">Dashboard</h1>
+        <p class="text-gray-400 text-xs" id="page-subtitle">Welcome back, Dr. Soje</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="relative text-gray-400 hover:text-primary transition-colors p-2 rounded-xl hover:bg-gray-50">
+        <i data-lucide="bell" class="w-5 h-5"></i>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+      </button>
+      <button class="text-gray-400 hover:text-primary transition-colors p-2 rounded-xl hover:bg-gray-50">
+        <i data-lucide="search" class="w-5 h-5"></i>
+      </button>
+      <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center cursor-pointer">
+        <i data-lucide="user" class="w-4 h-4 text-white/60"></i>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ════ DASHBOARD PANEL ════ -->
+  <section id="panel-dashboard" class="panel active p-6 fadein">
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+
+      <div class="stat-card bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
+            <i data-lucide="file-text" class="w-5 h-5 text-primary"></i>
+          </div>
+          <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full flex items-center gap-1">
+            <i data-lucide="trending-up" class="w-3 h-3"></i> +2
+          </span>
+        </div>
+        <p class="font-serif text-3xl font-bold text-primary">12</p>
+        <p class="text-gray-400 text-xs mt-1">Blog Posts</p>
+      </div>
+
+      <div class="stat-card bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center">
+            <i data-lucide="mail" class="w-5 h-5 text-red-500"></i>
+          </div>
+          <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">3 New</span>
+        </div>
+        <p class="font-serif text-3xl font-bold text-primary">18</p>
+        <p class="text-gray-400 text-xs mt-1">Messages</p>
+      </div>
+
+      <div class="stat-card bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center">
+            <i data-lucide="star" class="w-5 h-5 text-gold"></i>
+          </div>
+          <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">2 Pending</span>
+        </div>
+        <p class="font-serif text-3xl font-bold text-primary">24</p>
+        <p class="text-gray-400 text-xs mt-1">Testimonials</p>
+      </div>
+
+      <div class="stat-card bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
+            <i data-lucide="book-open" class="w-5 h-5 text-sage"></i>
+          </div>
+        </div>
+        <p class="font-serif text-3xl font-bold text-primary">8</p>
+        <p class="text-gray-400 text-xs mt-1">Published Books</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6">
+
+      <!-- Recent messages -->
+      <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="font-semibold text-gray-800 text-sm">Recent Messages</h2>
+          <button onclick="showPanel('messages')" class="text-gold text-xs font-semibold hover:text-gold-light transition-colors flex items-center gap-1">
+            View all <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+        <div class="divide-y divide-gray-50">
+
+          <div class="px-6 py-4 flex items-start gap-4 hover:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i data-lucide="user" class="w-4 h-4 text-white/40"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-0.5">
+                <p class="text-sm font-semibold text-gray-800 truncate">Adunola Bello</p>
+                <span class="badge-new text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">New</span>
+              </div>
+              <p class="text-gray-400 text-xs truncate">I'd like to book a session for marriage counselling...</p>
+              <p class="text-gray-300 text-xs mt-1 flex items-center gap-1">
+                <i data-lucide="clock" class="w-3 h-3"></i> 2 hours ago · Marriage Counselling
+              </p>
+            </div>
+          </div>
+
+          <div class="px-6 py-4 flex items-start gap-4 hover:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-xl bg-sage flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i data-lucide="user" class="w-4 h-4 text-white/40"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-0.5">
+                <p class="text-sm font-semibold text-gray-800 truncate">Emeka Okafor</p>
+                <span class="badge-new text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">New</span>
+              </div>
+              <p class="text-gray-400 text-xs truncate">My son has been struggling with addiction for two years...</p>
+              <p class="text-gray-300 text-xs mt-1 flex items-center gap-1">
+                <i data-lucide="clock" class="w-3 h-3"></i> 5 hours ago · Addiction Recovery
+              </p>
+            </div>
+          </div>
+
+          <div class="px-6 py-4 flex items-start gap-4 hover:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-xl bg-gold flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i data-lucide="user" class="w-4 h-4 text-white/40"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-0.5">
+                <p class="text-sm font-semibold text-gray-800 truncate">Funmi Adeleke</p>
+                <span class="badge-read text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">Read</span>
+              </div>
+              <p class="text-gray-400 text-xs truncate">I read your book "Anchored" and it changed my life...</p>
+              <p class="text-gray-300 text-xs mt-1 flex items-center gap-1">
+                <i data-lucide="clock" class="w-3 h-3"></i> Yesterday · General Inquiry
+              </p>
+            </div>
+          </div>
+
+          <div class="px-6 py-4 flex items-start gap-4 hover:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-xl bg-purple-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i data-lucide="user" class="w-4 h-4 text-white/40"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-0.5">
+                <p class="text-sm font-semibold text-gray-800 truncate">Tunde Fashola</p>
+                <span class="badge-read text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">Read</span>
+              </div>
+              <p class="text-gray-400 text-xs truncate">Please I need help for my daughter who has been diagnosed...</p>
+              <p class="text-gray-300 text-xs mt-1 flex items-center gap-1">
+                <i data-lucide="clock" class="w-3 h-3"></i> 2 days ago · ADHD Management
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Quick actions + activity -->
+      <div class="space-y-5">
+
+        <!-- Quick actions -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h2 class="font-semibold text-gray-800 text-sm mb-4">Quick Actions</h2>
+          <div class="space-y-2.5">
+            <button onclick="openPostModal()" class="w-full flex items-center gap-3 bg-primary hover:bg-primary-light text-white text-sm font-medium px-4 py-3 rounded-xl transition-colors">
+              <i data-lucide="plus" class="w-4 h-4"></i> New Blog Post
+            </button>
+            <button onclick="showPanel('testimonials')" class="w-full flex items-center gap-3 bg-gold/10 hover:bg-gold/20 text-gold text-sm font-medium px-4 py-3 rounded-xl transition-colors">
+              <i data-lucide="star" class="w-4 h-4"></i> Review Testimonials
+            </button>
+            <button onclick="showPanel('messages')" class="w-full flex items-center gap-3 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium px-4 py-3 rounded-xl transition-colors">
+              <i data-lucide="mail" class="w-4 h-4"></i> Check Messages
+            </button>
+            <a href="../index.html" target="_blank" class="w-full flex items-center gap-3 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium px-4 py-3 rounded-xl transition-colors">
+              <i data-lucide="eye" class="w-4 h-4"></i> Preview Portfolio
+            </a>
+          </div>
+        </div>
+
+        <!-- Recent posts mini -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h2 class="font-semibold text-gray-800 text-sm mb-4">Latest Posts</h2>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg flex-shrink-0" style="background:linear-gradient(135deg,#0F2444,#1C3A5E)"></div>
+              <div>
+                <p class="text-xs font-semibold text-gray-700 leading-snug">The Hidden Face of Trauma</p>
+                <p class="text-gray-400 text-xs mt-0.5">May 2 · <span class="text-green-600">Published</span></p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg flex-shrink-0" style="background:linear-gradient(135deg,#1A5E3A,#0A3C22)"></div>
+              <div>
+                <p class="text-xs font-semibold text-gray-700 leading-snug">What Relapse Really Means</p>
+                <p class="text-gray-400 text-xs mt-0.5">Apr 18 · <span class="text-green-600">Published</span></p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg flex-shrink-0" style="background:linear-gradient(135deg,#6E3A1A,#4A1F0A)"></div>
+              <div>
+                <p class="text-xs font-semibold text-gray-700 leading-snug">Faith &amp; Mental Health Care</p>
+                <p class="text-gray-400 text-xs mt-0.5">Draft · <span class="text-orange-500">Pending</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════ BLOG POSTS PANEL ════ -->
+  <section id="panel-posts" class="panel p-6 fadein">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="font-serif text-xl font-bold text-gray-800">Blog Posts</h2>
+        <p class="text-gray-400 text-sm mt-0.5">Manage all published and draft articles</p>
+      </div>
+      <button onclick="openPostModal()" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+        <i data-lucide="plus" class="w-4 h-4"></i> New Post
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-3 mb-5">
+      <div class="relative flex-1 min-w-48">
+        <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+        <input type="text" placeholder="Search posts..." class="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+      </div>
+      <select class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-500 bg-white focus:outline-none focus:border-gold transition-all">
+        <option>All Categories</option>
+        <option>Mental Health</option>
+        <option>Addiction &amp; Recovery</option>
+        <option>Marriage &amp; Family</option>
+        <option>Faith &amp; Healing</option>
+        <option>Parenting</option>
+      </select>
+      <select class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-500 bg-white focus:outline-none focus:border-gold transition-all">
+        <option>All Status</option>
+        <option>Published</option>
+        <option>Draft</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-100 bg-gray-50">
+              <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">Title</th>
+              <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-4 py-3.5 hidden md:table-cell">Category</th>
+              <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-4 py-3.5 hidden lg:table-cell">Date</th>
+              <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-4 py-3.5">Status</th>
+              <th class="text-right text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+
+            <tr>
+              <td class="px-6 py-4">
+                <p class="font-medium text-gray-800 text-sm leading-snug">The Hidden Face of Trauma: Why So Many Nigerians Suffer in Silence</p>
+                <p class="text-gray-400 text-xs mt-0.5">8 min read</p>
+              </td>
+              <td class="px-4 py-4 hidden md:table-cell">
+                <span class="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-medium">Mental Health</span>
+              </td>
+              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">May 2, 2025</td>
+              <td class="px-4 py-4">
+                <span class="badge-pub text-xs font-semibold px-2.5 py-1 rounded-full">Published</span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-end gap-2">
+                  <button class="p-1.5 text-gray-400 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors" title="Edit">
+                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                  </button>
+                  <button class="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Preview">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                  </button>
+                  <button class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="px-6 py-4">
+                <p class="font-medium text-gray-800 text-sm leading-snug">What Relapse Really Means — And Why It Doesn't Mean Failure</p>
+                <p class="text-gray-400 text-xs mt-0.5">5 min read</p>
+              </td>
+              <td class="px-4 py-4 hidden md:table-cell">
+                <span class="text-xs bg-green-50 text-green-700 px-2.5 py-1 rounded-full font-medium">Addiction &amp; Recovery</span>
+              </td>
+              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">Apr 18, 2025</td>
+              <td class="px-4 py-4">
+                <span class="badge-pub text-xs font-semibold px-2.5 py-1 rounded-full">Published</span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-end gap-2">
+                  <button class="p-1.5 text-gray-400 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                  <button class="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                  <button class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="px-6 py-4">
+                <p class="font-medium text-gray-800 text-sm leading-snug">Five Communication Patterns That Silently Destroy Marriages</p>
+                <p class="text-gray-400 text-xs mt-0.5">6 min read</p>
+              </td>
+              <td class="px-4 py-4 hidden md:table-cell">
+                <span class="text-xs bg-red-50 text-red-600 px-2.5 py-1 rounded-full font-medium">Marriage &amp; Family</span>
+              </td>
+              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">Apr 10, 2025</td>
+              <td class="px-4 py-4">
+                <span class="badge-pub text-xs font-semibold px-2.5 py-1 rounded-full">Published</span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-end gap-2">
+                  <button class="p-1.5 text-gray-400 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                  <button class="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                  <button class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="px-6 py-4">
+                <p class="font-medium text-gray-800 text-sm leading-snug">When Prayer Is Not Enough: Integrating Faith with Mental Health Care</p>
+                <p class="text-gray-400 text-xs mt-0.5">7 min read</p>
+              </td>
+              <td class="px-4 py-4 hidden md:table-cell">
+                <span class="text-xs bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full font-medium">Faith &amp; Healing</span>
+              </td>
+              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">Mar 28, 2025</td>
+              <td class="px-4 py-4">
+                <span class="badge-draft text-xs font-semibold px-2.5 py-1 rounded-full">Draft</span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-end gap-2">
+                  <button class="p-1.5 text-gray-400 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                  <button class="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                  <button class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <p class="text-gray-400 text-xs">Showing 4 of 12 posts</p>
+        <div class="flex gap-1.5">
+          <button class="w-8 h-8 rounded-lg border border-gray-200 text-gray-400 hover:border-primary hover:text-primary text-xs flex items-center justify-center transition-colors">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+          </button>
+          <button class="w-8 h-8 rounded-lg bg-primary text-white text-xs flex items-center justify-center font-semibold">1</button>
+          <button class="w-8 h-8 rounded-lg border border-gray-200 text-gray-500 text-xs flex items-center justify-center hover:border-primary hover:text-primary transition-colors">2</button>
+          <button class="w-8 h-8 rounded-lg border border-gray-200 text-gray-400 hover:border-primary hover:text-primary text-xs flex items-center justify-center transition-colors">
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════ TESTIMONIALS PANEL ════ -->
+  <section id="panel-testimonials" class="panel p-6 fadein">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="font-serif text-xl font-bold text-gray-800">Testimonials</h2>
+        <p class="text-gray-400 text-sm mt-0.5">Review and moderate client testimonials</p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+              <i data-lucide="user" class="w-5 h-5 text-white/40"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-800 text-sm">Anonymous</p>
+              <p class="text-xs text-gray-400">Addiction Recovery</p>
+            </div>
+          </div>
+          <span class="badge-approved text-xs font-semibold px-2.5 py-1 rounded-full">Approved</span>
+        </div>
+        <div class="flex gap-0.5 mb-3">
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+        </div>
+        <p class="text-gray-500 text-xs leading-relaxed italic">"After years of battling addiction alone, Dr. Soje's approach gave me something no other program had — a reason to believe recovery was possible..."</p>
+        <div class="flex gap-2 mt-4">
+          <button class="flex-1 py-2 text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i> Remove
+          </button>
+          <button class="flex-1 py-2 text-xs font-medium text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i> View
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-sage flex items-center justify-center">
+              <i data-lucide="user" class="w-5 h-5 text-white/40"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-800 text-sm">Mrs. T. Okonkwo</p>
+              <p class="text-xs text-gray-400">Marriage Counselling</p>
+            </div>
+          </div>
+          <span class="badge-approved text-xs font-semibold px-2.5 py-1 rounded-full">Approved</span>
+        </div>
+        <div class="flex gap-0.5 mb-3">
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+        </div>
+        <p class="text-gray-500 text-xs leading-relaxed italic">"My husband and I were on the verge of divorce. Two months of marriage counseling with Dr. Soje completely transformed our communication..."</p>
+        <div class="flex gap-2 mt-4">
+          <button class="flex-1 py-2 text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i> Remove
+          </button>
+          <button class="flex-1 py-2 text-xs font-medium text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i> View
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-amber-100 shadow-sm p-5 ring-1 ring-amber-200">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center">
+              <i data-lucide="user" class="w-5 h-5 text-white/40"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-800 text-sm">Chidi Nwosu</p>
+              <p class="text-xs text-gray-400">Life Coaching</p>
+            </div>
+          </div>
+          <span class="badge-pending text-xs font-semibold px-2.5 py-1 rounded-full">Pending</span>
+        </div>
+        <div class="flex gap-0.5 mb-3">
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#C9922A;fill:#C9922A;"></i>
+          <i data-lucide="star" class="w-3.5 h-3.5" style="color:#d1d5db;fill:#d1d5db;"></i>
+        </div>
+        <p class="text-gray-500 text-xs leading-relaxed italic">"The life coaching sessions helped me find direction when I felt completely lost. Dr. Soje has a way of making you feel seen and understood..."</p>
+        <div class="flex gap-2 mt-4">
+          <button class="flex-1 py-2 text-xs font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i> Approve
+          </button>
+          <button class="flex-1 py-2 text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i> Reject
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ════ MESSAGES PANEL ════ -->
+  <section id="panel-messages" class="panel p-6 fadein">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="font-serif text-xl font-bold text-gray-800">Contact Messages</h2>
+        <p class="text-gray-400 text-sm mt-0.5">3 unread messages</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-100 bg-gray-50">
+              <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">From</th>
+              <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-4 py-3.5 hidden md:table-cell">Service</th>
+              <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-4 py-3.5">Message</th>
+              <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-4 py-3.5 hidden lg:table-cell">Date</th>
+              <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-4 py-3.5">Status</th>
+              <th class="text-right text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+
+            <tr class="bg-blue-50/30">
+              <td class="px-6 py-4">
+                <p class="font-semibold text-gray-800 text-sm">Adunola Bello</p>
+                <p class="text-gray-400 text-xs">adunola@email.com</p>
+              </td>
+              <td class="px-4 py-4 hidden md:table-cell">
+                <span class="text-xs bg-red-50 text-red-600 px-2 py-1 rounded-full">Marriage Counselling</span>
+              </td>
+              <td class="px-4 py-4 max-w-xs">
+                <p class="text-gray-600 text-xs leading-relaxed truncate">I'd like to book a session for marriage counselling. My husband and I are going through a very difficult time...</p>
+              </td>
+              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">May 7, 2025</td>
+              <td class="px-4 py-4">
+                <span class="badge-new text-xs font-semibold px-2.5 py-1 rounded-full">New</span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <button class="inline-flex items-center gap-1.5 text-primary hover:text-gold text-xs font-semibold transition-colors">
+                  <i data-lucide="mail-open" class="w-3.5 h-3.5"></i> Read
+                </button>
+              </td>
+            </tr>
+
+            <tr class="bg-blue-50/30">
+              <td class="px-6 py-4">
+                <p class="font-semibold text-gray-800 text-sm">Emeka Okafor</p>
+                <p class="text-gray-400 text-xs">emeka@email.com</p>
+              </td>
+              <td class="px-4 py-4 hidden md:table-cell">
+                <span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full">Addiction Recovery</span>
+              </td>
+              <td class="px-4 py-4 max-w-xs">
+                <p class="text-gray-600 text-xs leading-relaxed truncate">My son has been struggling with addiction for two years. We have tried everything. Please can you help us...</p>
+              </td>
+              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">May 7, 2025</td>
+              <td class="px-4 py-4">
+                <span class="badge-new text-xs font-semibold px-2.5 py-1 rounded-full">New</span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <button class="inline-flex items-center gap-1.5 text-primary hover:text-gold text-xs font-semibold transition-colors">
+                  <i data-lucide="mail-open" class="w-3.5 h-3.5"></i> Read
+                </button>
+              </td>
+            </tr>
+
+            <tr class="bg-blue-50/30">
+              <td class="px-6 py-4">
+                <p class="font-semibold text-gray-800 text-sm">Tunde Fashola</p>
+                <p class="text-gray-400 text-xs">tunde@email.com</p>
+              </td>
+              <td class="px-4 py-4 hidden md:table-cell">
+                <span class="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-full">ADHD Management</span>
+              </td>
+              <td class="px-4 py-4 max-w-xs">
+                <p class="text-gray-600 text-xs leading-relaxed truncate">My daughter has been diagnosed with ADHD. I need help managing her behaviour at home and at school...</p>
+              </td>
+              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">May 5, 2025</td>
+              <td class="px-4 py-4">
+                <span class="badge-new text-xs font-semibold px-2.5 py-1 rounded-full">New</span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <button class="inline-flex items-center gap-1.5 text-primary hover:text-gold text-xs font-semibold transition-colors">
+                  <i data-lucide="mail-open" class="w-3.5 h-3.5"></i> Read
+                </button>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="px-6 py-4">
+                <p class="font-semibold text-gray-800 text-sm">Funmi Adeleke</p>
+                <p class="text-gray-400 text-xs">funmi@email.com</p>
+              </td>
+              <td class="px-4 py-4 hidden md:table-cell">
+                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">General</span>
+              </td>
+              <td class="px-4 py-4 max-w-xs">
+                <p class="text-gray-400 text-xs leading-relaxed truncate">I read your book "Anchored" and it changed my life completely. I would love to recommend it to my church...</p>
+              </td>
+              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">May 4, 2025</td>
+              <td class="px-4 py-4">
+                <span class="badge-read text-xs font-semibold px-2.5 py-1 rounded-full">Read</span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <button class="inline-flex items-center gap-1.5 text-gray-400 hover:text-gold text-xs font-semibold transition-colors">
+                  <i data-lucide="reply" class="w-3.5 h-3.5"></i> Reply
+                </button>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════ BOOKS PANEL ════ -->
+  <section id="panel-books" class="panel p-6 fadein">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="font-serif text-xl font-bold text-gray-800">Books &amp; Publications</h2>
+        <p class="text-gray-400 text-sm mt-0.5">Manage published works and publication info</p>
+      </div>
+      <button class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+        <i data-lucide="plus" class="w-4 h-4"></i> Add Book
+      </button>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="h-24 flex items-center justify-center" style="background:linear-gradient(135deg,#1C3A5E,#0A1F3C);">
+          <i data-lucide="book" class="w-8 h-8 text-white/30"></i>
+        </div>
+        <div class="p-4">
+          <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Marriage &amp; Relationships</span>
+          <h3 class="font-serif font-bold text-gray-800 text-sm mt-2 mb-1">Echoes of Eden</h3>
+          <p class="text-gray-400 text-xs">Dr. A.Y. Soje</p>
+          <div class="flex gap-2 mt-4">
+            <button class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+            </button>
+            <button class="p-2 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="h-24 flex items-center justify-center" style="background:linear-gradient(135deg,#1A5E3A,#0A3C22);">
+          <i data-lucide="navigation" class="w-8 h-8 text-white/30"></i>
+        </div>
+        <div class="p-4">
+          <span class="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">Addiction Recovery</span>
+          <h3 class="font-serif font-bold text-gray-800 text-sm mt-2 mb-1">The Addiction Compass</h3>
+          <p class="text-gray-400 text-xs">Dr. A.Y. Soje</p>
+          <div class="flex gap-2 mt-4">
+            <button class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+            </button>
+            <button class="p-2 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="h-24 flex items-center justify-center" style="background:linear-gradient(135deg,#4A1A6E,#2E0A4A);">
+          <i data-lucide="unlock" class="w-8 h-8 text-white/30"></i>
+        </div>
+        <div class="p-4">
+          <span class="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">Devotional</span>
+          <h3 class="font-serif font-bold text-gray-800 text-sm mt-2 mb-1">Unshackled</h3>
+          <p class="text-gray-400 text-xs">Dr. A.Y. Soje</p>
+          <div class="flex gap-2 mt-4">
+            <button class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+            </button>
+            <button class="p-2 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="h-24 flex items-center justify-center" style="background:linear-gradient(135deg,#6E1A1A,#4A0A0A);">
+          <i data-lucide="eye" class="w-8 h-8 text-white/30"></i>
+        </div>
+        <div class="p-4">
+          <span class="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full">Psychology</span>
+          <h3 class="font-serif font-bold text-gray-800 text-sm mt-2 mb-1">Unmasking You</h3>
+          <p class="text-gray-400 text-xs">Dr. A.Y. Soje</p>
+          <div class="flex gap-2 mt-4">
+            <button class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+            </button>
+            <button class="p-2 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ════ SETTINGS PANEL ════ -->
+  <section id="panel-settings" class="panel p-6 fadein">
+    <div class="mb-6">
+      <h2 class="font-serif text-xl font-bold text-gray-800">Settings</h2>
+      <p class="text-gray-400 text-sm mt-0.5">Manage your account and portfolio settings</p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-5">
+
+        <!-- Profile -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h3 class="font-semibold text-gray-800 mb-5 flex items-center gap-2">
+            <i data-lucide="user" class="w-4 h-4 text-gold"></i> Profile Information
+          </h3>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Full Name</label>
+              <input type="text" value="Dr. Mrs. Anthonia Yemisi Soje" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Display Name</label>
+              <input type="text" value="Dr. A.Y. Soje" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Email</label>
+              <input type="email" value="admin@drsoje.com" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Phone</label>
+              <input type="tel" placeholder="+234 ..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Bio / Tagline</label>
+              <textarea rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all resize-none">Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor &amp; Author</textarea>
+            </div>
+          </div>
+          <button class="mt-4 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors flex items-center gap-2">
+            <i data-lucide="save" class="w-4 h-4"></i> Save Changes
+          </button>
+        </div>
+
+        <!-- Security -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h3 class="font-semibold text-gray-800 mb-5 flex items-center gap-2">
+            <i data-lucide="lock" class="w-4 h-4 text-gold"></i> Change Password
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Current Password</label>
+              <input type="password" placeholder="••••••••" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">New Password</label>
+                <input type="password" placeholder="••••••••" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Confirm Password</label>
+                <input type="password" placeholder="••••••••" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+              </div>
+            </div>
+          </div>
+          <button class="mt-4 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors flex items-center gap-2">
+            <i data-lucide="shield" class="w-4 h-4"></i> Update Password
+          </button>
+        </div>
+      </div>
+
+      <!-- Contact &amp; Social -->
+      <div class="space-y-5">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h3 class="font-semibold text-gray-800 mb-5 flex items-center gap-2">
+            <i data-lucide="share-2" class="w-4 h-4 text-gold"></i> Social Media
+          </h3>
+          <div class="space-y-3">
+            <div class="relative">
+              <i data-lucide="facebook" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="url" placeholder="Facebook URL" class="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+            </div>
+            <div class="relative">
+              <i data-lucide="instagram" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="url" placeholder="Instagram URL" class="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+            </div>
+            <div class="relative">
+              <i data-lucide="twitter" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="url" placeholder="Twitter / X URL" class="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+            </div>
+            <div class="relative">
+              <i data-lucide="linkedin" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="url" placeholder="LinkedIn URL" class="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+            </div>
+          </div>
+          <button class="mt-4 w-full bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
+            <i data-lucide="save" class="w-4 h-4"></i> Save Links
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /main -->
+
+
+<!-- ════ NEW POST MODAL ════ -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100">
+      <h3 class="font-serif text-xl font-bold text-gray-800">New Blog Post</h3>
+      <button onclick="closePostModal()" class="text-gray-400 hover:text-primary transition-colors p-1">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div class="p-8 space-y-5">
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Post Title</label>
+        <input type="text" placeholder="Enter post title..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Category</label>
+          <select class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500 bg-white focus:outline-none focus:border-gold transition-all">
+            <option value="">Select category...</option>
+            <option>Mental Health</option>
+            <option>Addiction &amp; Recovery</option>
+            <option>Marriage &amp; Family</option>
+            <option>Faith &amp; Healing</option>
+            <option>Parenting</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Status</label>
+          <select class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500 bg-white focus:outline-none focus:border-gold transition-all">
+            <option>Draft</option>
+            <option>Published</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Excerpt / Summary</label>
+        <textarea rows="2" placeholder="Brief summary of the post..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300 resize-none"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Content</label>
+        <textarea rows="8" placeholder="Write your article content here..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300 resize-none"></textarea>
+        <p class="text-gray-400 text-xs mt-1.5">Your Laravel backend can replace this with a rich text editor (Trix, TinyMCE, etc.)</p>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Featured Image URL</label>
+        <input type="url" placeholder="https://..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+      </div>
+    </div>
+    <div class="flex gap-3 px-8 py-5 border-t border-gray-100">
+      <button onclick="closePostModal()" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors">
+        Cancel
+      </button>
+      <button class="flex-1 py-3 bg-gold hover:bg-gold-light text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+        <i data-lucide="save" class="w-4 h-4"></i> Save as Draft
+      </button>
+      <button class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+        <i data-lucide="send" class="w-4 h-4"></i> Publish
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  lucide.createIcons();
+
+  /* ── Sidebar toggle (desktop collapse) ── */
+  let sidebarCollapsed = false;
+  function toggleSidebar() {
+    sidebarCollapsed = !sidebarCollapsed;
+    const sb = document.getElementById('sidebar');
+    const mc = document.getElementById('main-content');
+    const icon = document.getElementById('sidebar-toggle-icon');
+    sb.classList.toggle('collapsed', sidebarCollapsed);
+    mc.style.marginLeft = sidebarCollapsed ? '72px' : '';
+    icon.setAttribute('data-lucide', sidebarCollapsed ? 'panel-left-open' : 'panel-left-close');
+    lucide.createIcons();
+  }
+
+  /* ── Mobile sidebar ── */
+  function toggleMobileSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('mob-overlay').classList.toggle('open');
+  }
+  function closeMobileSidebar() {
+    document.getElementById('sidebar').classList.add('-translate-x-full');
+    document.getElementById('mob-overlay').classList.remove('open');
+  }
+
+  /* ── Panel navigation ── */
+  const panelMeta = {
+    dashboard:    { title: 'Dashboard',          sub: 'Welcome back, Dr. Soje' },
+    posts:        { title: 'Blog Posts',          sub: '12 total posts' },
+    testimonials: { title: 'Testimonials',        sub: '2 pending approval' },
+    messages:     { title: 'Contact Messages',    sub: '3 unread messages' },
+    books:        { title: 'Books',               sub: '8 published books' },
+    settings:     { title: 'Settings',            sub: 'Manage account & preferences' },
+  };
+
+  function showPanel(id) {
+    /* Hide all panels */
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    /* Show target */
+    const target = document.getElementById('panel-' + id);
+    target.classList.add('active');
+    target.classList.remove('fadein');
+    void target.offsetWidth; /* reflow to restart animation */
+    target.classList.add('fadein');
+
+    /* Update nav active state */
+    document.querySelectorAll('.sidebar-nav-item').forEach(btn => btn.classList.remove('active'));
+    const navBtn = [...document.querySelectorAll('.sidebar-nav-item')]
+      .find(b => b.getAttribute('onclick') === `showPanel('${id}')`);
+    if (navBtn) navBtn.classList.add('active');
+
+    /* Update header */
+    const meta = panelMeta[id] || {};
+    document.getElementById('page-title').textContent    = meta.title || id;
+    document.getElementById('page-subtitle').textContent = meta.sub   || '';
+
+    /* Close mobile sidebar */
+    closeMobileSidebar();
+  }
+
+  /* ── New Post Modal ── */
+  function openPostModal() {
+    document.getElementById('modal-overlay').classList.add('open');
+    lucide.createIcons();
+  }
+  function closePostModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+  function closeModal(e) {
+    if (e.target === document.getElementById('modal-overlay')) closePostModal();
+  }
+</script>
+</body>
+</html>

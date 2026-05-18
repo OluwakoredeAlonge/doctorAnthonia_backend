@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Mrs. Anthonia Yemisi Soje | Mental Health &amp; Wellness</title>
+  <meta name="description" content="Dr. Anthonia Yemisi Soje  Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor, ADHD Specialist &amp; Author. Founder of Fosterheirs Mental Health Therapists, Oye-Ekiti." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:         '#0F2444',
+            'primary-light': '#1C3A5E',
+            'primary-dark':  '#081526',
+            gold:            '#C9922A',
+            'gold-light':    '#D4A847',
+            cream:           '#FDF9F4',
+            sage:            '#2E7D63',
+          },
+          fontFamily: {
+            serif: ['Playfair Display','Georgia','serif'],
+            sans:  ['Inter','system-ui','sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body { font-family:'Inter',sans-serif; }
+    .font-serif { font-family:'Playfair Display',serif !important; }
+
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity .7s ease,transform .7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    .hero-dots {
+      background-image: radial-gradient(circle,rgba(201,146,42,.22) 1px,transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    .gold-rule::after {
+      content:''; display:block; width:52px; height:3px;
+      background:#C9922A; border-radius:2px; margin-top:10px;
+    }
+
+    #navbar { transition: background .3s ease, box-shadow .3s ease; }
+    #navbar.scrolled {
+      background: rgba(255,255,255,.97) !important;
+      box-shadow: 0 2px 20px rgba(0,0,0,.08);
+    }
+    #navbar.scrolled .nav-link { color:#0F2444 !important; }
+    #navbar.scrolled .nav-logo { color:#0F2444 !important; }
+
+    .svc-card { transition: transform .3s ease, box-shadow .3s ease; }
+    .svc-card:hover { transform: translateY(-7px); box-shadow: 0 18px 36px rgba(15,36,68,.11); }
+
+    .book-card { transition: transform .3s ease, box-shadow .3s ease; }
+    .book-card:hover { transform: translateY(-7px) scale(1.02); box-shadow: 0 22px 44px rgba(0,0,0,.28); }
+
+    .bg-b1{background:linear-gradient(135deg,#1C3A5E,#0A1F3C);}
+    .bg-b2{background:linear-gradient(135deg,#1A5E3A,#0A3C22);}
+    .bg-b3{background:linear-gradient(135deg,#4A1A6E,#2E0A4A);}
+    .bg-b4{background:linear-gradient(135deg,#6E1A1A,#4A0A0A);}
+    .bg-b5{background:linear-gradient(135deg,#1A3A6E,#0A1F4A);}
+    .bg-b6{background:linear-gradient(135deg,#6E3A1A,#4A1F0A);}
+    .bg-b7{background:linear-gradient(135deg,#1A6E3A,#0A4A22);}
+    .bg-b8{background:linear-gradient(135deg,#4A1A5E,#2A0A3C);}
+
+    .t-slider { overflow: hidden; }
+    .t-track  { display: flex; transition: transform .5s ease; }
+    .t-slide  { min-width: 100%; }
+
+    .star-gold { color:#C9922A; fill:#C9922A; }
+
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:#FDF9F4; }
+    ::-webkit-scrollbar-thumb { background:#C9922A; border-radius:3px; }
+
+    @keyframes spin-slow { to{transform:rotate(360deg);} }
+    .spin-slow { animation: spin-slow 22s linear infinite; }
+
+    @keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
+    .bob { animation: bob 1.6s ease-in-out infinite; }
+
+    #mobile-menu {
+      max-height: 0; opacity: 0; overflow: hidden;
+      transition: max-height .35s ease, opacity .3s ease;
+    }
+    #mobile-menu.open { max-height: 440px; opacity: 1; }
+
+    /* Hero enhancements */
+    @keyframes spin-slow-rev { from{transform:rotate(0deg);} to{transform:rotate(-360deg);} }
+    .spin-slow-reverse { animation: spin-slow-rev 30s linear infinite; }
+
+    @keyframes heroFadeIn { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+    @keyframes floatUpDown { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+    @keyframes floatDownUp { 0%,100%{transform:translateY(0);} 50%{transform:translateY(10px);} }
+    .float-card-1 { animation: heroFadeIn .8s ease .5s both, floatUpDown   4s   ease-in-out 1.3s infinite; }
+    .float-card-2 { animation: heroFadeIn .8s ease .9s both, floatDownUp   5s   ease-in-out 1.7s infinite; }
+    .float-card-3 { animation: heroFadeIn .8s ease .7s both, floatDownUp   4.5s ease-in-out 1.5s infinite; }
+    .float-card-4 { animation: heroFadeIn .8s ease 1.1s both, floatUpDown  3.8s ease-in-out 1.9s infinite; }
+
+    @keyframes goldShimmer { 0%{background-position:0% 50%;} 100%{background-position:200% 50%;} }
+    .hero-name-gold {
+      background: linear-gradient(90deg,#C9922A 0%,#D4A847 35%,#F0D898 50%,#D4A847 65%,#C9922A 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: goldShimmer 4s linear infinite;
+    }
+
+    @keyframes ticker { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+    .ticker-track { animation: ticker 38s linear infinite; width: max-content; }
+    .ticker-track:hover { animation-play-state: paused; }
+
+    .hero-orb-1, .hero-orb-2 { transition: transform .12s ease-out; will-change: transform; }
+
+    /* ── Hero background image ── */
+    .hero-bg {
+      /* Face is centered in the image — keep it center on all screens */
+      background: url('public/asset/DrAnthonia.png') center 20% / cover no-repeat #0F2444;
+    }
+    @media (max-width: 640px) {
+      /* Mobile: pull the image up so face sits clearly in the upper viewport */
+      .hero-bg { background-position: center top; }
+    }
+    @media (min-width: 641px) and (max-width: 1023px) {
+      .hero-bg { background-position: center 15%; }
+    }
+
+    /* Vertical overlay:
+       Top   → moderately dark (navbar stays readable)
+       Middle → near-transparent (face shines through)
+       Bottom → very dark (all text is crisp over the dark zone)              */
+    .hero-overlay {
+      background: linear-gradient(
+        to bottom,
+        rgba(8,21,38,.82)  0%,
+        rgba(8,21,38,.18) 14%,
+        rgba(8,21,38,.08) 45%,
+        rgba(8,21,38,.68) 65%,
+        rgba(8,21,38,.93) 80%,
+        rgba(8,21,38,.97) 100%
+      );
+    }
+  </style>
+</head>
+<body class="bg-cream antialiased">
+
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <a href="#home" class="nav-logo font-serif text-white text-xl font-bold tracking-wide">Dr. A.Y. Soje</a>
+
+    <div class="hidden md:flex items-center gap-7">
+      <a href="#about"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">About</a>
+      <a href="#services"     class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Services</a>
+      <a href="#books"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Books</a>
+      <a href="#organization" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Organization</a>
+      <a href="#testimonials" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Testimonials</a>
+      <a href="blog.html"     class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Blog</a>
+    </div>
+
+    <a href="#contact" class="hidden md:inline-flex items-center gap-2 bg-gold hover:bg-gold-light text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-all shadow-lg shadow-gold/25">
+      <i data-lucide="calendar" class="w-4 h-4"></i> Book a Session
+    </a>
+
+    <button id="ham" class="md:hidden text-white" onclick="toggleMenu()">
+      <i data-lucide="menu" class="w-6 h-6" id="ham-icon"></i>
+    </button>
+  </div>
+
+  <div id="mobile-menu">
+    <div class="mt-3 bg-white rounded-2xl shadow-2xl p-6 space-y-4">
+      <a href="#about"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">About</a>
+      <a href="#services"     class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Services</a>
+      <a href="#books"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Books</a>
+      <a href="#organization" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Organization</a>
+      <a href="#testimonials" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Testimonials</a>
+      <a href="blog.html"     class="block text-primary font-medium hover:text-gold transition-colors">Blog</a>
+      <a href="#contact" onclick="toggleMenu()" class="block bg-gold hover:bg-gold-light text-white font-semibold px-6 py-3 rounded-full text-center transition-colors">Book a Session</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ══════════ HERO ══════════ -->
+<section id="home" class="relative min-h-screen hero-bg flex flex-col overflow-hidden">
+
+  <!-- Photo overlay (multi-layer gradient for legibility) -->
+  <div class="hero-overlay absolute inset-0 pointer-events-none"></div>
+
+  <!-- Background layers -->
+  <div class="absolute inset-0 hero-dots pointer-events-none opacity-30"></div>
+  <div class="hero-orb-1 absolute -top-20 -left-20 w-[560px] h-[560px] rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(201,146,42,.1),transparent 70%)"></div>
+  <div class="hero-orb-2 absolute -bottom-20 -right-20 w-[460px] h-[460px] rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(46,125,99,.09),transparent 70%)"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(201,146,42,.03),transparent 65%)"></div>
+
+  <!-- Corner decorative rings -->
+  <div class="absolute -top-10 -left-10 w-56 h-56 rounded-full border border-gold/10 spin-slow pointer-events-none"></div>
+  <div class="absolute -top-4 -left-4 w-40 h-40 rounded-full border border-dashed border-gold/8 spin-slow-reverse pointer-events-none"></div>
+  <div class="absolute -bottom-10 -right-10 w-64 h-64 rounded-full border border-white/5 spin-slow pointer-events-none"></div>
+  <div class="absolute -bottom-4 -right-4 w-48 h-48 rounded-full border border-dashed border-gold/8 spin-slow-reverse pointer-events-none"></div>
+
+  <!-- Horizontal depth lines -->
+  <div class="absolute top-1/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/6 to-transparent pointer-events-none"></div>
+  <div class="absolute bottom-1/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/4 to-transparent pointer-events-none"></div>
+
+  <!-- Floating credential cards — LEFT edge, framing the face zone -->
+  <div class="float-card-1 absolute left-4 xl:left-12 top-[22%] hidden lg:flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/15 rounded-2xl px-4 py-3 shadow-2xl shadow-black/50 z-10">
+    <div class="w-9 h-9 rounded-xl bg-blue-500/25 flex items-center justify-center flex-shrink-0">
+      <i data-lucide="brain" class="w-4 h-4 text-blue-300"></i>
+    </div>
+    <div>
+      <p class="text-xs font-bold text-white">Trauma Therapist</p>
+      <p class="text-xs text-white/40 mt-0.5">Board Certified</p>
+    </div>
+  </div>
+
+  <div class="float-card-2 absolute left-4 xl:left-12 top-[47%] hidden lg:flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/15 rounded-2xl px-4 py-3 shadow-2xl shadow-black/50 z-10">
+    <div class="w-9 h-9 rounded-xl bg-gold/25 flex items-center justify-center flex-shrink-0">
+      <i data-lucide="book-open" class="w-4 h-4 text-gold-light"></i>
+    </div>
+    <div>
+      <p class="text-xs font-bold text-white">8+ Published Books</p>
+      <p class="text-xs text-white/40 mt-0.5">Author &amp; Researcher</p>
+    </div>
+  </div>
+
+  <!-- Floating credential cards — RIGHT edge, framing the face zone -->
+  <div class="float-card-3 absolute right-4 xl:right-12 top-[25%] hidden lg:flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/15 rounded-2xl px-4 py-3 shadow-2xl shadow-black/50 z-10">
+    <div class="w-9 h-9 rounded-xl bg-sage/30 flex items-center justify-center flex-shrink-0">
+      <i data-lucide="heart" class="w-4 h-4 text-green-300"></i>
+    </div>
+    <div>
+      <p class="text-xs font-bold text-white">Marriage Counsellor</p>
+      <p class="text-xs text-white/40 mt-0.5">50+ Marriages Restored</p>
+    </div>
+  </div>
+
+  <div class="float-card-4 absolute right-4 xl:right-12 top-[49%] hidden lg:flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/15 rounded-2xl px-4 py-3 shadow-2xl shadow-black/50 z-10">
+    <div class="w-9 h-9 rounded-xl bg-purple-500/25 flex items-center justify-center flex-shrink-0">
+      <i data-lucide="zap" class="w-4 h-4 text-purple-300"></i>
+    </div>
+    <div>
+      <p class="text-xs font-bold text-white">ADHD Specialist</p>
+      <p class="text-xs text-white/40 mt-0.5">Child &amp; Adult Cases</p>
+    </div>
+  </div>
+
+  <!-- Face spacer: reserves the upper viewport so the doctor's face is clearly visible.
+       flex-1 lets it grow on tall screens; min-h anchors the minimum face zone per breakpoint.
+       pt-20 clears the fixed navbar (80px). -->
+  <div class="flex-1 min-h-[46vh] sm:min-h-[52vh] lg:min-h-[58vh] pt-20 pointer-events-none"></div>
+
+  <!-- Text block: full-width centered, lives in the lower dark-overlay zone -->
+  <div class="relative z-10 w-full text-center text-white px-5 sm:px-8 pb-20">
+    <!-- Extra localised scrim so text is readable even on bright images -->
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-primary-dark/60 pointer-events-none -z-10"></div>
+
+    <div class="max-w-4xl mx-auto">
+
+      <div class="inline-flex items-center gap-2 border border-gold/35 bg-gold/10 text-white text-xs font-semibold px-5 py-2 rounded-full mb-7 tracking-widest uppercase">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+        Physician &amp; Mental Health Specialist
+      </div>
+
+      <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-5">
+        Dr. Mrs. Anthonia<br><span class="hero-name-gold">Yemisi Soje</span>
+      </h1>
+
+      <div class="flex items-center justify-center gap-4 mb-6">
+        <div class="w-12 h-px bg-gold/35 flex-shrink-0"></div>
+        <p class="text-gold/85 font-medium text-base md:text-lg" id="typing-role" style="min-height:28px">&nbsp;</p>
+        <div class="w-12 h-px bg-gold/35 flex-shrink-0"></div>
+      </div>
+
+      <p class="text-white/65 text-base leading-relaxed mb-8 max-w-2xl mx-auto">
+        Bridging medicine, psychology, and faith to restore lives. Founder of
+        <span class="text-white/95 font-semibold">Fosterheirs Mental Health Consultancy</span>
+        — healing hearts, rebuilding homes, restoring hope.
+      </p>
+
+      <div class="flex flex-wrap gap-4 justify-center mb-10">
+        <a href="#contact" class="inline-flex items-center gap-2 bg-gold hover:bg-gold-light text-white font-semibold px-8 py-4 rounded-full transition-all duration-200 shadow-xl shadow-gold/30 hover:shadow-gold/50 hover:-translate-y-0.5 transform">
+          <i data-lucide="calendar" class="w-5 h-5"></i> Book a Session
+        </a>
+        <a href="#about" class="inline-flex items-center gap-2 border border-white/25 hover:border-gold/60 hover:bg-white/5 text-white hover:text-gold font-semibold px-8 py-4 rounded-full transition-all duration-200">
+          <i data-lucide="user" class="w-5 h-5"></i> About Dr. Soje
+        </a>
+      </div>
+
+      <!-- Stats grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-black/40 backdrop-blur-sm">
+        <div class="bg-primary-dark/70 backdrop-blur-md px-6 py-5">
+          <p class="font-serif text-3xl font-bold text-gold" data-count="8" data-suffix="+">0</p>
+          <p class="text-white/50 text-xs mt-1.5 uppercase tracking-wider leading-relaxed">Published<br>Books</p>
+        </div>
+        <div class="bg-primary-dark/70 backdrop-blur-md px-6 py-5">
+          <p class="font-serif text-3xl font-bold text-gold" data-count="200" data-suffix="+">0</p>
+          <p class="text-white/50 text-xs mt-1.5 uppercase tracking-wider leading-relaxed">Lives<br>Transformed</p>
+        </div>
+        <div class="bg-primary-dark/70 backdrop-blur-md px-6 py-5">
+          <p class="font-serif text-3xl font-bold text-gold" data-count="50" data-suffix="+">0</p>
+          <p class="text-white/50 text-xs mt-1.5 uppercase tracking-wider leading-relaxed">Marriages<br>Restored</p>
+        </div>
+        <div class="bg-primary-dark/70 backdrop-blur-md px-6 py-5">
+          <p class="font-serif text-3xl font-bold text-gold" data-count="100" data-suffix="+">0</p>
+          <p class="text-white/50 text-xs mt-1.5 uppercase tracking-wider leading-relaxed">Addicts<br>Rehabilitated</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Credential ticker strip -->
+  <div class="absolute bottom-0 left-0 right-0 border-t border-white/10 bg-black/40 backdrop-blur-md py-3 overflow-hidden">
+    <div class="ticker-track flex items-center gap-10">
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Medical Practitioner</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Psycho-trauma Therapist</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>ADHD Specialist</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Marriage Counsellor</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Addiction Recovery Expert</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Life Coach</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Published Author</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Faith-integrated Therapist</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Medical Practitioner</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Psycho-trauma Therapist</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>ADHD Specialist</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Marriage Counsellor</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Addiction Recovery Expert</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Life Coach</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Published Author</span>
+      <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
+      <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>Faith-integrated Therapist</span>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ══════════ ABOUT ══════════ -->
+<section id="about" class="py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-20 items-center">
+
+      <div class="relative reveal">
+        <div class="absolute top-6 left-6 right-0 bottom-0 rounded-3xl bg-cream border border-gold/20"></div>
+        <div class="relative rounded-3xl overflow-hidden bg-primary-light" style="aspect-ratio:4/5">
+         <div class="absolute inset-0 flex flex-col items-center justify-center text-white/20">
+    <video autoplay muted loop playsinline class="w-full h-full object-cover">
+        <source src="public/asset/drAnthonia_.mp4" type="video/mp4">
+    </video>
+
+    <p class="text-sm mt-2">Dr. Anthonia Yemisi Soje</p>
+</div>
+          <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-primary to-transparent"></div>
+          <div class="absolute bottom-6 left-6 right-6">
+            <p class="font-serif text-white text-lg font-semibold">Dr. Mrs. Anthonia Yemisi Soje</p>
+            <p class="text-gold/80 text-sm mt-0.5">Physician &amp; Psycho-trauma Therapist · Author</p>
+          </div>
+        </div>
+        <div class="absolute -bottom-5 -right-5 bg-gold rounded-2xl p-5 shadow-2xl shadow-gold/30 text-white text-center">
+          <p class="font-serif text-3xl font-bold">5+</p>
+          <p class="text-white/80 text-xs mt-0.5 leading-tight">Years of<br>Impact</p>
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay:.18s">
+        <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-4">About Dr. Soje</p>
+        <h2 class="font-serif text-4xl lg:text-5xl font-bold text-primary leading-tight gold-rule">
+          Healing Minds,<br>Restoring Lives
+        </h2>
+
+        <!-- Faith identity badge -->
+        <div class="flex items-center gap-3 mt-10 mb-6">
+          <div class="flex items-center gap-2 bg-gold/10 border border-gold/25 text-gold text-xs font-semibold px-4 py-2 rounded-full tracking-wider uppercase">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Faith meets Science
+          </div>
+          <div class="flex items-center gap-2 bg-primary/5 border border-primary/15 text-primary text-xs font-semibold px-4 py-2 rounded-full tracking-wider uppercase">
+            <i data-lucide="mic" class="w-3.5 h-3.5"></i> Conference Speaker
+          </div>
+        </div>
+
+        <p class="text-gray-500 leading-relaxed mb-5">
+          Dr. Mrs. Anthonia Yemisi Soje is a Nigerian medical practitioner, board-certified psycho-trauma therapist, and a thought leader at the intersection of faith and psychology. As Founder &amp; CEO of <strong class="text-primary font-semibold">Fosterheirs Mental Health Consultancy</strong> and a leading voice at the intersection of <strong class="text-primary font-semibold">Christian faith and mental health</strong>, she has built her practice on a single conviction: that lasting healing must honour the whole person  mind, body, and soul. Drawing on medical expertise, psychological depth, and spiritual wisdom, she walks alongside individuals and families to restore hope where it has been most severely tested.
+        </p>
+        <p class="text-gray-500 leading-relaxed mb-8">
+          Beyond the therapy room, Dr. Soje is a sought-after speaker and published author who carries this integrated message to corporate boardrooms, church pulpits, conference halls, and seminar stages  speaking with authority and compassion on addiction, trauma, ADHD, marriage, emotional resilience, and the often-overlooked role of faith in mental wellness.
+        </p>
+
+        <div class="flex flex-wrap gap-2 mb-8">
+          <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Physician &amp; Psycho-trauma Therapist</span>
+          <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">ADHD Specialist</span>
+          <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Marriage Counsellor</span>
+          <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Conference Speaker</span>
+          <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Faith Advocate</span>
+          <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Published Author</span>
+        </div>
+
+        <blockquote class="relative bg-cream rounded-2xl p-6 border-l-4 border-gold">
+          <i data-lucide="quote" class="w-8 h-8 text-gold/20 absolute top-4 right-4"></i>
+          <p class="font-serif italic text-primary text-lg leading-relaxed">
+            "God designed the mind just as He designed the soul  and true healing must honour both. This is why faith and science must walk together."
+          </p>
+          <footer class="mt-3 text-gold text-sm font-semibold"> Dr. Anthonia Yemisi Soje</footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ SERVICES ══════════ -->
+<section id="services" class="py-28 bg-cream">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <div class="text-center mb-16 reveal">
+      <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-3">What I Offer</p>
+      <h2 class="font-serif text-4xl lg:text-5xl font-bold text-primary">Services &amp; Speaking</h2>
+      <div class="w-14 h-0.5 bg-gold mx-auto mt-3 mb-6"></div>
+      <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed">
+        From intimate therapy rooms to large conference halls  every service flows from one conviction: where faith meets science, whole people are formed.
+      </p>
+    </div>
+
+    <!-- ── Speaking & Events  full-width featured card ── -->
+    <div class="reveal mb-6">
+      <div class="relative bg-primary rounded-3xl overflow-hidden border border-white/5">
+        <div class="absolute inset-0 hero-dots opacity-25 pointer-events-none"></div>
+        <div class="absolute top-0 right-0 w-[480px] h-[480px] rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(201,146,42,.11),transparent 65%)"></div>
+        <div class="absolute bottom-0 left-0 w-72 h-72 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(46,125,99,.1),transparent 70%)"></div>
+
+        <div class="relative grid lg:grid-cols-2 items-stretch">
+
+          <!-- Left: copy & CTA -->
+          <div class="p-10 lg:p-14">
+            <div class="inline-flex items-center gap-2 bg-gold/20 border border-gold/30 text-gold text-xs font-bold px-4 py-1.5 rounded-full mb-7 tracking-widest uppercase">
+              <i data-lucide="mic" class="w-3.5 h-3.5"></i> Speaking &amp; Events
+            </div>
+            <h3 class="font-serif text-3xl lg:text-4xl font-bold text-white leading-tight mb-5">
+              Invite Dr. Soje to<br><span class="text-gold">Speak at Your Event</span>
+            </h3>
+            <p class="text-white/55 leading-relaxed mb-8 max-w-md text-sm">
+              Dr. Soje is available as a keynote speaker, panelist, or workshop facilitator for corporate organisations, churches, conferences, retreats, and seminars. She delivers compelling, faith-grounded discourse on mental health, emotional resilience, addiction, marriage, and purpose  leaving audiences both informed and transformed.
+            </p>
+
+            <!-- Speaking topic pills -->
+            <div class="flex flex-wrap gap-2 mb-9">
+              <span class="text-xs bg-white/10 border border-white/15 text-white/70 px-3 py-1.5 rounded-full">Mental Health</span>
+              <span class="text-xs bg-white/10 border border-white/15 text-white/70 px-3 py-1.5 rounded-full">Faith &amp; Wellness</span>
+              <span class="text-xs bg-white/10 border border-white/15 text-white/70 px-3 py-1.5 rounded-full">Life Purpose</span>
+              <span class="text-xs bg-white/10 border border-white/15 text-white/70 px-3 py-1.5 rounded-full">Addiction &amp; Recovery</span>
+              <span class="text-xs bg-white/10 border border-white/15 text-white/70 px-3 py-1.5 rounded-full">Marriage &amp; Family</span>
+              <span class="text-xs bg-white/10 border border-white/15 text-white/70 px-3 py-1.5 rounded-full">Emotional Resilience</span>
+              <span class="text-xs bg-white/10 border border-white/15 text-white/70 px-3 py-1.5 rounded-full">Corporate Wellness</span>
+            </div>
+
+            <a href="#contact" class="inline-flex items-center gap-2 bg-gold hover:bg-gold-light text-white font-semibold px-8 py-4 rounded-full transition-all duration-200 shadow-xl shadow-gold/30 hover:-translate-y-0.5 transform">
+              <i data-lucide="calendar" class="w-4 h-4"></i> Book Dr. Soje for Your Event
+            </a>
+          </div>
+
+          <!-- Right: venue types -->
+          <div class="border-t lg:border-t-0 lg:border-l border-white/8 p-10 lg:p-14 flex flex-col justify-center gap-4">
+            <p class="text-gold text-xs font-bold tracking-widest uppercase mb-2">Ideal Venues &amp; Formats</p>
+
+            <div class="flex items-start gap-4 bg-white/5 hover:bg-white/10 rounded-2xl p-4 transition-colors cursor-default group">
+              <div class="w-10 h-10 rounded-xl bg-blue-500/15 group-hover:bg-blue-500/25 flex items-center justify-center flex-shrink-0 transition-colors">
+                <i data-lucide="building-2" class="w-5 h-5 text-blue-300"></i>
+              </div>
+              <div>
+                <p class="text-white font-semibold text-sm mb-0.5">Corporate Organisations</p>
+                <p class="text-white/40 text-xs leading-relaxed">Workplace mental health, executive resilience &amp; employee wellness</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 bg-white/5 hover:bg-white/10 rounded-2xl p-4 transition-colors cursor-default group">
+              <div class="w-10 h-10 rounded-xl bg-gold/20 group-hover:bg-gold/30 flex items-center justify-center flex-shrink-0 transition-colors">
+                <i data-lucide="bookmark" class="w-5 h-5 text-gold-light"></i>
+              </div>
+              <div>
+                <p class="text-white font-semibold text-sm mb-0.5">Churches &amp; Religious Organisations</p>
+                <p class="text-white/40 text-xs leading-relaxed">Faith-mental health integration, pastoral care &amp; congregational wellbeing</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 bg-white/5 hover:bg-white/10 rounded-2xl p-4 transition-colors cursor-default group">
+              <div class="w-10 h-10 rounded-xl bg-sage/25 group-hover:bg-sage/35 flex items-center justify-center flex-shrink-0 transition-colors">
+                <i data-lucide="users" class="w-5 h-5 text-green-300"></i>
+              </div>
+              <div>
+                <p class="text-white font-semibold text-sm mb-0.5">Seminars &amp; Conferences</p>
+                <p class="text-white/40 text-xs leading-relaxed">Keynotes, panel discussions &amp; interactive workshops</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 bg-white/5 hover:bg-white/10 rounded-2xl p-4 transition-colors cursor-default group">
+              <div class="w-10 h-10 rounded-xl bg-purple-500/15 group-hover:bg-purple-500/25 flex items-center justify-center flex-shrink-0 transition-colors">
+                <i data-lucide="graduation-cap" class="w-5 h-5 text-purple-300"></i>
+              </div>
+              <div>
+                <p class="text-white font-semibold text-sm mb-0.5">Academic &amp; Community Events</p>
+                <p class="text-white/40 text-xs leading-relaxed">Schools, universities, NGOs &amp; community outreach programmes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section divider ── -->
+    <div class="flex items-center gap-5 mb-6 reveal">
+      <div class="h-px flex-1 bg-gold/15"></div>
+      <p class="text-gold font-bold text-xs tracking-widest uppercase flex items-center gap-2">
+        <i data-lucide="stethoscope" class="w-3.5 h-3.5"></i> Clinical &amp; Therapy Services
+      </p>
+      <div class="h-px flex-1 bg-gold/15"></div>
+    </div>
+
+    <!-- ── Bento service grid ── -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <!-- Faith & Mental Health  featured 2-col card -->
+      <div class="svc-card group bg-white rounded-2xl overflow-hidden shadow-sm cursor-default reveal lg:col-span-2 border border-gold/15 relative">
+        <div class="h-2 bg-gradient-to-r from-gold to-gold-light"></div>
+        <div class="p-7 flex flex-col md:flex-row gap-5 items-start">
+          <div class="w-12 h-12 rounded-2xl bg-gold/10 group-hover:bg-gold flex items-center justify-center flex-shrink-0 transition-colors duration-300">
+            <i data-lucide="sparkles" class="w-6 h-6 text-gold group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <div>
+            <div class="inline-flex items-center gap-1.5 bg-gold/10 text-gold text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">Core Identity</div>
+            <h3 class="font-serif text-xl font-bold text-primary mb-2">Faith &amp; Mental Health Integration</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">At the heart of Dr. Soje's practice is the conviction that Christian faith and clinical psychology are not rivals  they are partners. Every session, every talk, every book is anchored in the Word and backed by science.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc-card group bg-white rounded-2xl overflow-hidden shadow-sm cursor-default reveal border border-gray-100">
+        <div class="h-1.5 bg-blue-500"></div>
+        <div class="p-7">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 group-hover:bg-blue-500 flex items-center justify-center mb-5 transition-colors duration-300">
+            <i data-lucide="brain" class="w-6 h-6 text-blue-500 group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-primary mb-2">Psycho-trauma Therapy</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Evidence-based trauma processing for individuals dealing with post-traumatic stress and deep emotional wounds.</p>
+          <div class="mt-5 flex items-center gap-1.5 text-blue-500 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+            <span>Book session</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc-card group bg-white rounded-2xl overflow-hidden shadow-sm cursor-default reveal border border-gray-100" style="transition-delay:.07s">
+        <div class="h-1.5 bg-amber-500"></div>
+        <div class="p-7">
+          <div class="w-12 h-12 rounded-2xl bg-amber-50 group-hover:bg-amber-500 flex items-center justify-center mb-5 transition-colors duration-300">
+            <i data-lucide="anchor" class="w-6 h-6 text-amber-500 group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-primary mb-2">Addiction Recovery</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Comprehensive drug and alcohol rehabilitation combining medical intervention, psychological therapy, and spiritual support.</p>
+          <div class="mt-5 flex items-center gap-1.5 text-amber-500 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+            <span>Book session</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc-card group bg-white rounded-2xl overflow-hidden shadow-sm cursor-default reveal border border-gray-100" style="transition-delay:.14s">
+        <div class="h-1.5 bg-sage"></div>
+        <div class="p-7">
+          <div class="w-12 h-12 rounded-2xl bg-green-50 group-hover:bg-sage flex items-center justify-center mb-5 transition-colors duration-300">
+            <i data-lucide="heart" class="w-6 h-6 text-sage group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-primary mb-2">Marriage Counselling</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Restoring and strengthening marital bonds through conflict resolution, communication, and faith-based rebuilding.</p>
+          <div class="mt-5 flex items-center gap-1.5 text-sage text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+            <span>Book session</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc-card group bg-white rounded-2xl overflow-hidden shadow-sm cursor-default reveal border border-gray-100" style="transition-delay:.21s">
+        <div class="h-1.5 bg-purple-500"></div>
+        <div class="p-7">
+          <div class="w-12 h-12 rounded-2xl bg-purple-50 group-hover:bg-purple-500 flex items-center justify-center mb-5 transition-colors duration-300">
+            <i data-lucide="zap" class="w-6 h-6 text-purple-500 group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-primary mb-2">ADHD Specialist</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Specialised assessment and structured management for ADHD in children and adults, with lasting behavioural frameworks.</p>
+          <div class="mt-5 flex items-center gap-1.5 text-purple-500 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+            <span>Book session</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc-card group bg-white rounded-2xl overflow-hidden shadow-sm cursor-default reveal border border-gray-100">
+        <div class="h-1.5 bg-orange-400"></div>
+        <div class="p-7">
+          <div class="w-12 h-12 rounded-2xl bg-orange-50 group-hover:bg-orange-400 flex items-center justify-center mb-5 transition-colors duration-300">
+            <i data-lucide="compass" class="w-6 h-6 text-orange-400 group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-primary mb-2">Life Coaching</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Goal-oriented coaching to help individuals discover purpose, build resilience, and unlock their fullest God-given potential.</p>
+          <div class="mt-5 flex items-center gap-1.5 text-orange-400 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+            <span>Book session</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc-card group bg-white rounded-2xl overflow-hidden shadow-sm cursor-default reveal border border-gray-100" style="transition-delay:.07s">
+        <div class="h-1.5 bg-pink-500"></div>
+        <div class="p-7">
+          <div class="w-12 h-12 rounded-2xl bg-pink-50 group-hover:bg-pink-500 flex items-center justify-center mb-5 transition-colors duration-300">
+            <i data-lucide="gem" class="w-6 h-6 text-pink-500 group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-primary mb-2">Premarital Counselling</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Equipping couples with communication skills, aligned expectations, and faith foundations before marriage begins.</p>
+          <div class="mt-5 flex items-center gap-1.5 text-pink-500 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+            <span>Book session</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc-card group bg-white rounded-2xl overflow-hidden shadow-sm cursor-default reveal border border-gray-100" style="transition-delay:.14s">
+        <div class="h-1.5 bg-teal-500"></div>
+        <div class="p-7">
+          <div class="w-12 h-12 rounded-2xl bg-teal-50 group-hover:bg-teal-500 flex items-center justify-center mb-5 transition-colors duration-300">
+            <i data-lucide="sun" class="w-6 h-6 text-teal-500 group-hover:text-white transition-colors duration-300"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-primary mb-2">Emotional Wellness</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Ongoing support for emotional health, identity, self-worth, and resilience  mentoring individuals toward lasting inner wholeness.</p>
+          <div class="mt-5 flex items-center gap-1.5 text-teal-500 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+            <span>Book session</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ BOOKS ══════════ -->
+<section id="books" class="py-28 bg-primary overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-3">Published Works</p>
+      <h2 class="font-serif text-4xl lg:text-5xl font-bold text-white">Books &amp; Publications</h2>
+      <div class="w-14 h-0.5 bg-gold mx-auto mt-3 mb-6"></div>
+      <p class="text-white/50 max-w-xl mx-auto text-sm leading-relaxed">
+        A growing library of works on mental health, relationships, addiction recovery, and faith-based healing  each one a lamp on the path to wholeness.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <div class="book-card bg-b1 rounded-2xl p-6 border border-white/8 cursor-default reveal">
+        <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-5"><i data-lucide="book" class="w-5 h-5 text-white"></i></div>
+        <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-4">Marriage &amp; Relationships</span>
+        <h3 class="font-serif text-lg font-bold text-white mb-2">Echoes of Eden</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Building healthy homes and nurturing meaningful relationships rooted in love and purpose.</p>
+        <div class="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+          <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-white/25"></i>
+        </div>
+      </div>
+
+      <div class="book-card bg-b2 rounded-2xl p-6 border border-white/8 cursor-default reveal" style="transition-delay:.07s">
+        <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-5"><i data-lucide="navigation" class="w-5 h-5 text-white"></i></div>
+        <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-4">Addiction Recovery</span>
+        <h3 class="font-serif text-lg font-bold text-white mb-2">The Addiction Compass</h3>
+        <p class="text-white/50 text-sm leading-relaxed">A guide to understanding addiction, navigating recovery, and building lasting sobriety.</p>
+        <div class="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+          <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-white/25"></i>
+        </div>
+      </div>
+
+      <div class="book-card bg-b3 rounded-2xl p-6 border border-white/8 cursor-default reveal" style="transition-delay:.14s">
+        <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-5"><i data-lucide="unlock" class="w-5 h-5 text-white"></i></div>
+        <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-4">Devotional</span>
+        <h3 class="font-serif text-lg font-bold text-white mb-2">Unshackled</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Daily faith anchors for those in recovery  breaking free from addiction's chains through devotion.</p>
+        <div class="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+          <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-white/25"></i>
+        </div>
+      </div>
+
+      <div class="book-card bg-b4 rounded-2xl p-6 border border-white/8 cursor-default reveal" style="transition-delay:.21s">
+        <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-5"><i data-lucide="eye" class="w-5 h-5 text-white"></i></div>
+        <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-4">Psychology</span>
+        <h3 class="font-serif text-lg font-bold text-white mb-2">Unmasking You</h3>
+        <p class="text-white/50 text-sm leading-relaxed">A guide to personality disorders  understanding human behavior and emotional patterns.</p>
+        <div class="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+          <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-white/25"></i>
+        </div>
+      </div>
+
+      <div class="book-card bg-b5 rounded-2xl p-6 border border-white/8 cursor-default reveal">
+        <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-5"><i data-lucide="anchor" class="w-5 h-5 text-white"></i></div>
+        <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-4">Identity &amp; Faith</span>
+        <h3 class="font-serif text-lg font-bold text-white mb-2">Anchored</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Exploring identity, self-worth, and faith-based encouragement for those searching for solid ground.</p>
+        <div class="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+          <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-white/25"></i>
+        </div>
+      </div>
+
+      <div class="book-card bg-b6 rounded-2xl p-6 border border-white/8 cursor-default reveal" style="transition-delay:.07s">
+        <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-5"><i data-lucide="shield" class="w-5 h-5 text-white"></i></div>
+        <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-4">Trauma Healing</span>
+        <h3 class="font-serif text-lg font-bold text-white mb-2">Sanctuary</h3>
+        <p class="text-white/50 text-sm leading-relaxed">A journey through trauma healing, psychological restoration, and the discovery of spiritual wholeness.</p>
+        <div class="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+          <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-white/25"></i>
+        </div>
+      </div>
+
+      <div class="book-card bg-b7 rounded-2xl p-6 border border-white/8 cursor-default reveal" style="transition-delay:.14s">
+        <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-5"><i data-lucide="key" class="w-5 h-5 text-white"></i></div>
+        <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-4">Addiction Recovery</span>
+        <h3 class="font-serif text-lg font-bold text-white mb-2">The Fourfold Path to Freedom</h3>
+        <p class="text-white/50 text-sm leading-relaxed">A holistic recovery model combining medical, psychological, social, and spiritual healing.</p>
+        <div class="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+          <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-white/25"></i>
+        </div>
+      </div>
+
+      <div class="book-card bg-b8 rounded-2xl p-6 border border-white/8 cursor-default reveal" style="transition-delay:.21s">
+        <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-5"><i data-lucide="smile" class="w-5 h-5 text-white"></i></div>
+        <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-4">Parenting</span>
+        <h3 class="font-serif text-lg font-bold text-white mb-2">Feelings and Faith</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Helping parents guide children to regulate emotions through principles of faith and intentional parenting.</p>
+        <div class="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+          <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 text-white/25"></i>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ ORGANIZATION ══════════ -->
+<section id="organization" class="py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <div class="reveal">
+        <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-4">The Organization</p>
+        <h2 class="font-serif text-4xl lg:text-5xl font-bold text-primary leading-tight gold-rule">
+          Fosterheirs <br>Mental Health Therapists
+        </h2>
+
+        <p class="text-gray-500 leading-relaxed mt-10 mb-5">
+          Founded in 2023 by Dr. Soje, Fosterheirs is a counseling and rehabilitation organization based in Oye-Ekiti, Nigeria. Nestled within the <strong class="text-primary font-semibold">Heirs Specialist Hospital Complex</strong>, it operates as a sanctuary for holistic healing  addressing addiction, trauma, marital crises, and emotional instability.
+        </p>
+        <p class="text-gray-500 leading-relaxed mb-8">
+          The organization's mission is a fourfold healing approach: medical intervention, psychological therapy, social rehabilitation, and spiritual anchoring  because true recovery honors the whole person.
+        </p>
+
+        <div class="grid grid-cols-2 gap-4 mb-10">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-4 h-4 text-gold"></i>
+            </div>
+            <div>
+              <p class="text-primary font-medium text-sm">Drug &amp; Alcohol Rehab</p>
+              <p class="text-gray-400 text-xs mt-0.5">Comprehensive programs</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-4 h-4 text-gold"></i>
+            </div>
+            <div>
+              <p class="text-primary font-medium text-sm">Marriage Restoration</p>
+              <p class="text-gray-400 text-xs mt-0.5">Rebuilding broken bonds</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-4 h-4 text-gold"></i>
+            </div>
+            <div>
+              <p class="text-primary font-medium text-sm">Trauma Recovery</p>
+              <p class="text-gray-400 text-xs mt-0.5">Psycho-trauma therapy</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check" class="w-4 h-4 text-gold"></i>
+            </div>
+            <div>
+              <p class="text-primary font-medium text-sm">Relapse Prevention</p>
+              <p class="text-gray-400 text-xs mt-0.5">Ongoing support systems</p>
+            </div>
+          </div>
+        </div>
+
+        <a href="#contact" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white font-semibold px-8 py-4 rounded-full transition-colors">
+          <i data-lucide="map-pin" class="w-4 h-4"></i> Visit Fosterheirs
+        </a>
+      </div>
+
+      <div class="space-y-5 reveal" style="transition-delay:.18s">
+        <div class="bg-primary rounded-3xl p-10 text-white relative overflow-hidden">
+          <div class="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-gold/8 pointer-events-none"></div>
+          <div class="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-sage/15 pointer-events-none"></div>
+          <div class="relative">
+            <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-8">Impact Since 2023</p>
+            <div class="grid grid-cols-3 gap-6 text-center">
+              <div>
+                <p class="font-serif text-4xl font-bold">100+</p>
+                <p class="text-white/45 text-xs mt-2 leading-relaxed">Addicts<br>Rehabilitated</p>
+              </div>
+              <div class="border-x border-white/10">
+                <p class="font-serif text-4xl font-bold text-gold">50+</p>
+                <p class="text-white/45 text-xs mt-2 leading-relaxed">Marriages<br>Restored</p>
+              </div>
+              <div>
+                <p class="font-serif text-4xl font-bold">200+</p>
+                <p class="text-white/45 text-xs mt-2 leading-relaxed">Lives<br>Transformed</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-cream rounded-3xl p-6 border border-gold/20 flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="building-2" class="w-6 h-6 text-gold"></i>
+          </div>
+          <div>
+            <p class="font-semibold text-primary mb-1">Location</p>
+            <p class="text-gray-400 text-sm leading-relaxed">Heirs Specialist Hospital Complex,<br>Oye-Ekiti, Ekiti State, Nigeria</p>
+            <a href="#contact" class="inline-flex items-center gap-1 text-gold text-sm font-medium mt-2 hover:gap-2 transition-all">
+              Get Directions <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ TESTIMONIALS ══════════ -->
+<section id="testimonials" class="py-28 bg-cream overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-3">Testimonials</p>
+      <h2 class="font-serif text-4xl lg:text-5xl font-bold text-primary">Stories of Transformation</h2>
+      <div class="w-14 h-0.5 bg-gold mx-auto mt-3 mb-6"></div>
+      <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed">
+        Real stories from real people whose lives were touched through therapy, counseling, and healing.
+      </p>
+    </div>
+
+    <div class="t-slider relative reveal">
+      <div class="t-track" id="tTrack">
+
+        <div class="t-slide px-2">
+          <div class="max-w-3xl mx-auto bg-white rounded-3xl p-10 shadow-sm border border-gold/8">
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+              <div class="w-16 h-16 rounded-2xl bg-primary flex-shrink-0 flex items-center justify-center">
+                <i data-lucide="user" class="w-8 h-8 text-white/35"></i>
+              </div>
+              <div>
+                <div class="flex gap-1 mb-4">
+                  <i data-lucide="star" class="w-4 h-4 star-gold"></i><i data-lucide="star" class="w-4 h-4 star-gold"></i>
+                  <i data-lucide="star" class="w-4 h-4 star-gold"></i><i data-lucide="star" class="w-4 h-4 star-gold"></i>
+                  <i data-lucide="star" class="w-4 h-4 star-gold"></i>
+                </div>
+                <i data-lucide="quote" class="w-7 h-7 text-gold/20 mb-3"></i>
+                <p class="font-serif italic text-gray-600 text-lg leading-relaxed mb-5">
+                  "After years of battling addiction alone, Dr. Soje's approach at Fosterheirs gave me something no other program had  a reason to believe recovery was actually possible. Today I am three years clean and my family is whole again."
+                </p>
+                <p class="font-semibold text-primary text-sm">Anonymous</p>
+                <p class="text-gold text-xs mt-0.5">Addiction Recovery Client</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-slide px-2">
+          <div class="max-w-3xl mx-auto bg-white rounded-3xl p-10 shadow-sm border border-gold/8">
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+              <div class="w-16 h-16 rounded-2xl bg-sage flex-shrink-0 flex items-center justify-center">
+                <i data-lucide="user" class="w-8 h-8 text-white/35"></i>
+              </div>
+              <div>
+                <div class="flex gap-1 mb-4">
+                  <i data-lucide="star" class="w-4 h-4 star-gold"></i><i data-lucide="star" class="w-4 h-4 star-gold"></i>
+                  <i data-lucide="star" class="w-4 h-4 star-gold"></i><i data-lucide="star" class="w-4 h-4 star-gold"></i>
+                  <i data-lucide="star" class="w-4 h-4 star-gold"></i>
+                </div>
+                <i data-lucide="quote" class="w-7 h-7 text-gold/20 mb-3"></i>
+                <p class="font-serif italic text-gray-600 text-lg leading-relaxed mb-5">
+                  "My husband and I were on the verge of divorce. Two months of marriage counseling with Dr. Soje completely transformed our communication and helped us rediscover our love for each other. She is truly gifted."
+                </p>
+                <p class="font-semibold text-primary text-sm">Mrs. T. Okonkwo</p>
+                <p class="text-gold text-xs mt-0.5">Marriage Counseling Client</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-slide px-2">
+          <div class="max-w-3xl mx-auto bg-white rounded-3xl p-10 shadow-sm border border-gold/8">
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+              <div class="w-16 h-16 rounded-2xl bg-gold flex-shrink-0 flex items-center justify-center">
+                <i data-lucide="user" class="w-8 h-8 text-white/35"></i>
+              </div>
+              <div>
+                <div class="flex gap-1 mb-4">
+                  <i data-lucide="star" class="w-4 h-4 star-gold"></i><i data-lucide="star" class="w-4 h-4 star-gold"></i>
+                  <i data-lucide="star" class="w-4 h-4 star-gold"></i><i data-lucide="star" class="w-4 h-4 star-gold"></i>
+                  <i data-lucide="star" class="w-4 h-4 star-gold"></i>
+                </div>
+                <i data-lucide="quote" class="w-7 h-7 text-gold/20 mb-3"></i>
+                <p class="font-serif italic text-gray-600 text-lg leading-relaxed mb-5">
+                  "Dr. Soje's trauma therapy sessions were life-altering. She has a rare ability to make you feel truly seen and heard. The healing I experienced goes beyond what I thought was possible after everything I went through."
+                </p>
+                <p class="font-semibold text-primary text-sm">B. Adeyemi</p>
+                <p class="text-gold text-xs mt-0.5">Trauma Therapy Client</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button onclick="prevT()" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-5 w-11 h-11 bg-white rounded-full shadow-lg items-center justify-center hover:bg-primary hover:text-white transition-colors z-10">
+        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+      </button>
+      <button onclick="nextT()" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-5 w-11 h-11 bg-white rounded-full shadow-lg items-center justify-center hover:bg-primary hover:text-white transition-colors z-10">
+        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <div class="flex justify-center gap-2 mt-8">
+      <button class="t-dot h-2 w-8 rounded-full transition-all" style="background:#C9922A" onclick="goT(0)"></button>
+      <button class="t-dot h-2 w-2 rounded-full transition-all" style="background:rgba(201,146,42,.25)" onclick="goT(1)"></button>
+      <button class="t-dot h-2 w-2 rounded-full transition-all" style="background:rgba(201,146,42,.25)" onclick="goT(2)"></button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ CONTACT ══════════ -->
+<section id="contact" class="py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-3">Get in Touch</p>
+      <h2 class="font-serif text-4xl lg:text-5xl font-bold text-primary">Begin Your Healing Journey</h2>
+      <div class="w-14 h-0.5 bg-gold mx-auto mt-3 mb-6"></div>
+      <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed">
+        Take the first step toward wholeness. Reach out to schedule a consultation  we respond within 24 hours.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-5 gap-10">
+
+      <div class="lg:col-span-2 space-y-5 reveal">
+        <div class="bg-primary rounded-2xl p-6 text-white">
+          <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-4">
+            <i data-lucide="map-pin" class="w-5 h-5 text-gold"></i>
+          </div>
+          <p class="font-semibold mb-1">Office Address</p>
+          <p class="text-white/55 text-sm leading-relaxed">Fosterheirs, Heirs Specialist Hospital Complex,<br>Oye-Ekiti, Ekiti State, Nigeria</p>
+        </div>
+
+        <div class="bg-cream rounded-2xl p-6 border border-gold/20">
+          <div class="w-11 h-11 bg-gold/10 rounded-xl flex items-center justify-center mb-4">
+            <i data-lucide="phone" class="w-5 h-5 text-gold"></i>
+          </div>
+          <p class="font-semibold text-primary mb-1">Phone</p>
+          <p class="text-gray-400 text-sm">Available during working hours</p>
+        </div>
+
+        <div class="bg-cream rounded-2xl p-6 border border-gold/20">
+          <div class="w-11 h-11 bg-gold/10 rounded-xl flex items-center justify-center mb-4">
+            <i data-lucide="mail" class="w-5 h-5 text-gold"></i>
+          </div>
+          <p class="font-semibold text-primary mb-1">Email</p>
+          <p class="text-gray-400 text-sm">For inquiries and session bookings</p>
+        </div>
+
+        <div class="bg-cream rounded-2xl p-6 border border-gold/20">
+          <div class="w-11 h-11 bg-gold/10 rounded-xl flex items-center justify-center mb-4">
+            <i data-lucide="clock" class="w-5 h-5 text-gold"></i>
+          </div>
+          <p class="font-semibold text-primary mb-1">Working Hours</p>
+          <p class="text-gray-400 text-sm">Mon – Fri: 8:00 AM – 6:00 PM<br>Saturday: 9:00 AM – 2:00 PM</p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-3 reveal" style="transition-delay:.18s">
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-10">
+          <h3 class="font-serif text-2xl font-bold text-primary mb-1">Send a Message</h3>
+          <p class="text-gray-400 text-sm mb-8">We'll get back to you within 24 hours.</p>
+
+          <form id="contactForm" onsubmit="submitForm(event)" class="space-y-5">
+            <div class="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-xs font-semibold text-primary mb-2 uppercase tracking-wide">First Name</label>
+                <input type="text" placeholder="Your first name" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold focus:ring-2 focus:ring-yellow-100 transition-all placeholder-gray-300" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Last Name</label>
+                <input type="text" placeholder="Your last name" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold focus:ring-2 focus:ring-yellow-100 transition-all placeholder-gray-300" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Email Address</label>
+              <input type="email" placeholder="your@email.com" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold focus:ring-2 focus:ring-yellow-100 transition-all placeholder-gray-300" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-primary mb-2 uppercase tracking-wide">How Can We Help?</label>
+              <select id="serviceSelect" onchange="toggleEventNote()" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500 bg-white focus:outline-none focus:border-gold transition-all">
+                <option value="">Select a service or inquiry...</option>
+                <optgroup label="── Speaking &amp; Events ──">
+                  <option value="event">Corporate Speaking / Organisation Event</option>
+                  <option value="event">Church / Religious Organisation Event</option>
+                  <option value="event">Conference or Seminar (Keynote / Panel)</option>
+                  <option value="event">Retreat, Workshop or Community Programme</option>
+                </optgroup>
+                <optgroup label="── Therapy &amp; Counselling ──">
+                  <option>Psycho-trauma Therapy</option>
+                  <option>Addiction Recovery</option>
+                  <option>Marriage Counselling</option>
+                  <option>Premarital Counselling</option>
+                  <option>ADHD Management</option>
+                  <option>Life Coaching</option>
+                  <option>Emotional Wellness</option>
+                  <option>Faith-integrated Therapy</option>
+                </optgroup>
+                <optgroup label="── Other ──">
+                  <option>Book / Publication Inquiry</option>
+                  <option>General Inquiry</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Event enquiry note  shown when Speaking/Event is selected -->
+            <div id="eventNote" class="hidden bg-primary/5 border border-primary/15 rounded-xl px-5 py-4 flex items-start gap-3">
+              <i data-lucide="mic" class="w-4 h-4 text-primary flex-shrink-0 mt-0.5"></i>
+              <p class="text-primary text-xs leading-relaxed">
+                <strong>Event Booking:</strong> Please include the event name, date, venue, expected audience size, and preferred topic(s) in your message below. We'll respond within 48 hours with Dr. Soje's availability and speaking terms.
+              </p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Message</label>
+              <textarea rows="5" placeholder="Tell us about yourself and how we can help..." required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold focus:ring-2 focus:ring-yellow-100 transition-all placeholder-gray-300 resize-none"></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full bg-primary hover:bg-primary-light text-white font-semibold py-4 rounded-xl transition-colors flex items-center justify-center gap-2">
+              <i data-lucide="send" class="w-5 h-5"></i> Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="bg-primary-dark text-white py-16">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid md:grid-cols-4 gap-10 mb-12">
+
+      <div class="md:col-span-2">
+        <p class="font-serif text-2xl font-bold mb-1">Dr. A.Y. Soje</p>
+        <p class="text-gold text-sm mb-4">Mental Health Professional &amp; Author</p>
+        <p class="text-white/40 text-sm leading-relaxed max-w-xs">
+          Bridging medicine, psychology, and faith to restore lives and rebuild homes across Nigeria and beyond.
+        </p>
+        <div class="flex gap-3 mt-6">
+          <a href="#" class="w-10 h-10 rounded-xl bg-white/8 hover:bg-gold flex items-center justify-center transition-colors"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+          <a href="#" class="w-10 h-10 rounded-xl bg-white/8 hover:bg-gold flex items-center justify-center transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          <a href="#" class="w-10 h-10 rounded-xl bg-white/8 hover:bg-gold flex items-center justify-center transition-colors"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+          <a href="#" class="w-10 h-10 rounded-xl bg-white/8 hover:bg-gold flex items-center justify-center transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+        </div>
+      </div>
+
+      <div>
+        <p class="font-semibold text-white text-xs uppercase tracking-widest mb-5">Quick Links</p>
+        <ul class="space-y-3">
+          <li><a href="#about"        class="text-white/40 hover:text-gold text-sm transition-colors">About</a></li>
+          <li><a href="#services"     class="text-white/40 hover:text-gold text-sm transition-colors">Services</a></li>
+          <li><a href="#books"        class="text-white/40 hover:text-gold text-sm transition-colors">Books</a></li>
+          <li><a href="#organization" class="text-white/40 hover:text-gold text-sm transition-colors">Fosterheirs</a></li>
+          <li><a href="blog.html"     class="text-white/40 hover:text-gold text-sm transition-colors">Blog</a></li>
+          <li><a href="#contact"      class="text-white/40 hover:text-gold text-sm transition-colors">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="font-semibold text-white text-xs uppercase tracking-widest mb-5">Services</p>
+        <ul class="space-y-3">
+          <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">Speaking &amp; Events</a></li>
+          <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">Trauma Therapy</a></li>
+          <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">Addiction Recovery</a></li>
+          <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">Marriage Counselling</a></li>
+          <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">ADHD Specialist</a></li>
+          <li><a href="#contact"  class="text-white/40 hover:text-gold text-sm transition-colors">Book a Session</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 border-t border-white/8 flex flex-col md:flex-row items-center justify-between gap-3">
+      <p class="text-white/30 text-sm">© 2025 Dr. Mrs. Anthonia Yemisi Soje. All rights reserved.</p>
+      <p class="text-white/30 text-sm">Fosterheirs Mental Health Therapists · Oye-Ekiti, Nigeria</p>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  lucide.createIcons();
+
+  window.addEventListener('scroll', () =>
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 55)
+  );
+
+  /* Count-up animation for hero stats */
+  function countUp(el) {
+    const target = parseInt(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    const steps  = 60;
+    const delay  = 1600 / steps;
+    let step = 0;
+    const t = setInterval(() => {
+      step++;
+      el.textContent = Math.round(target * (step / steps)) + suffix;
+      if (step >= steps) clearInterval(t);
+    }, delay);
+  }
+  const countObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { countUp(e.target); countObs.unobserve(e.target); } });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+
+  /* Subtle mouse parallax on hero background orbs */
+  document.getElementById('home').addEventListener('mousemove', e => {
+    const r = document.getElementById('home').getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - 0.5;
+    const y = (e.clientY - r.top)  / r.height - 0.5;
+    document.querySelector('.hero-orb-1').style.transform = `translate(${x * 28}px, ${y * 28}px)`;
+    document.querySelector('.hero-orb-2').style.transform = `translate(${-x * 22}px, ${-y * 22}px)`;
+  });
+
+  function toggleMenu() {
+    const m = document.getElementById('mobile-menu');
+    const open = m.classList.toggle('open');
+    document.getElementById('ham-icon').setAttribute('data-lucide', open ? 'x' : 'menu');
+    lucide.createIcons();
+  }
+
+  const io = new IntersectionObserver(entries =>
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); })
+  , { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* Typewriter */
+  const roles = ['Psycho-trauma Therapist','Christian Mental Health Advocate','Conference Speaker & Author','Addiction Recovery Expert','Faith & Wellness Voice','Marriage Counsellor','ADHD Specialist','Life Coach'];
+  let ri = 0, ci = 0, del = false;
+  const typEl = document.getElementById('typing-role');
+  (function type() {
+    const cur = roles[ri];
+    typEl.textContent = del ? cur.slice(0, --ci) : cur.slice(0, ++ci);
+    if (!del && ci === cur.length)  setTimeout(() => del = true, 2400);
+    else if (del && ci === 0)       { del = false; ri = (ri + 1) % roles.length; }
+    setTimeout(type, del ? 45 : 90);
+  })();
+
+  /* Testimonial slider */
+  let cur = 0;
+  const track = document.getElementById('tTrack');
+  const dots  = document.querySelectorAll('.t-dot');
+  function goT(i) {
+    cur = i;
+    track.style.transform = `translateX(-${i * 100}%)`;
+    dots.forEach((d, j) => {
+      d.style.width    = j === i ? '2rem' : '0.5rem';
+      d.style.opacity  = j === i ? '1' : '0.25';
+    });
+  }
+  function nextT() { goT((cur + 1) % 3); }
+  function prevT() { goT((cur - 1 + 3) % 3); }
+  setInterval(nextT, 5500);
+
+  /* Event note toggle */
+  function toggleEventNote() {
+    const sel  = document.getElementById('serviceSelect');
+    const note = document.getElementById('eventNote');
+    const isEvent = sel.value === 'event';
+    note.classList.toggle('hidden', !isEvent);
+    if (isEvent) lucide.createIcons();
+  }
+
+  /* Contact form */
+  function submitForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="check-circle" class="w-5 h-5"></i> Message Sent!';
+    btn.style.background = '#2E7D63';
+    lucide.createIcons();
+    setTimeout(() => {
+      btn.innerHTML = '<i data-lucide="send" class="w-5 h-5"></i> Send Message';
+      btn.style.background = '';
+      btn.disabled = false;
+      lucide.createIcons();
+      e.target.reset();
+    }, 3500);
+  }
+</script>
+</body>
+</html>

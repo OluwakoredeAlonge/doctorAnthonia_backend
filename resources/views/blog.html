@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog &amp; Insights | Dr. Anthonia Yemisi Soje</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:         '#0F2444',
+            'primary-light': '#1C3A5E',
+            'primary-dark':  '#081526',
+            gold:            '#C9922A',
+            'gold-light':    '#D4A847',
+            cream:           '#FDF9F4',
+            sage:            '#2E7D63',
+          },
+          fontFamily: {
+            serif: ['Playfair Display','Georgia','serif'],
+            sans:  ['Inter','system-ui','sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body { font-family:'Inter',sans-serif; }
+    .font-serif { font-family:'Playfair Display',serif !important; }
+
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity .65s ease,transform .65s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    #navbar { transition: background .3s ease, box-shadow .3s ease; }
+    #navbar.scrolled {
+      background: rgba(255,255,255,.97) !important;
+      box-shadow: 0 2px 20px rgba(0,0,0,.08);
+    }
+    #navbar.scrolled .nav-link { color:#0F2444 !important; }
+    #navbar.scrolled .nav-logo { color:#0F2444 !important; }
+
+    .post-card { transition: transform .3s ease, box-shadow .3s ease; }
+    .post-card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(15,36,68,.1); }
+    .post-card:hover .post-title { color:#C9922A; }
+
+    .post-img { transition: transform .4s ease; }
+    .post-card:hover .post-img { transform: scale(1.04); }
+
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:#FDF9F4; }
+    ::-webkit-scrollbar-thumb { background:#C9922A; border-radius:3px; }
+
+    #mobile-menu { max-height:0; opacity:0; overflow:hidden; transition:max-height .35s ease,opacity .3s ease; }
+    #mobile-menu.open { max-height:440px; opacity:1; }
+
+    .category-btn.active {
+      background: #0F2444;
+      color: white;
+      border-color: #0F2444;
+    }
+  </style>
+</head>
+<body class="bg-cream antialiased">
+
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-primary">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <a href="index.html" class="nav-logo font-serif text-white text-xl font-bold tracking-wide">Dr. A.Y. Soje</a>
+
+    <div class="hidden md:flex items-center gap-7">
+      <a href="index.html#about"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">About</a>
+      <a href="index.html#services"     class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Services</a>
+      <a href="index.html#books"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Books</a>
+      <a href="index.html#organization" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Organization</a>
+      <a href="blog.html"               class="nav-link text-gold text-sm font-semibold border-b border-gold pb-0.5">Blog</a>
+    </div>
+
+    <a href="index.html#contact" class="hidden md:inline-flex items-center gap-2 bg-gold hover:bg-gold-light text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-all shadow-lg shadow-gold/25">
+      <i data-lucide="calendar" class="w-4 h-4"></i> Book a Session
+    </a>
+
+    <button id="ham" class="md:hidden text-white" onclick="toggleMenu()">
+      <i data-lucide="menu" class="w-6 h-6" id="ham-icon"></i>
+    </button>
+  </div>
+
+  <div id="mobile-menu">
+    <div class="mt-3 bg-white rounded-2xl shadow-2xl p-6 space-y-4">
+      <a href="index.html#about"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">About</a>
+      <a href="index.html#services"     class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Services</a>
+      <a href="index.html#books"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Books</a>
+      <a href="index.html#organization" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Organization</a>
+      <a href="blog.html"               class="block text-gold font-semibold">Blog</a>
+      <a href="index.html#contact" onclick="toggleMenu()" class="block bg-gold hover:bg-gold-light text-white font-semibold px-6 py-3 rounded-full text-center transition-colors">Book a Session</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ══════════ HERO BANNER ══════════ -->
+<section class="pt-32 pb-16 bg-primary relative overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none opacity-30"
+    style="background-image:radial-gradient(circle,rgba(201,146,42,.25) 1px,transparent 1px);background-size:28px 28px;"></div>
+  <div class="absolute top-1/2 right-10 w-72 h-72 rounded-full pointer-events-none -translate-y-1/2"
+    style="background:radial-gradient(circle,rgba(201,146,42,.1),transparent 70%)"></div>
+
+  <div class="relative max-w-7xl mx-auto px-6">
+    <div class="flex items-center gap-2 text-white/50 text-sm mb-6">
+      <a href="index.html" class="hover:text-gold transition-colors">Home</a>
+      <i data-lucide="chevron-right" class="w-4 h-4"></i>
+      <span class="text-gold">Blog</span>
+    </div>
+
+    <div class="max-w-2xl">
+      <div class="inline-flex items-center gap-2 border border-gold/35 bg-gold/10 text-gold text-xs font-semibold px-4 py-2 rounded-full mb-6 tracking-widest uppercase">
+        <i data-lucide="pen-line" class="w-3.5 h-3.5"></i>
+        Insights &amp; Reflections
+      </div>
+      <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
+        Blog &amp; <span class="text-gold">Articles</span>
+      </h1>
+      <p class="text-white/60 text-lg leading-relaxed">
+        Practical insights on mental health, healing, relationships, and faith — written to inform, encourage, and transform.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ FILTER BAR ══════════ -->
+<div class="sticky top-16 z-40 bg-white border-b border-gray-100 shadow-sm">
+  <div class="max-w-7xl mx-auto px-6 py-3">
+    <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+      <button class="category-btn active flex-shrink-0 border border-gray-200 text-xs font-semibold px-4 py-2 rounded-full transition-all" onclick="filterPosts('all', this)">All Posts</button>
+      <button class="category-btn flex-shrink-0 border border-gray-200 text-primary text-xs font-semibold px-4 py-2 rounded-full hover:border-primary transition-all" onclick="filterPosts('mental-health', this)">Mental Health</button>
+      <button class="category-btn flex-shrink-0 border border-gray-200 text-primary text-xs font-semibold px-4 py-2 rounded-full hover:border-primary transition-all" onclick="filterPosts('addiction', this)">Addiction &amp; Recovery</button>
+      <button class="category-btn flex-shrink-0 border border-gray-200 text-primary text-xs font-semibold px-4 py-2 rounded-full hover:border-primary transition-all" onclick="filterPosts('marriage', this)">Marriage &amp; Family</button>
+      <button class="category-btn flex-shrink-0 border border-gray-200 text-primary text-xs font-semibold px-4 py-2 rounded-full hover:border-primary transition-all" onclick="filterPosts('faith', this)">Faith &amp; Healing</button>
+      <button class="category-btn flex-shrink-0 border border-gray-200 text-primary text-xs font-semibold px-4 py-2 rounded-full hover:border-primary transition-all" onclick="filterPosts('parenting', this)">Parenting</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ MAIN CONTENT ══════════ -->
+<main class="max-w-7xl mx-auto px-6 py-16">
+  <div class="grid lg:grid-cols-3 gap-10">
+
+    <!-- Blog posts grid (2/3) -->
+    <div class="lg:col-span-2">
+
+      <!-- Featured post -->
+      <div class="post-card group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 mb-8 cursor-pointer reveal" data-category="mental-health">
+        <div class="overflow-hidden" style="height:280px; background:linear-gradient(135deg,#0F2444,#1C3A5E);">
+          <div class="post-img w-full h-full flex items-center justify-center">
+            <div class="text-center text-white/20">
+              <i data-lucide="image" class="w-16 h-16 mx-auto"></i>
+              <p class="text-sm mt-2">Featured Article Image</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-8">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="bg-gold/10 text-gold text-xs font-semibold px-3 py-1 rounded-full">Mental Health</span>
+            <span class="bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full">Featured</span>
+          </div>
+          <h2 class="post-title font-serif text-2xl font-bold text-primary leading-tight mb-3 transition-colors duration-300">
+            The Hidden Face of Trauma: Why So Many Nigerians Suffer in Silence
+          </h2>
+          <p class="text-gray-500 text-sm leading-relaxed mb-5">
+            Trauma is not always visible. It hides behind productivity, behind smiles, behind religious devotion. In Nigeria's culture of resilience, many people carry wounds they have never named — wounds that quietly dismantle relationships, ambitions, and health from within...
+          </p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+                <i data-lucide="user" class="w-4 h-4 text-white/50"></i>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-primary">Dr. A.Y. Soje</p>
+                <p class="text-xs text-gray-400">May 2, 2025 · 8 min read</p>
+              </div>
+            </div>
+            <span class="inline-flex items-center gap-1.5 text-gold text-sm font-semibold group-hover:gap-2.5 transition-all">
+              Read More <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post grid -->
+      <div class="grid sm:grid-cols-2 gap-6" id="postsGrid">
+
+        <div class="post-card group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer reveal" data-category="addiction">
+          <div class="overflow-hidden" style="height:160px; background:linear-gradient(135deg,#1A5E3A,#0A3C22);">
+            <div class="post-img w-full h-full flex items-center justify-center">
+              <i data-lucide="anchor" class="w-10 h-10 text-white/20"></i>
+            </div>
+          </div>
+          <div class="p-5">
+            <span class="bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">Addiction &amp; Recovery</span>
+            <h3 class="post-title font-serif text-base font-bold text-primary leading-snug mt-3 mb-2 transition-colors duration-300">
+              What Relapse Really Means — And Why It Doesn't Mean Failure
+            </h3>
+            <p class="text-gray-400 text-xs leading-relaxed mb-4">
+              Relapse is one of the most misunderstood events in the addiction recovery journey. Many people see it as the end — the proof that they were never truly healed...
+            </p>
+            <div class="flex items-center justify-between">
+              <p class="text-xs text-gray-400">Apr 18, 2025 · 5 min read</p>
+              <span class="text-gold text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Read <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer reveal" style="transition-delay:.07s" data-category="marriage">
+          <div class="overflow-hidden" style="height:160px; background:linear-gradient(135deg,#6E1A1A,#4A0A0A);">
+            <div class="post-img w-full h-full flex items-center justify-center">
+              <i data-lucide="heart" class="w-10 h-10 text-white/20"></i>
+            </div>
+          </div>
+          <div class="p-5">
+            <span class="bg-red-50 text-red-600 text-xs font-semibold px-3 py-1 rounded-full">Marriage &amp; Family</span>
+            <h3 class="post-title font-serif text-base font-bold text-primary leading-snug mt-3 mb-2 transition-colors duration-300">
+              Five Communication Patterns That Silently Destroy Marriages
+            </h3>
+            <p class="text-gray-400 text-xs leading-relaxed mb-4">
+              Most marriages don't break over dramatic betrayals. They crumble slowly under the weight of unspoken resentments and destructive patterns of daily communication...
+            </p>
+            <div class="flex items-center justify-between">
+              <p class="text-xs text-gray-400">Apr 10, 2025 · 6 min read</p>
+              <span class="text-gold text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Read <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer reveal" data-category="faith">
+          <div class="overflow-hidden" style="height:160px; background:linear-gradient(135deg,#4A1A6E,#2E0A4A);">
+            <div class="post-img w-full h-full flex items-center justify-center">
+              <i data-lucide="sparkles" class="w-10 h-10 text-white/20"></i>
+            </div>
+          </div>
+          <div class="p-5">
+            <span class="bg-purple-50 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full">Faith &amp; Healing</span>
+            <h3 class="post-title font-serif text-base font-bold text-primary leading-snug mt-3 mb-2 transition-colors duration-300">
+              When Prayer Is Not Enough: Integrating Faith with Mental Health Care
+            </h3>
+            <p class="text-gray-400 text-xs leading-relaxed mb-4">
+              Faith is a powerful resource for healing. But it was never designed to be the only tool. Here is why integrating professional mental health care with spiritual practice is not a contradiction...
+            </p>
+            <div class="flex items-center justify-between">
+              <p class="text-xs text-gray-400">Mar 28, 2025 · 7 min read</p>
+              <span class="text-gold text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Read <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer reveal" style="transition-delay:.07s" data-category="parenting">
+          <div class="overflow-hidden" style="height:160px; background:linear-gradient(135deg,#1A3A6E,#0A1F4A);">
+            <div class="post-img w-full h-full flex items-center justify-center">
+              <i data-lucide="smile" class="w-10 h-10 text-white/20"></i>
+            </div>
+          </div>
+          <div class="p-5">
+            <span class="bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Parenting</span>
+            <h3 class="post-title font-serif text-base font-bold text-primary leading-snug mt-3 mb-2 transition-colors duration-300">
+              Raising Emotionally Healthy Children in a Broken World
+            </h3>
+            <p class="text-gray-400 text-xs leading-relaxed mb-4">
+              Children absorb the emotional environment around them like sponges. Helping your child develop emotional intelligence is one of the most protective gifts you can give them...
+            </p>
+            <div class="flex items-center justify-between">
+              <p class="text-xs text-gray-400">Mar 14, 2025 · 5 min read</p>
+              <span class="text-gold text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Read <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer reveal" data-category="mental-health">
+          <div class="overflow-hidden" style="height:160px; background:linear-gradient(135deg,#6E3A1A,#4A1F0A);">
+            <div class="post-img w-full h-full flex items-center justify-center">
+              <i data-lucide="brain" class="w-10 h-10 text-white/20"></i>
+            </div>
+          </div>
+          <div class="p-5">
+            <span class="bg-orange-50 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full">Mental Health</span>
+            <h3 class="post-title font-serif text-base font-bold text-primary leading-snug mt-3 mb-2 transition-colors duration-300">
+              ADHD in African Adults: The Diagnosis That Is Constantly Missed
+            </h3>
+            <p class="text-gray-400 text-xs leading-relaxed mb-4">
+              ADHD is not a childhood condition that you outgrow. Millions of African adults live with undiagnosed ADHD, misread as laziness, irresponsibility, or spiritual weakness...
+            </p>
+            <div class="flex items-center justify-between">
+              <p class="text-xs text-gray-400">Mar 3, 2025 · 6 min read</p>
+              <span class="text-gold text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Read <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer reveal" style="transition-delay:.07s" data-category="marriage">
+          <div class="overflow-hidden" style="height:160px; background:linear-gradient(135deg,#1A6E3A,#0A4A22);">
+            <div class="post-img w-full h-full flex items-center justify-center">
+              <i data-lucide="users" class="w-10 h-10 text-white/20"></i>
+            </div>
+          </div>
+          <div class="p-5">
+            <span class="bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">Marriage &amp; Family</span>
+            <h3 class="post-title font-serif text-base font-bold text-primary leading-snug mt-3 mb-2 transition-colors duration-300">
+              What Premarital Counselling Can (and Cannot) Do for Your Relationship
+            </h3>
+            <p class="text-gray-400 text-xs leading-relaxed mb-4">
+              Premarital counselling is not magic. It will not guarantee a perfect marriage. But what it can do — when approached honestly — is give you a fighting chance...
+            </p>
+            <div class="flex items-center justify-between">
+              <p class="text-xs text-gray-400">Feb 20, 2025 · 5 min read</p>
+              <span class="text-gold text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Read <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /postsGrid -->
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center gap-2 mt-12">
+        <button class="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:border-primary text-gray-400 hover:text-primary transition-colors">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+        <button class="w-10 h-10 rounded-xl bg-primary text-white text-sm font-semibold flex items-center justify-center">1</button>
+        <button class="w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-500 text-sm font-medium flex items-center justify-center hover:border-primary hover:text-primary transition-colors">2</button>
+        <button class="w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-500 text-sm font-medium flex items-center justify-center hover:border-primary hover:text-primary transition-colors">3</button>
+        <span class="text-gray-300 px-1">···</span>
+        <button class="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:border-primary text-gray-400 hover:text-primary transition-colors">
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+
+
+    <!-- ── Sidebar (1/3) ── -->
+    <aside class="space-y-8">
+
+      <!-- Search -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 reveal">
+        <h3 class="font-serif text-lg font-bold text-primary mb-4">Search</h3>
+        <div class="relative">
+          <input type="text" placeholder="Search articles..." class="w-full border border-gray-200 rounded-xl pl-4 pr-10 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+          <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gold transition-colors">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- About widget -->
+      <div class="bg-primary rounded-2xl p-6 text-white reveal" style="transition-delay:.1s">
+        <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-4">
+          <i data-lucide="user-circle" class="w-8 h-8 text-white/40"></i>
+        </div>
+        <h3 class="font-serif text-lg font-bold mb-2">Dr. A.Y. Soje</h3>
+        <p class="text-white/60 text-sm leading-relaxed mb-4">
+          Medical Practitioner, Psycho-trauma Therapist, and Founder of Fosterheirs. Writing to inform, heal, and restore.
+        </p>
+        <a href="index.html#about" class="inline-flex items-center gap-1.5 text-gold text-sm font-semibold hover:gap-2.5 transition-all">
+          Learn More <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- Categories -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 reveal" style="transition-delay:.12s">
+        <h3 class="font-serif text-lg font-bold text-primary mb-5">Categories</h3>
+        <ul class="space-y-3">
+          <li class="flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 text-gray-600 hover:text-gold transition-colors text-sm font-medium">
+              <i data-lucide="brain" class="w-4 h-4 text-gray-400"></i> Mental Health
+            </a>
+            <span class="text-xs bg-cream text-gray-400 px-2.5 py-1 rounded-full">8</span>
+          </li>
+          <li class="flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 text-gray-600 hover:text-gold transition-colors text-sm font-medium">
+              <i data-lucide="anchor" class="w-4 h-4 text-gray-400"></i> Addiction &amp; Recovery
+            </a>
+            <span class="text-xs bg-cream text-gray-400 px-2.5 py-1 rounded-full">6</span>
+          </li>
+          <li class="flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 text-gray-600 hover:text-gold transition-colors text-sm font-medium">
+              <i data-lucide="heart" class="w-4 h-4 text-gray-400"></i> Marriage &amp; Family
+            </a>
+            <span class="text-xs bg-cream text-gray-400 px-2.5 py-1 rounded-full">10</span>
+          </li>
+          <li class="flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 text-gray-600 hover:text-gold transition-colors text-sm font-medium">
+              <i data-lucide="sparkles" class="w-4 h-4 text-gray-400"></i> Faith &amp; Healing
+            </a>
+            <span class="text-xs bg-cream text-gray-400 px-2.5 py-1 rounded-full">7</span>
+          </li>
+          <li class="flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 text-gray-600 hover:text-gold transition-colors text-sm font-medium">
+              <i data-lucide="smile" class="w-4 h-4 text-gray-400"></i> Parenting
+            </a>
+            <span class="text-xs bg-cream text-gray-400 px-2.5 py-1 rounded-full">4</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Recent posts -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 reveal" style="transition-delay:.14s">
+        <h3 class="font-serif text-lg font-bold text-primary mb-5">Recent Posts</h3>
+        <div class="space-y-5">
+
+          <div class="flex gap-4 group cursor-pointer">
+            <div class="w-16 h-14 rounded-xl flex-shrink-0 flex items-center justify-center"
+              style="background:linear-gradient(135deg,#0F2444,#1C3A5E)">
+              <i data-lucide="book-open" class="w-5 h-5 text-white/30"></i>
+            </div>
+            <div>
+              <p class="text-primary text-xs font-semibold leading-snug group-hover:text-gold transition-colors">
+                The Hidden Face of Trauma: Why So Many Nigerians Suffer in Silence
+              </p>
+              <p class="text-gray-400 text-xs mt-1">May 2, 2025</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 group cursor-pointer">
+            <div class="w-16 h-14 rounded-xl flex-shrink-0 flex items-center justify-center"
+              style="background:linear-gradient(135deg,#1A5E3A,#0A3C22)">
+              <i data-lucide="anchor" class="w-5 h-5 text-white/30"></i>
+            </div>
+            <div>
+              <p class="text-primary text-xs font-semibold leading-snug group-hover:text-gold transition-colors">
+                What Relapse Really Means — And Why It Doesn't Mean Failure
+              </p>
+              <p class="text-gray-400 text-xs mt-1">Apr 18, 2025</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 group cursor-pointer">
+            <div class="w-16 h-14 rounded-xl flex-shrink-0 flex items-center justify-center"
+              style="background:linear-gradient(135deg,#4A1A6E,#2E0A4A)">
+              <i data-lucide="sparkles" class="w-5 h-5 text-white/30"></i>
+            </div>
+            <div>
+              <p class="text-primary text-xs font-semibold leading-snug group-hover:text-gold transition-colors">
+                When Prayer Is Not Enough: Faith &amp; Mental Health Care
+              </p>
+              <p class="text-gray-400 text-xs mt-1">Mar 28, 2025</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="rounded-2xl p-6 border border-gold/25 reveal" style="background:linear-gradient(135deg,#FDF9F4,#FFF8EC); transition-delay:.16s">
+        <div class="w-11 h-11 bg-gold/10 rounded-xl flex items-center justify-center mb-4">
+          <i data-lucide="mail" class="w-5 h-5 text-gold"></i>
+        </div>
+        <h3 class="font-serif text-lg font-bold text-primary mb-2">Newsletter</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-4">Get new articles, healing insights, and session updates delivered to your inbox.</p>
+        <input type="email" placeholder="your@email.com" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300 mb-3" />
+        <button class="w-full bg-primary hover:bg-primary-light text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
+          <i data-lucide="send" class="w-4 h-4"></i> Subscribe
+        </button>
+      </div>
+
+      <!-- Books CTA -->
+      <div class="bg-primary rounded-2xl p-6 text-white reveal" style="transition-delay:.18s">
+        <i data-lucide="book-open" class="w-8 h-8 text-gold mb-4"></i>
+        <h3 class="font-serif text-lg font-bold mb-2">Explore My Books</h3>
+        <p class="text-white/55 text-sm leading-relaxed mb-4">8 published works on healing, faith, addiction, and relationships.</p>
+        <a href="index.html#books" class="inline-flex items-center gap-2 bg-gold hover:bg-gold-light text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-colors">
+          View All Books <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+    </aside>
+  </div>
+</main>
+
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="bg-primary-dark text-white py-12 mt-8">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+      <div>
+        <p class="font-serif text-xl font-bold">Dr. A.Y. Soje</p>
+        <p class="text-white/40 text-sm mt-1">Mental Health Professional &amp; Author</p>
+      </div>
+      <div class="flex gap-3">
+        <a href="#" class="w-9 h-9 rounded-xl bg-white/8 hover:bg-gold flex items-center justify-center transition-colors"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+        <a href="#" class="w-9 h-9 rounded-xl bg-white/8 hover:bg-gold flex items-center justify-center transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+        <a href="#" class="w-9 h-9 rounded-xl bg-white/8 hover:bg-gold flex items-center justify-center transition-colors"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+    <div class="pt-6 border-t border-white/8 flex flex-col md:flex-row items-center justify-between gap-3">
+      <p class="text-white/30 text-sm">© 2025 Dr. Mrs. Anthonia Yemisi Soje. All rights reserved.</p>
+      <a href="index.html" class="text-white/40 hover:text-gold text-sm transition-colors flex items-center gap-1">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Portfolio
+      </a>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  lucide.createIcons();
+
+  window.addEventListener('scroll', () =>
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 55)
+  );
+
+  function toggleMenu() {
+    const m = document.getElementById('mobile-menu');
+    const open = m.classList.toggle('open');
+    document.getElementById('ham-icon').setAttribute('data-lucide', open ? 'x' : 'menu');
+    lucide.createIcons();
+  }
+
+  const io = new IntersectionObserver(entries =>
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); })
+  , { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  function filterPosts(cat, btn) {
+    document.querySelectorAll('.category-btn').forEach(b => {
+      b.classList.remove('active');
+      b.style.background = '';
+      b.style.color = '';
+      b.style.borderColor = '';
+    });
+    btn.classList.add('active');
+
+    document.querySelectorAll('#postsGrid [data-category]').forEach(card => {
+      const show = cat === 'all' || card.dataset.category === cat;
+      card.style.display = show ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>
