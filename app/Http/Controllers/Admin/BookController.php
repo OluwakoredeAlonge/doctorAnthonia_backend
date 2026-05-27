@@ -16,7 +16,8 @@ class BookController extends Controller
             'category'        => 'required|string|max:100',
             'cover_gradient'  => 'required|string|max:20',
             'icon'            => 'required|string|max:50',
-            'buy_link'        => 'nullable|url|max:500',
+            'buy_link'        => 'nullable|string|max:500',
+            'cover_image'     => 'nullable|string|max:500',
             'sort_order'      => 'nullable|integer',
         ]);
 
@@ -34,7 +35,8 @@ class BookController extends Controller
             'category'        => 'required|string|max:100',
             'cover_gradient'  => 'required|string|max:20',
             'icon'            => 'required|string|max:50',
-            'buy_link'        => 'nullable|url|max:500',
+            'buy_link'        => 'nullable|string|max:500',
+            'cover_image'     => 'nullable|string|max:500',
             'sort_order'      => 'nullable|integer',
         ]);
 

@@ -51,11 +51,12 @@ class SettingsController extends Controller
             'social_linkedin'  => 'nullable|string|max:500',
             'social_youtube'   => 'nullable|string|max:500',
             'social_tiktok'    => 'nullable|string|max:500',
+            'social_spotify'   => 'nullable|string|max:500',
             'contact_phone'    => 'nullable|string|max:50',
             'contact_email'    => 'nullable|email|max:200',
         ]);
 
-        foreach ($request->only('social_facebook', 'social_instagram', 'social_twitter', 'social_linkedin', 'social_youtube', 'social_tiktok', 'contact_phone', 'contact_email') as $key => $value) {
+        foreach ($request->only('social_facebook', 'social_instagram', 'social_twitter', 'social_linkedin', 'social_youtube', 'social_tiktok', 'social_spotify', 'contact_phone', 'contact_email') as $key => $value) {
             SiteSetting::set($key, $value ?? '');
         }
 

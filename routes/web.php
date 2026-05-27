@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ImageUploadController;
 use App\Http\Controllers\Admin\MessageController;
@@ -56,8 +57,15 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
 
+    /* Courses */
+    Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+    Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
+    Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
+
     /* Services */
+    Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
+    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
     /* Settings */
     Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile');

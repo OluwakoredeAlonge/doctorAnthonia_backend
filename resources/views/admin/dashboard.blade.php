@@ -32,8 +32,8 @@
     .panel{display:none;}.panel.active{display:block;}
     ::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:#F3F4F6;}::-webkit-scrollbar-thumb{background:#C9922A;border-radius:3px;}
     tbody tr{transition:background .15s ease;}tbody tr:hover{background:#FAFAFA;}
-    #modal-overlay,#book-modal-overlay,#edit-post-overlay,#edit-book-overlay,#edit-service-overlay,#msg-modal-overlay,#preview-overlay,#add-testi-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;}
-    #modal-overlay.open,#book-modal-overlay.open,#edit-post-overlay.open,#edit-book-overlay.open,#edit-service-overlay.open,#msg-modal-overlay.open,#preview-overlay.open,#add-testi-overlay.open{display:flex;}
+    #modal-overlay,#book-modal-overlay,#edit-post-overlay,#edit-book-overlay,#edit-service-overlay,#add-service-overlay,#msg-modal-overlay,#preview-overlay,#add-testi-overlay,#add-course-overlay,#edit-course-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;}
+    #modal-overlay.open,#book-modal-overlay.open,#edit-post-overlay.open,#edit-book-overlay.open,#edit-service-overlay.open,#add-service-overlay.open,#msg-modal-overlay.open,#preview-overlay.open,#add-testi-overlay.open,#add-course-overlay.open,#edit-course-overlay.open{display:flex;}
     .ck.ck-editor__editable{min-height:320px;font-family:'Inter',sans-serif;font-size:.875rem;border-radius:0 0 .75rem .75rem!important;}
     .ck.ck-toolbar{border-radius:.75rem .75rem 0 0!important;border-color:#E5E7EB!important;background:#FAFAFA!important;}
     .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused{border-color:#C9922A!important;box-shadow:0 0 0 3px rgba(201,146,42,.1)!important;}
@@ -93,6 +93,7 @@
     <button onclick="showPanel('testimonials')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="message-square" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Testimonials</span></button>
     <button onclick="showPanel('messages')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="mail" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Messages</span>@if($stats['new_messages']>0)<span class="sidebar-label ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['new_messages'] }}</span>@endif</button>
     <button onclick="showPanel('books')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="book-open" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Books</span></button>
+    <button onclick="showPanel('courses')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="play-circle" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Courses</span>@if($stats['courses']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['courses'] }}</span>@endif</button>
     <p class="sidebar-section-label text-white/25 text-xs font-semibold uppercase tracking-widest px-3 mb-2 mt-5">Content</p>
     <button onclick="showPanel('about')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="user" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">About Section</span></button>
     <button onclick="showPanel('services')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="briefcase" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Services</span></button>
@@ -335,21 +336,70 @@
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
       @foreach($books as $book)
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+        @if($book->cover_image)
+        <div class="h-32 overflow-hidden">
+          <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        </div>
+        @else
         <div class="h-24 flex items-center justify-center {{ $book->cover_gradient }}">
           <i data-lucide="{{ $book->icon }}" class="w-8 h-8 text-white/30"></i>
         </div>
+        @endif
         <div class="p-4">
           <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{{ $book->category }}</span>
           <h3 class="font-serif font-bold text-gray-800 text-sm mt-2 mb-1">{{ $book->title }}</h3>
           <p class="text-gray-400 text-xs leading-relaxed">{{ Str::limit($book->description,80) }}</p>
           <div class="flex gap-2 mt-4">
-            <button onclick="openEditBookModal({{ $book->id }},'{{ addslashes($book->title) }}','{{ addslashes($book->description) }}','{{ addslashes($book->category) }}','{{ $book->cover_gradient }}','{{ $book->icon }}','{{ addslashes($book->buy_link ?? '') }}','{{ $book->sort_order }}')" class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit</button>
+            <button onclick="openEditBookModal({{ $book->id }},'{{ addslashes($book->title) }}','{{ addslashes($book->description) }}','{{ addslashes($book->category) }}','{{ $book->cover_gradient }}','{{ $book->icon }}','{{ addslashes($book->buy_link ?? '') }}','{{ $book->sort_order }}','{{ addslashes($book->cover_image ?? '') }}')" class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit</button>
             <form method="POST" action="{{ route('admin.books.destroy', $book) }}" class="inline" onsubmit="return confirm('Delete this book?')">@csrf @method('DELETE')<button type="submit" class="p-2 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
           </div>
         </div>
       </div>
       @endforeach
     </div>
+  </section>
+
+  {{-- ═══ COURSES PANEL ═══ --}}
+  <section id="panel-courses" class="panel p-6 fadein">
+    <div class="flex items-center justify-between mb-6">
+      <div><h2 class="font-serif text-xl font-bold text-gray-800">Courses &amp; Teachings</h2><p class="text-gray-400 text-sm mt-0.5">Manage YouTube courses and workbook links</p></div>
+      <button onclick="openAddCourseModal()" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Course</button>
+    </div>
+    @if($courses->isEmpty())
+    <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-12 text-center">
+      <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><i data-lucide="play-circle" class="w-7 h-7 text-gray-300"></i></div>
+      <p class="font-medium text-gray-400 mb-1">No courses yet</p>
+      <p class="text-gray-300 text-sm">Click "Add Course" to add your first YouTube course.</p>
+    </div>
+    @else
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      @foreach($courses as $course)
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+        <div class="relative aspect-video bg-gray-100 overflow-hidden">
+          @if($course->youtube_id)
+          <img src="https://img.youtube.com/vi/{{ $course->youtube_id }}/hqdefault.jpg" alt="{{ $course->title }}" class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-primary/30 flex items-center justify-center">
+            <div class="w-10 h-10 bg-[#FF0000] rounded-full flex items-center justify-center"><svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          </div>
+          @else
+          <div class="flex items-center justify-center h-full"><i data-lucide="youtube" class="w-10 h-10 text-gray-200"></i></div>
+          @endif
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold text-gray-800 text-sm mb-1 leading-snug">{{ $course->title }}</h3>
+          @if($course->description)<p class="text-gray-400 text-xs leading-relaxed mb-2">{{ Str::limit($course->description,80) }}</p>@endif
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            @if($course->workbook_url)<span class="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full"><i data-lucide="file-text" class="w-3 h-3"></i> Workbook</span>@endif
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openEditCourseModal({{ $course->id }},'{{ addslashes($course->title) }}','{{ addslashes($course->description ?? '') }}','{{ addslashes($course->youtube_url) }}','{{ addslashes($course->workbook_url ?? '') }}','{{ $course->sort_order }}')" class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit</button>
+            <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" class="inline" onsubmit="return confirm('Delete this course?')">@csrf @method('DELETE')<button type="submit" class="p-2 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
+          </div>
+        </div>
+      </div>
+      @endforeach
+    </div>
+    @endif
   </section>
 
   {{-- ═══ ABOUT PANEL ═══ --}}
@@ -378,15 +428,24 @@
 
   {{-- ═══ SERVICES PANEL ═══ --}}
   <section id="panel-services" class="panel p-6 fadein">
-    <div class="mb-6"><h2 class="font-serif text-xl font-bold text-gray-800">Services</h2><p class="text-gray-400 text-sm mt-0.5">Edit service titles and descriptions shown on your portfolio</p></div>
+    <div class="flex items-center justify-between mb-6">
+      <div><h2 class="font-serif text-xl font-bold text-gray-800">Services</h2><p class="text-gray-400 text-sm mt-0.5">Add, edit or remove services shown on your portfolio</p></div>
+      <button onclick="document.getElementById('add-service-overlay').classList.add('open');lucide.createIcons();" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Service</button>
+    </div>
     <div class="grid md:grid-cols-2 gap-5">
       @foreach($services as $svc)
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:{{ $svc->color }}20">
-            <i data-lucide="{{ $svc->icon }}" class="w-5 h-5" style="color:{{ $svc->color }}"></i>
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:{{ $svc->color }}20">
+              <i data-lucide="{{ $svc->icon }}" class="w-5 h-5" style="color:{{ $svc->color }}"></i>
+            </div>
+            <h3 class="font-semibold text-gray-800 text-sm truncate">{{ $svc->title }}</h3>
           </div>
-          <h3 class="font-semibold text-gray-800 text-sm">{{ $svc->title }}</h3>
+          <form method="POST" action="{{ route('admin.services.destroy', $svc) }}" class="flex-shrink-0" onsubmit="return confirm('Delete this service?')">
+            @csrf @method('DELETE')
+            <button type="submit" class="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </form>
         </div>
         <form method="POST" action="{{ route('admin.services.update', $svc) }}">
           @csrf @method('PUT')
@@ -399,7 +458,20 @@
               <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">Description</label>
               <textarea name="description" rows="3" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gold transition-all resize-none">{{ $svc->description }}</textarea>
             </div>
-            <button type="submit" class="w-full py-2 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-xl transition-colors flex items-center justify-center gap-1"><i data-lucide="save" class="w-3.5 h-3.5"></i> Save</button>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">Icon</label>
+                <input type="text" name="icon" value="{{ $svc->icon }}" placeholder="e.g. heart, mic…" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gold transition-all" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">Colour</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" value="{{ $svc->color }}" class="w-9 h-9 rounded-lg border border-gray-200 cursor-pointer p-0.5 flex-shrink-0" oninput="this.nextElementSibling.value=this.value" />
+                  <input type="text" name="color" value="{{ $svc->color }}" class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-gold transition-all" oninput="this.previousElementSibling.value=this.value" />
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="w-full py-2 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-xl transition-colors flex items-center justify-center gap-1"><i data-lucide="save" class="w-3.5 h-3.5"></i> Save Changes</button>
           </div>
         </form>
       </div>
@@ -471,6 +543,10 @@
               <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.95a8.16 8.16 0 004.77 1.52V7.02a4.85 4.85 0 01-1-.33z"/></svg>
               <input type="text" name="social_tiktok" value="{{ $settings['social_tiktok'] ?? '' }}" placeholder="https://tiktok.com/@yourhandle" class="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
             </div>
+            <div class="relative">
+              <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              <input type="text" name="social_spotify" value="{{ $settings['social_spotify'] ?? '' }}" placeholder="https://open.spotify.com/show/…" class="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+            </div>
             <div class="relative"><i data-lucide="phone" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i><input type="tel" name="contact_phone" value="{{ $settings['contact_phone'] ?? '' }}" placeholder="Contact Phone" class="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" /></div>
             <div class="relative"><i data-lucide="mail" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i><input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? '' }}" placeholder="Contact Email" class="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" /></div>
           </div>
@@ -494,7 +570,7 @@
       @csrf
       <div class="grid sm:grid-cols-2 gap-4">
         <div class="sm:col-span-2"><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Post Title</label><input type="text" name="title" id="np-title" placeholder="Enter post title..." required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" /></div>
-        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Category</label><select name="category" id="np-category" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold transition-all"><option value="">Select category...</option><option>Mental Health</option><option>Addiction &amp; Recovery</option><option>Marriage &amp; Family</option><option>Faith &amp; Healing</option><option>Parenting</option></select></div>
+        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Category</label><input type="text" name="category" id="np-category" required placeholder="e.g. Mental Health, Parenting…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" /></div>
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Status</label><select name="status" id="np-status" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold transition-all"><option value="draft">Draft — Save for later</option><option value="published">Published — Go live now</option></select></div>
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Read Time (minutes)</label><input type="number" name="read_time" value="5" min="1" max="120" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" /></div>
         <div>
@@ -542,7 +618,7 @@
       @csrf @method('PUT')
       <div class="grid sm:grid-cols-2 gap-4">
         <div class="sm:col-span-2"><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Post Title</label><input type="text" name="title" id="ep-title" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" /></div>
-        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Category</label><select name="category" id="ep-category" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option>Mental Health</option><option>Addiction &amp; Recovery</option><option>Marriage &amp; Family</option><option>Faith &amp; Healing</option><option>Parenting</option></select></div>
+        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Category</label><input type="text" name="category" id="ep-category" placeholder="e.g. Mental Health, Parenting…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" /></div>
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Status</label><select name="status" id="ep-status" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option value="draft">Draft — Save for later</option><option value="published">Published — Go live now</option></select></div>
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Read Time (min)</label><input type="number" name="read_time" id="ep-readtime" min="1" max="120" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
         <div>
@@ -594,7 +670,20 @@
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Style</label><select name="cover_gradient" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option value="bg-b1">Blue Dark</option><option value="bg-b2">Green Dark</option><option value="bg-b3">Purple Dark</option><option value="bg-b4">Red Dark</option><option value="bg-b5">Navy</option><option value="bg-b6">Brown</option><option value="bg-b7">Forest</option><option value="bg-b8">Violet</option></select></div>
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Icon</label><select name="icon" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option>book</option><option>book-open</option><option>navigation</option><option>unlock</option><option>eye</option><option>anchor</option><option>shield</option><option>key</option><option>smile</option><option>heart</option></select></div>
       </div>
-      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Buy Link (optional)</label><input type="url" name="buy_link" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Buy Link (optional)</label><input type="text" name="buy_link" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Image <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+        <div class="flex gap-2">
+          <input type="text" name="cover_image" id="nb-cover-url" placeholder="Paste URL or upload →" class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300 min-w-0" />
+          <label class="cursor-pointer flex-shrink-0 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-xl px-3 py-3 flex items-center gap-1.5 transition-colors whitespace-nowrap" id="nb-upload-btn">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload
+            <input type="file" accept="image/*" class="hidden" onchange="uploadBookCoverImage(this,'nb-cover-url','nb-cover-preview','nb-upload-btn')" />
+          </label>
+        </div>
+        <div id="nb-cover-preview" class="hidden mt-2 rounded-xl overflow-hidden h-32 bg-gray-50 border border-gray-100">
+          <img src="" alt="Cover preview" class="w-full h-full object-cover" />
+        </div>
+      </div>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
         <button type="button" onclick="closeBookModal()" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
         <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Add Book</button>
@@ -619,7 +708,20 @@
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Style</label><select name="cover_gradient" id="eb-gradient" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option value="bg-b1">Blue Dark</option><option value="bg-b2">Green Dark</option><option value="bg-b3">Purple Dark</option><option value="bg-b4">Red Dark</option><option value="bg-b5">Navy</option><option value="bg-b6">Brown</option><option value="bg-b7">Forest</option><option value="bg-b8">Violet</option></select></div>
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Icon</label><select name="icon" id="eb-icon" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option>book</option><option>book-open</option><option>navigation</option><option>unlock</option><option>eye</option><option>anchor</option><option>shield</option><option>key</option><option>smile</option><option>heart</option></select></div>
       </div>
-      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Buy Link</label><input type="url" name="buy_link" id="eb-buylink" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Buy Link</label><input type="text" name="buy_link" id="eb-buylink" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Image <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+        <div class="flex gap-2">
+          <input type="text" name="cover_image" id="eb-cover-url" placeholder="Paste URL or upload →" class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300 min-w-0" />
+          <label class="cursor-pointer flex-shrink-0 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-xl px-3 py-3 flex items-center gap-1.5 transition-colors whitespace-nowrap" id="eb-upload-btn">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload
+            <input type="file" accept="image/*" class="hidden" onchange="uploadBookCoverImage(this,'eb-cover-url','eb-cover-preview','eb-upload-btn')" />
+          </label>
+        </div>
+        <div id="eb-cover-preview" class="hidden mt-2 rounded-xl overflow-hidden h-32 bg-gray-50 border border-gray-100">
+          <img src="" alt="Cover preview" class="w-full h-full object-cover" />
+        </div>
+      </div>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
         <button type="button" onclick="document.getElementById('edit-book-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
         <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Update Book</button>
@@ -731,6 +833,101 @@
   </div>
 </div>
 
+{{-- ═══ ADD SERVICE MODAL ═══ --}}
+<div id="add-service-overlay" onclick="document.getElementById('add-service-overlay').classList.remove('open')">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100">
+      <div>
+        <h3 class="font-serif text-xl font-bold text-gray-800">Add Service</h3>
+        <p class="text-gray-400 text-xs mt-0.5">New service will appear in the Services section on your portfolio</p>
+      </div>
+      <button onclick="document.getElementById('add-service-overlay').classList.remove('open')" class="text-gray-400 hover:text-primary p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <form method="POST" action="{{ route('admin.services.store') }}" class="p-8 space-y-4">
+      @csrf
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Service Title</label>
+        <input type="text" name="title" required placeholder="e.g. Grief Counselling" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Description</label>
+        <textarea name="description" rows="4" required placeholder="Brief description of this service…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none placeholder-gray-300"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Icon <span class="text-gray-300 normal-case font-normal">(Lucide name)</span></label>
+          <input type="text" name="icon" value="heart" placeholder="e.g. heart, mic, brain" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
+          <p class="text-gray-300 text-xs mt-1.5">Any <a href="https://lucide.dev/icons/" target="_blank" class="text-gold underline">Lucide icon</a> name.</p>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Accent Colour</label>
+          <div class="flex items-center gap-2">
+            <input type="color" value="#3B82F6" id="ns-color-picker" class="w-9 h-9 rounded-lg border border-gray-200 cursor-pointer p-0.5 flex-shrink-0" oninput="document.getElementById('ns-color-text').value=this.value" />
+            <input type="text" name="color" id="ns-color-text" value="#3B82F6" class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-gold" oninput="document.getElementById('ns-color-picker').value=this.value" />
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="button" onclick="document.getElementById('add-service-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Add Service</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ═══ ADD COURSE MODAL ═══ --}}
+<div id="add-course-overlay" onclick="document.getElementById('add-course-overlay').classList.remove('open')">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100">
+      <div>
+        <h3 class="font-serif text-xl font-bold text-gray-800">Add Course</h3>
+        <p class="text-gray-400 text-xs mt-0.5">Add a YouTube video with an optional workbook link</p>
+      </div>
+      <button onclick="document.getElementById('add-course-overlay').classList.remove('open')" class="text-gray-400 hover:text-primary p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <form method="POST" action="{{ route('admin.courses.store') }}" class="p-8 space-y-4">
+      @csrf
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Title</label><input type="text" name="title" required placeholder="e.g. Overcoming Anxiety — A Faith-Based Approach" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" rows="2" placeholder="Brief description of what viewers will learn…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none placeholder-gray-300"></textarea></div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">YouTube Video URL</label>
+        <input type="text" name="youtube_url" required placeholder="https://www.youtube.com/watch?v=…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
+        <p class="text-gray-300 text-xs mt-1.5">Accepts full YouTube URLs or youtu.be short links.</p>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Workbook Link (Google Drive) <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+        <input type="text" name="workbook_url" placeholder="https://drive.google.com/…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
+        <p class="text-gray-300 text-xs mt-1.5">Paste the sharable Google Drive link to your PDF workbook.</p>
+      </div>
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="button" onclick="document.getElementById('add-course-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Add Course</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ═══ EDIT COURSE MODAL ═══ --}}
+<div id="edit-course-overlay" onclick="document.getElementById('edit-course-overlay').classList.remove('open')">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100">
+      <h3 class="font-serif text-xl font-bold text-gray-800">Edit Course</h3>
+      <button onclick="document.getElementById('edit-course-overlay').classList.remove('open')" class="text-gray-400 hover:text-primary p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <form method="POST" id="edit-course-form" class="p-8 space-y-4">
+      @csrf @method('PUT')
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Title</label><input type="text" name="title" id="ec-title" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" id="ec-description" rows="2" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none"></textarea></div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">YouTube Video URL</label><input type="text" name="youtube_url" id="ec-youtube" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Workbook Link (Google Drive) <span class="text-gray-300 normal-case font-normal">(optional)</span></label><input type="text" name="workbook_url" id="ec-workbook" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="button" onclick="document.getElementById('edit-course-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Update Course</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
   lucide.createIcons();
   const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -748,6 +945,7 @@
     testimonials:{title:'Testimonials',sub:'Add and manage client testimonials'},
     messages:{title:'Contact Messages',sub:'{{ $stats["new_messages"] }} unread messages'},
     books:{title:'Books',sub:'{{ $stats["books"] }} published books'},
+    courses:{title:'Courses & Teachings',sub:'{{ $stats["courses"] }} courses'},
     about:{title:'About Section',sub:'Edit your portfolio bio and quote'},
     services:{title:'Services',sub:'Edit service titles and descriptions'},
     settings:{title:'Settings',sub:'Manage account & preferences'},
@@ -815,6 +1013,40 @@
     fontSize: { options: ['tiny','small','default','big','huge'] },
     mediaEmbed: { previewsInData: true },
   };
+
+  /* ── Cloudinary Book Cover Image Upload ── */
+  async function uploadBookCoverImage(input, urlFieldId, previewId, btnId) {
+    if (!input.files[0]) return;
+    const btn = document.getElementById(btnId);
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = '<svg class="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>';
+    btn.style.pointerEvents = 'none';
+    const formData = new FormData();
+    formData.append('upload', input.files[0]);
+    try {
+      const res = await fetch('{{ route("admin.images.upload") }}', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': csrfToken },
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.url) {
+        document.getElementById(urlFieldId).value = data.url;
+        const prev = document.getElementById(previewId);
+        prev.querySelector('img').src = data.url;
+        prev.classList.remove('hidden');
+        showToast('Cover image uploaded!');
+      } else {
+        showToast((data.error?.message || 'Upload failed'), 'bg-red-600');
+      }
+    } catch(e) {
+      showToast('Upload error. Check connection.', 'bg-red-600');
+    }
+    btn.innerHTML = origHTML;
+    btn.style.pointerEvents = '';
+    lucide.createIcons();
+    input.value = '';
+  }
 
   /* ── Cloudinary Featured Image Upload ── */
   async function uploadFeaturedImage(input, urlFieldId, previewId, btnId) {
@@ -896,7 +1128,7 @@
   }
   function closeEditPostModal(e){if(e.target===document.getElementById('edit-post-overlay'))document.getElementById('edit-post-overlay').classList.remove('open');}
 
-  function openEditBookModal(id,title,desc,cat,grad,icon,buyLink,sort){
+  function openEditBookModal(id,title,desc,cat,grad,icon,buyLink,sort,coverImage){
     const form=document.getElementById('edit-book-form');
     form.action='/admin/books/'+id;
     document.getElementById('eb-title').value=title;
@@ -905,7 +1137,33 @@
     document.getElementById('eb-gradient').value=grad;
     document.getElementById('eb-icon').value=icon;
     document.getElementById('eb-buylink').value=buyLink||'';
+    const coverUrl=document.getElementById('eb-cover-url');
+    const coverPrev=document.getElementById('eb-cover-preview');
+    coverUrl.value=coverImage||'';
+    if(coverImage){
+      coverPrev.querySelector('img').src=coverImage;
+      coverPrev.classList.remove('hidden');
+    } else {
+      coverPrev.classList.add('hidden');
+      coverPrev.querySelector('img').src='';
+    }
     document.getElementById('edit-book-overlay').classList.add('open');
+    lucide.createIcons();
+  }
+
+  function openAddCourseModal(){
+    document.getElementById('add-course-overlay').classList.add('open');
+    lucide.createIcons();
+  }
+
+  function openEditCourseModal(id,title,desc,youtubeUrl,workbookUrl,sort){
+    const form=document.getElementById('edit-course-form');
+    form.action='/admin/courses/'+id;
+    document.getElementById('ec-title').value=title;
+    document.getElementById('ec-description').value=desc||'';
+    document.getElementById('ec-youtube').value=youtubeUrl;
+    document.getElementById('ec-workbook').value=workbookUrl||'';
+    document.getElementById('edit-course-overlay').classList.add('open');
     lucide.createIcons();
   }
 

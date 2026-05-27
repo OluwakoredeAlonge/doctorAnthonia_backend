@@ -90,6 +90,7 @@
       <a href="#about"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">About</a>
       <a href="#services"     class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Services</a>
       <a href="#books"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Books</a>
+      <a href="#courses"      class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Courses</a>
       <a href="#organization" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Organization</a>
       <a href="#testimonials" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Testimonials</a>
       <a href="{{ route('blog') }}" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Blog</a>
@@ -106,6 +107,7 @@
       <a href="#about"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">About</a>
       <a href="#services"     class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Services</a>
       <a href="#books"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Books</a>
+      <a href="#courses"      class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Courses</a>
       <a href="#organization" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Organization</a>
       <a href="#testimonials" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Testimonials</a>
       <a href="{{ route('blog') }}" class="block text-primary font-medium hover:text-gold transition-colors">Blog</a>
@@ -221,10 +223,6 @@
             <p class="font-serif text-white text-lg font-semibold">Dr. Mrs. Anthonia Yemisi Soje</p>
             <p class="text-gold/80 text-sm mt-0.5">Physician &amp; Psycho-trauma Therapist · Author</p>
           </div>
-        </div>
-        <div class="absolute -bottom-5 -right-5 bg-gold rounded-2xl p-5 shadow-2xl shadow-gold/30 text-white text-center">
-          <p class="font-serif text-3xl font-bold">5+</p>
-          <p class="text-white/80 text-xs mt-0.5 leading-tight">Years of<br>Impact</p>
         </div>
       </div>
       <div class="reveal" style="transition-delay:.18s">
@@ -343,6 +341,31 @@
   </div>
 </section>
 
+<!-- FREE DISCOVERY CALL CTA -->
+<section class="bg-cream py-10">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="bg-gold rounded-3xl px-10 py-10 text-center shadow-2xl shadow-gold/25 reveal">
+      <p class="text-white/80 text-xs font-semibold tracking-widest uppercase mb-3">No Commitment — Just a Conversation</p>
+      <h2 class="font-serif text-3xl font-bold text-white mb-3">Not Sure Where to Start?</h2>
+      <p class="text-white/80 text-sm max-w-lg mx-auto mb-7 leading-relaxed">Book a <strong class="text-white">free 10-minute discovery call</strong> with Dr. Soje to see if we're a good fit. No pressure, no obligation — just clarity on how to move forward.</p>
+      <div class="flex flex-wrap items-center justify-center gap-4 mb-7">
+        <a href="#contact" class="inline-flex items-center gap-2 bg-white text-gold font-bold px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all transform text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Book My Free Call
+        </a>
+        <a href="#services" class="inline-flex items-center gap-2 text-white/90 font-semibold text-sm hover:text-white transition-colors">
+          View All Services <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-5 text-white/70 text-xs">
+        <span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> 100% Free, No Hidden Fees</span>
+        <span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Via WhatsApp or Video Call</span>
+        <span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Only 10 Minutes</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- BOOKS -->
 <section id="books" class="py-28 bg-primary overflow-hidden">
   <div class="max-w-7xl mx-auto px-6">
@@ -355,25 +378,95 @@
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
       @foreach($books as $i => $book)
         @php $delay = ($i % 4) * 0.07; @endphp
-        <div class="book-card {{ $book->cover_gradient }} rounded-2xl p-6 border border-white/8 cursor-default reveal" @if($delay) style="transition-delay:{{ $delay }}s" @endif>
-          <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center mb-5"><i data-lucide="{{ $book->icon }}" class="w-5 h-5 text-white"></i></div>
-          <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-4">{{ $book->category }}</span>
-          <h3 class="font-serif text-lg font-bold text-white mb-2">{{ $book->title }}</h3>
-          <p class="text-white/50 text-sm leading-relaxed">{{ $book->description }}</p>
-          <div class="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
-            <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
-            @if($book->buy_link)
-            <a href="{{ $book->buy_link }}" target="_blank" rel="noopener"
-               class="inline-flex items-center gap-1.5 bg-gold hover:bg-gold-light text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all shadow-lg shadow-gold/30 hover:-translate-y-0.5 transform">
-              <i data-lucide="shopping-bag" class="w-3 h-3"></i> Buy Now
-            </a>
-            @endif
+        <div class="book-card rounded-2xl overflow-hidden border border-white/8 cursor-default reveal flex flex-col" @if($delay) style="transition-delay:{{ $delay }}s" @endif>
+          {{-- Cover image (if uploaded) or gradient placeholder --}}
+          @if($book->cover_image)
+            <div class="h-52 overflow-hidden">
+              <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-full object-cover" />
+            </div>
+          @else
+            <div class="{{ $book->cover_gradient }} h-36 flex items-center justify-center">
+              <i data-lucide="{{ $book->icon }}" class="w-8 h-8 text-white/30"></i>
+            </div>
+          @endif
+          <div class="bg-primary-light flex-1 p-5 flex flex-col">
+            <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-3 self-start">{{ $book->category }}</span>
+            <h3 class="font-serif text-base font-bold text-white mb-2">{{ $book->title }}</h3>
+            <p class="text-white/50 text-sm leading-relaxed flex-1">{{ $book->description }}</p>
+            <div class="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
+              <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+              @if($book->buy_link)
+              <a href="{{ $book->buy_link }}" target="_blank" rel="noopener"
+                 class="inline-flex items-center gap-1.5 bg-gold hover:bg-gold-light text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all shadow-lg shadow-gold/30 hover:-translate-y-0.5 transform">
+                <i data-lucide="shopping-bag" class="w-3 h-3"></i> Buy Now
+              </a>
+              @endif
+            </div>
           </div>
         </div>
       @endforeach
     </div>
   </div>
 </section>
+
+@if($courses->isNotEmpty())
+<!-- COURSES -->
+<section id="courses" class="py-28 bg-cream overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-3">Learning Resources</p>
+      <h2 class="font-serif text-4xl lg:text-5xl font-bold text-primary">Courses &amp; Teachings</h2>
+      <div class="w-14 h-0.5 bg-gold mx-auto mt-3 mb-6"></div>
+      <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed">Watch, learn, and grow. Each course is paired with a downloadable workbook to deepen your journey.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
+      @foreach($courses as $i => $course)
+        @php $delay = ($i % 3) * 0.08; @endphp
+        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group reveal" @if($delay) style="transition-delay:{{ $delay }}s" @endif>
+          {{-- YouTube embed thumbnail --}}
+          @if($course->youtube_id)
+          <div class="relative aspect-video bg-primary overflow-hidden">
+            <img src="https://img.youtube.com/vi/{{ $course->youtube_id }}/hqdefault.jpg"
+                 alt="{{ $course->title }}"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <a href="{{ $course->youtube_url }}" target="_blank" rel="noopener"
+               class="absolute inset-0 flex items-center justify-center bg-primary/40 hover:bg-primary/20 transition-colors">
+              <div class="w-14 h-14 bg-[#FF0000] rounded-full flex items-center justify-center shadow-2xl">
+                <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </a>
+          </div>
+          @else
+          <div class="aspect-video bg-primary flex items-center justify-center">
+            <svg class="w-12 h-12 text-white/20" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </div>
+          @endif
+          <div class="p-5">
+            <h3 class="font-serif text-base font-bold text-primary mb-2 leading-snug">{{ $course->title }}</h3>
+            @if($course->description)
+            <p class="text-gray-400 text-sm leading-relaxed mb-4">{{ $course->description }}</p>
+            @endif
+            <div class="flex flex-wrap gap-2">
+              <a href="{{ $course->youtube_url }}" target="_blank" rel="noopener"
+                 class="inline-flex items-center gap-1.5 bg-[#FF0000] hover:bg-red-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                Watch on YouTube
+              </a>
+              @if($course->workbook_url)
+              <a href="{{ $course->workbook_url }}" target="_blank" rel="noopener"
+                 class="inline-flex items-center gap-1.5 bg-primary/8 hover:bg-primary text-primary hover:text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors border border-primary/15 hover:border-primary">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                Read Workbook
+              </a>
+              @endif
+            </div>
+          </div>
+        </div>
+      @endforeach
+    </div>
+  </div>
+</section>
+@endif
 
 <!-- ORGANIZATION (static) -->
 <section id="organization" class="py-28 bg-white">
@@ -493,7 +586,7 @@
           <p class="text-gray-400 text-sm">Mon – Fri: 8:00 AM – 6:00 PM<br>Saturday: 9:00 AM – 2:00 PM</p>
         </div>
         @php
-          $hasSocial = !empty($settings['social_facebook']) || !empty($settings['social_instagram']) || !empty($settings['social_twitter']) || !empty($settings['social_linkedin']) || !empty($settings['social_youtube']) || !empty($settings['social_tiktok']);
+          $hasSocial = !empty($settings['social_facebook']) || !empty($settings['social_instagram']) || !empty($settings['social_twitter']) || !empty($settings['social_linkedin']) || !empty($settings['social_youtube']) || !empty($settings['social_tiktok']) || !empty($settings['social_spotify']);
         @endphp
         @if($hasSocial)
         <div class="bg-cream rounded-2xl px-5 py-4 border border-gold/20 flex items-center gap-4">
@@ -527,6 +620,11 @@
             @if(!empty($settings['social_tiktok']))
             <a href="{{ $settings['social_tiktok'] }}" target="_blank" rel="noopener" title="TikTok" class="w-9 h-9 rounded-xl bg-primary/5 hover:bg-black hover:text-white text-primary flex items-center justify-center transition-all" aria-label="TikTok">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.95a8.16 8.16 0 004.77 1.52V7.02a4.85 4.85 0 01-1-.33z"/></svg>
+            </a>
+            @endif
+            @if(!empty($settings['social_spotify']))
+            <a href="{{ $settings['social_spotify'] }}" target="_blank" rel="noopener" title="Spotify Podcast" class="w-9 h-9 rounded-xl bg-primary/5 hover:bg-[#1DB954] hover:text-white text-primary flex items-center justify-center transition-all" aria-label="Spotify">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
             </a>
             @endif
           </div>
@@ -617,7 +715,8 @@
           @if(!empty($settings['social_linkedin']))<a href="{{ $settings['social_linkedin'] }}" target="_blank" rel="noopener" title="LinkedIn" class="w-9 h-9 rounded-xl bg-white/8 hover:bg-[#0A66C2] flex items-center justify-center transition-colors text-white"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>@endif
           @if(!empty($settings['social_youtube']))<a href="{{ $settings['social_youtube'] }}" target="_blank" rel="noopener" title="YouTube" class="w-9 h-9 rounded-xl bg-white/8 hover:bg-[#FF0000] flex items-center justify-center transition-colors text-white"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>@endif
           @if(!empty($settings['social_tiktok']))<a href="{{ $settings['social_tiktok'] }}" target="_blank" rel="noopener" title="TikTok" class="w-9 h-9 rounded-xl bg-white/8 hover:bg-black flex items-center justify-center transition-colors text-white"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.95a8.16 8.16 0 004.77 1.52V7.02a4.85 4.85 0 01-1-.33z"/></svg></a>@endif
-          @if(empty($settings['social_facebook']) && empty($settings['social_instagram']) && empty($settings['social_twitter']) && empty($settings['social_linkedin']) && empty($settings['social_youtube']) && empty($settings['social_tiktok']))
+          @if(!empty($settings['social_spotify']))<a href="{{ $settings['social_spotify'] }}" target="_blank" rel="noopener" title="Spotify Podcast" class="w-9 h-9 rounded-xl bg-white/8 hover:bg-[#1DB954] flex items-center justify-center transition-colors text-white"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a>@endif
+          @if(empty($settings['social_facebook']) && empty($settings['social_instagram']) && empty($settings['social_twitter']) && empty($settings['social_linkedin']) && empty($settings['social_youtube']) && empty($settings['social_tiktok']) && empty($settings['social_spotify']))
             @foreach(['facebook','instagram','twitter','linkedin','youtube'] as $sn)
             <a href="#" class="w-9 h-9 rounded-xl bg-white/8 hover:bg-gold flex items-center justify-center transition-colors"><i data-lucide="{{ $sn }}" class="w-4 h-4"></i></a>
             @endforeach
@@ -630,6 +729,7 @@
           <li><a href="#about"        class="text-white/40 hover:text-gold text-sm transition-colors">About</a></li>
           <li><a href="#services"     class="text-white/40 hover:text-gold text-sm transition-colors">Services</a></li>
           <li><a href="#books"        class="text-white/40 hover:text-gold text-sm transition-colors">Books</a></li>
+          <li><a href="#courses"      class="text-white/40 hover:text-gold text-sm transition-colors">Courses</a></li>
           <li><a href="#organization" class="text-white/40 hover:text-gold text-sm transition-colors">Fosterheirs</a></li>
           <li><a href="{{ route('blog') }}" class="text-white/40 hover:text-gold text-sm transition-colors">Blog</a></li>
           <li><a href="#contact"      class="text-white/40 hover:text-gold text-sm transition-colors">Contact</a></li>

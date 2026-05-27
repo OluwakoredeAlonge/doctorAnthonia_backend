@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\ContactMessage;
+use App\Models\Course;
 use App\Models\Service;
 use App\Models\SiteSetting;
 use App\Models\Testimonial;
@@ -15,17 +16,18 @@ class HomeController extends Controller
     public function index()
     {
         $books        = Book::orderBy('sort_order')->get();
+        $courses      = Course::orderBy('sort_order')->get();
         $services     = Service::orderBy('sort_order')->get();
         $testimonials = Testimonial::where('status', 'approved')->latest()->get();
         $settings     = SiteSetting::bulk([
             'about_bio_1', 'about_bio_2', 'about_quote',
             'stat_books', 'stat_lives', 'stat_marriages', 'stat_addicts',
             'social_facebook', 'social_instagram', 'social_twitter', 'social_linkedin',
-            'social_youtube', 'social_tiktok',
+            'social_youtube', 'social_tiktok', 'social_spotify',
             'contact_phone', 'contact_email',
         ]);
 
-        return view('home', compact('books', 'services', 'testimonials', 'settings'));
+        return view('home', compact('books', 'courses', 'services', 'testimonials', 'settings'));
     }
 
     public function contact(Request $request)
