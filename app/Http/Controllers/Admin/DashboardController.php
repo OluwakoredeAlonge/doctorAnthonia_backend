@@ -7,6 +7,7 @@ use App\Models\BlogPost;
 use App\Models\Book;
 use App\Models\ContactMessage;
 use App\Models\Course;
+use App\Models\Organization;
 use App\Models\Service;
 use App\Models\SiteSetting;
 use App\Models\Testimonial;
@@ -16,13 +17,14 @@ class DashboardController extends Controller
     public function index()
     {
         $stats = [
-            'posts'            => BlogPost::count(),
-            'messages'         => ContactMessage::count(),
-            'new_messages'     => ContactMessage::where('status', 'new')->count(),
-            'testimonials'     => Testimonial::count(),
-            'pending_testimonials' => Testimonial::where('status', 'pending')->count(),
-            'books'            => Book::count(),
-            'courses'          => Course::count(),
+            'posts'               => BlogPost::count(),
+            'messages'            => ContactMessage::count(),
+            'new_messages'        => ContactMessage::where('status', 'new')->count(),
+            'testimonials'        => Testimonial::count(),
+            'pending_testimonials'=> Testimonial::where('status', 'pending')->count(),
+            'books'               => Book::count(),
+            'courses'             => Course::count(),
+            'organizations'       => Organization::count(),
         ];
 
         $recentMessages  = ContactMessage::latest()->take(5)->get();
@@ -30,10 +32,12 @@ class DashboardController extends Controller
         $posts           = BlogPost::latest()->paginate(10);
         $testimonials    = Testimonial::latest()->get();
         $messages        = ContactMessage::latest()->get();
-        $books           = Book::orderBy('sort_order')->get();
-        $courses         = Course::orderBy('sort_order')->get();
+        $books           = Book::orderBy('sort_order')->orderBy('id')->get();
+        $courses         = Course::with('modules')->orderBy('sort_order')->orderBy('id')->get();
+        $organizations   = Organization::orderBy('sort_order')->get();
         $services        = Service::orderBy('sort_order')->get();
         $settings        = SiteSetting::bulk([
+            'doctor_name',
             'about_bio_1', 'about_bio_2', 'about_quote',
             'stat_books', 'stat_lives', 'stat_marriages', 'stat_addicts',
             'social_facebook', 'social_instagram', 'social_twitter', 'social_linkedin',
@@ -46,7 +50,7 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact(
             'stats', 'recentMessages', 'recentPosts',
             'posts', 'testimonials', 'messages',
-            'books', 'courses', 'services', 'settings', 'panel'
+            'books', 'courses', 'organizations', 'services', 'settings', 'panel'
         ));
     }
 }

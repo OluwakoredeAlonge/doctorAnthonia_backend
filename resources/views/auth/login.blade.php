@@ -55,7 +55,7 @@
     </div>
     <div class="relative">
       <p class="text-white/30 text-xs">© 2025 Dr. Mrs. Anthonia Yemisi Soje</p>
-      <p class="text-white/20 text-xs mt-1">Fosterheirs Mental Health Therapists</p>
+      <p class="text-white/20 text-xs mt-1">Fosterheirs Mental Health Consultancy</p>
     </div>
   </div>
 

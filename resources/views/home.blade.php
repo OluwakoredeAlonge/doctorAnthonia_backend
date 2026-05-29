@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dr. Mrs. Anthonia Yemisi Soje | Mental Health &amp; Wellness</title>
-  <meta name="description" content="Dr. Anthonia Yemisi Soje — Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor, ADHD Specialist &amp; Author. Founder of Fosterheirs Mental Health Consultancy, Oye-Ekiti." />
+  <title>{{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }} | Mental Health &amp; Wellness</title>
+  <meta name="description" content="{{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }} — Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor, Addiction Recovery Therapist &amp; Author. Founder of Fosterheirs Mental Health Consultancy, Oye-Ekiti." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -85,7 +85,7 @@
 <!-- NAVBAR -->
 <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
   <div class="max-w-7xl mx-auto flex items-center justify-between">
-    <a href="#home" class="nav-logo font-serif text-white text-xl font-bold tracking-wide">Dr. A.Y. Soje</a>
+    <a href="#home" class="nav-logo font-serif text-white text-xl font-bold tracking-wide">{{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }}</a>
     <div class="hidden md:flex items-center gap-7">
       <a href="#about"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">About</a>
       <a href="#services"     class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Services</a>
@@ -139,7 +139,7 @@
   </div>
   <div class="float-card-4 absolute right-4 xl:right-12 top-[49%] hidden lg:flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/15 rounded-2xl px-4 py-3 shadow-2xl shadow-black/50 z-10">
     <div class="w-9 h-9 rounded-xl bg-purple-500/25 flex items-center justify-center flex-shrink-0"><i data-lucide="zap" class="w-4 h-4 text-purple-300"></i></div>
-    <div><p class="text-xs font-bold text-white">ADHD Specialist</p><p class="text-xs text-white/40 mt-0.5">Child &amp; Adult Cases</p></div>
+    <div><p class="text-xs font-bold text-white">Addiction Recovery Therapist</p><p class="text-xs text-white/40 mt-0.5">Child &amp; Adult Cases</p></div>
   </div>
   <div class="flex-1 min-h-[46vh] sm:min-h-[52vh] lg:min-h-[58vh] pt-20 pointer-events-none"></div>
   <div class="relative z-10 w-full text-center text-white px-5 sm:px-8 pb-20">
@@ -193,11 +193,11 @@
   <!-- Ticker -->
   <div class="absolute bottom-0 left-0 right-0 border-t border-white/10 bg-black/40 backdrop-blur-md py-3 overflow-hidden">
     <div class="ticker-track flex items-center gap-10">
-      @foreach(['Medical Practitioner','Psycho-trauma Therapist','ADHD Specialist','Marriage Counsellor','Addiction Recovery Expert','Life Coach','Published Author','Faith-integrated Therapist'] as $cred)
+      @foreach(['Medical Practitioner','Psycho-trauma Therapist','Addiction Recovery Therapist','Marriage Counsellor','Addiction Recovery Expert','Life Coach','Published Author','Faith-integrated Therapist'] as $cred)
         <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>{{ $cred }}</span>
         <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
       @endforeach
-      @foreach(['Medical Practitioner','Psycho-trauma Therapist','ADHD Specialist','Marriage Counsellor','Addiction Recovery Expert','Life Coach','Published Author','Faith-integrated Therapist'] as $cred)
+      @foreach(['Medical Practitioner','Psycho-trauma Therapist','Addiction Recovery Therapist','Marriage Counsellor','Addiction Recovery Expert','Life Coach','Published Author','Faith-integrated Therapist'] as $cred)
         <span class="flex-shrink-0 flex items-center gap-2.5 text-white/30 text-xs font-medium uppercase tracking-widest"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-gold/50"></i>{{ $cred }}</span>
         <span class="flex-shrink-0 text-gold/20 text-lg">·</span>
       @endforeach
@@ -220,7 +220,7 @@
           </div>
           <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-primary to-transparent"></div>
           <div class="absolute bottom-6 left-6 right-6">
-            <p class="font-serif text-white text-lg font-semibold">Dr. Mrs. Anthonia Yemisi Soje</p>
+            <p class="font-serif text-white text-lg font-semibold">{{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }}</p>
             <p class="text-gold/80 text-sm mt-0.5">Physician &amp; Psycho-trauma Therapist · Author</p>
           </div>
         </div>
@@ -240,7 +240,7 @@
         <p class="text-gray-500 leading-relaxed mb-8">{{ $settings['about_bio_2'] ?? '' }}</p>
         <div class="flex flex-wrap gap-2 mb-8">
           <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Physician &amp; Psycho-trauma Therapist</span>
-          <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">ADHD Specialist</span>
+          <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Addiction Recovery Therapist</span>
           <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Marriage Counsellor</span>
           <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Conference Speaker</span>
           <span class="bg-cream border border-gold/20 text-primary text-xs font-medium px-3 py-1.5 rounded-full">Faith Advocate</span>
@@ -377,8 +377,7 @@
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
       @foreach($books as $i => $book)
-        @php $delay = ($i % 4) * 0.07; @endphp
-        <div class="book-card rounded-2xl overflow-hidden border border-white/8 cursor-default reveal flex flex-col" @if($delay) style="transition-delay:{{ $delay }}s" @endif>
+        <div class="book-card rounded-2xl overflow-hidden border border-white/8 cursor-default flex flex-col">
           {{-- Cover image (if uploaded) or gradient placeholder --}}
           @if($book->cover_image)
             <div class="h-52 overflow-hidden">
@@ -394,7 +393,7 @@
             <h3 class="font-serif text-base font-bold text-white mb-2">{{ $book->title }}</h3>
             <p class="text-white/50 text-sm leading-relaxed flex-1">{{ $book->description }}</p>
             <div class="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
-              <span class="text-gold text-xs font-medium">Dr. A.Y. Soje</span>
+              <span class="text-gold text-xs font-medium">{{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }}</span>
               @if($book->buy_link)
               <a href="{{ $book->buy_link }}" target="_blank" rel="noopener"
                  class="inline-flex items-center gap-1.5 bg-gold hover:bg-gold-light text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all shadow-lg shadow-gold/30 hover:-translate-y-0.5 transform">
@@ -413,55 +412,135 @@
 <!-- COURSES -->
 <section id="courses" class="py-28 bg-cream overflow-hidden">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-14 reveal">
+    <div class="text-center mb-16 reveal">
       <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-3">Learning Resources</p>
       <h2 class="font-serif text-4xl lg:text-5xl font-bold text-primary">Courses &amp; Teachings</h2>
       <div class="w-14 h-0.5 bg-gold mx-auto mt-3 mb-6"></div>
-      <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed">Watch, learn, and grow. Each course is paired with a downloadable workbook to deepen your journey.</p>
+      <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed">Watch, learn, and grow. Each course is paired with a workbook to deepen your journey.</p>
     </div>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
-      @foreach($courses as $i => $course)
-        @php $delay = ($i % 3) * 0.08; @endphp
-        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group reveal" @if($delay) style="transition-delay:{{ $delay }}s" @endif>
-          {{-- YouTube embed thumbnail --}}
-          @if($course->youtube_id)
-          <div class="relative aspect-video bg-primary overflow-hidden">
-            <img src="https://img.youtube.com/vi/{{ $course->youtube_id }}/hqdefault.jpg"
-                 alt="{{ $course->title }}"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            <a href="{{ $course->youtube_url }}" target="_blank" rel="noopener"
-               class="absolute inset-0 flex items-center justify-center bg-primary/40 hover:bg-primary/20 transition-colors">
-              <div class="w-14 h-14 bg-[#FF0000] rounded-full flex items-center justify-center shadow-2xl">
-                <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-              </div>
-            </a>
+
+    <div class="space-y-16">
+      @foreach($courses as $course)
+      <div class="reveal">
+        {{-- Course header --}}
+        <div class="flex items-start gap-4 mb-7">
+          <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </div>
-          @else
-          <div class="aspect-video bg-primary flex items-center justify-center">
-            <svg class="w-12 h-12 text-white/20" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </div>
-          @endif
-          <div class="p-5">
-            <h3 class="font-serif text-base font-bold text-primary mb-2 leading-snug">{{ $course->title }}</h3>
+          <div>
+            <h3 class="font-serif text-2xl font-bold text-primary leading-snug">{{ $course->title }}</h3>
             @if($course->description)
-            <p class="text-gray-400 text-sm leading-relaxed mb-4">{{ $course->description }}</p>
+            <p class="text-gray-400 text-sm leading-relaxed mt-1 max-w-2xl">{{ $course->description }}</p>
             @endif
-            <div class="flex flex-wrap gap-2">
-              <a href="{{ $course->youtube_url }}" target="_blank" rel="noopener"
-                 class="inline-flex items-center gap-1.5 bg-[#FF0000] hover:bg-red-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors">
-                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                Watch on YouTube
-              </a>
-              @if($course->workbook_url)
-              <a href="{{ $course->workbook_url }}" target="_blank" rel="noopener"
-                 class="inline-flex items-center gap-1.5 bg-primary/8 hover:bg-primary text-primary hover:text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors border border-primary/15 hover:border-primary">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                Read Workbook
-              </a>
-              @endif
-            </div>
+            @if($course->modules->count())
+            <p class="text-gold text-xs font-semibold mt-2">{{ $course->modules->count() }} {{ Str::plural('Module', $course->modules->count()) }}</p>
+            @endif
           </div>
         </div>
+
+        {{-- Modules grid --}}
+        @if($course->modules->count())
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 pl-0 lg:pl-14">
+          @foreach($course->modules as $mi => $module)
+          @php $moduleDelay = ($mi % 3) * 0.07; @endphp
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group" style="transition-delay:{{ $moduleDelay }}s">
+            {{-- YouTube thumbnail --}}
+            @if($module->youtube_id)
+            <div class="relative aspect-video bg-primary overflow-hidden">
+              <img src="https://img.youtube.com/vi/{{ $module->youtube_id }}/hqdefault.jpg"
+                   alt="{{ $module->title }}"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <a href="{{ $module->youtube_url }}" target="_blank" rel="noopener"
+                 class="absolute inset-0 flex items-center justify-center bg-primary/40 hover:bg-primary/20 transition-colors">
+                <div class="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center shadow-2xl">
+                  <svg class="w-5 h-5 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </a>
+            </div>
+            @else
+            <div class="aspect-video bg-primary/90 flex flex-col items-center justify-center gap-2">
+              <svg class="w-10 h-10 text-white/20" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <p class="text-white/30 text-xs">Coming soon</p>
+            </div>
+            @endif
+
+            <div class="p-4">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="text-gold text-[10px] font-bold uppercase tracking-wider">Module {{ $mi + 1 }}</span>
+              </div>
+              <h4 class="font-semibold text-primary text-sm leading-snug mb-3">{{ $module->title }}</h4>
+              <div class="flex flex-wrap gap-2">
+                @if($module->youtube_url)
+                <a href="{{ $module->youtube_url }}" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-1.5 bg-[#FF0000] hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  Watch
+                </a>
+                @endif
+                @if($module->workbook_url)
+                <a href="{{ $module->workbook_url }}" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-1.5 bg-gold/10 hover:bg-gold text-gold hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border border-gold/20 hover:border-gold">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                  Read Workbook
+                </a>
+                @endif
+              </div>
+            </div>
+          </div>
+          @endforeach
+        </div>
+        @else
+        <div class="pl-0 lg:pl-14">
+          <div class="bg-white border border-dashed border-gray-200 rounded-2xl p-8 text-center">
+            <svg class="w-8 h-8 text-gray-200 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            <p class="text-gray-300 text-sm">Modules coming soon</p>
+          </div>
+        </div>
+        @endif
+
+        @if(!$loop->last)
+        <div class="mt-14 border-b border-gold/10"></div>
+        @endif
+      </div>
+      @endforeach
+    </div>
+  </div>
+</section>
+@endif
+
+@if($organizations->isNotEmpty())
+<!-- ORGANIZATIONS (dynamic) -->
+<section id="organizations" class="py-20 bg-white overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12 reveal">
+      <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-3">Our Reach</p>
+      <h2 class="font-serif text-4xl lg:text-5xl font-bold text-primary">Organizations &amp; Affiliations</h2>
+      <div class="w-14 h-0.5 bg-gold mx-auto mt-3 mb-6"></div>
+      <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed">{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }} serves across a range of institutions dedicated to healing, restoration, and community health.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @foreach($organizations as $oi => $org)
+      @php $orgDelay = ($oi % 3) * 0.09; @endphp
+      <div class="group bg-cream rounded-2xl p-7 border border-gold/10 hover:border-gold/30 hover:shadow-lg transition-all duration-300 reveal" style="transition-delay:{{ $orgDelay }}s">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm" style="background: {{ $org->color }}18">
+            <i data-lucide="{{ $org->icon ?? 'building-2' }}" class="w-6 h-6" style="color: {{ $org->color }}"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif font-bold text-primary text-base leading-snug">{{ $org->name }}</h3>
+          </div>
+        </div>
+        @if($org->description)
+        <p class="text-gray-400 text-sm leading-relaxed mb-5">{{ $org->description }}</p>
+        @endif
+        @if($org->website_url)
+        <a href="{{ $org->website_url }}" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-1.5 text-xs font-semibold transition-colors"
+           style="color: {{ $org->color }}">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Learn More
+        </a>
+        @endif
+      </div>
       @endforeach
     </div>
   </div>
@@ -672,7 +751,7 @@
                   <option value="event" {{ old('service')=='event'?'selected':'' }}>Conference or Seminar (Keynote / Panel)</option>
                 </optgroup>
                 <optgroup label="── Therapy & Counselling ──">
-                  @foreach(['Psycho-trauma Therapy','Addiction Recovery','Marriage Counselling','Premarital Counselling','ADHD Management','Life Coaching','Emotional Wellness','Faith-integrated Therapy'] as $svcOpt)
+                  @foreach(['Psycho-trauma Therapy','Addiction Recovery','Marriage Counselling','Premarital Counselling','Addiction Recovery Therapy','Life Coaching','Emotional Wellness','Faith-integrated Therapy'] as $svcOpt)
                   <option value="{{ $svcOpt }}" {{ old('service')==$svcOpt?'selected':'' }}>{{ $svcOpt }}</option>
                   @endforeach
                 </optgroup>
@@ -705,7 +784,7 @@
   <div class="max-w-7xl mx-auto px-6">
     <div class="grid md:grid-cols-4 gap-10 mb-12">
       <div class="md:col-span-2">
-        <p class="font-serif text-2xl font-bold mb-1">Dr. A.Y. Soje</p>
+        <p class="font-serif text-2xl font-bold mb-1">{{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }}</p>
         <p class="text-gold text-sm mb-4">Mental Health Professional &amp; Author</p>
         <p class="text-white/40 text-sm leading-relaxed max-w-xs">Bridging medicine, psychology, and faith to restore lives and rebuild homes across Nigeria and beyond.</p>
         <div class="flex flex-wrap gap-2 mt-6">
@@ -742,14 +821,14 @@
           <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">Trauma Therapy</a></li>
           <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">Addiction Recovery</a></li>
           <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">Marriage Counselling</a></li>
-          <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">ADHD Specialist</a></li>
+          <li><a href="#services" class="text-white/40 hover:text-gold text-sm transition-colors">Addiction Recovery Therapist</a></li>
           <li><a href="#contact"  class="text-white/40 hover:text-gold text-sm transition-colors">Book a Session</a></li>
         </ul>
       </div>
     </div>
     <div class="pt-8 border-t border-white/8 flex flex-col md:flex-row items-center justify-between gap-3">
-      <p class="text-white/30 text-sm">© {{ date('Y') }} Dr. Mrs. Anthonia Yemisi Soje. All rights reserved.</p>
-      <p class="text-white/30 text-sm">Fosterheirs Mental Health Therapists · Oye-Ekiti, Nigeria</p>
+      <p class="text-white/30 text-sm">© {{ date('Y') }} {{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}. All rights reserved.</p>
+      <p class="text-white/30 text-sm">Fosterheirs Mental Health Consultancy · Oye-Ekiti, Nigeria</p>
     </div>
   </div>
 </footer>
@@ -777,7 +856,7 @@
   const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-  const roles=['Psycho-trauma Therapist','Christian Mental Health Advocate','Conference Speaker & Author','Addiction Recovery Expert','Faith & Wellness Voice','Marriage Counsellor','ADHD Specialist','Life Coach'];
+  const roles=['Psycho-trauma Therapist','Christian Mental Health Advocate','Conference Speaker & Author','Addiction Recovery Expert','Faith & Wellness Voice','Marriage Counsellor','Addiction Recovery Therapist','Life Coach'];
   let ri=0,ci=0,del=false;const typEl=document.getElementById('typing-role');
   (function type(){const cur=roles[ri];typEl.textContent=del?cur.slice(0,--ci):cur.slice(0,++ci);if(!del&&ci===cur.length)setTimeout(()=>del=true,2400);else if(del&&ci===0){del=false;ri=(ri+1)%roles.length;}setTimeout(type,del?45:90);})();
 

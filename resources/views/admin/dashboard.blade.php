@@ -32,8 +32,8 @@
     .panel{display:none;}.panel.active{display:block;}
     ::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:#F3F4F6;}::-webkit-scrollbar-thumb{background:#C9922A;border-radius:3px;}
     tbody tr{transition:background .15s ease;}tbody tr:hover{background:#FAFAFA;}
-    #modal-overlay,#book-modal-overlay,#edit-post-overlay,#edit-book-overlay,#edit-service-overlay,#add-service-overlay,#msg-modal-overlay,#preview-overlay,#add-testi-overlay,#add-course-overlay,#edit-course-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;}
-    #modal-overlay.open,#book-modal-overlay.open,#edit-post-overlay.open,#edit-book-overlay.open,#edit-service-overlay.open,#add-service-overlay.open,#msg-modal-overlay.open,#preview-overlay.open,#add-testi-overlay.open,#add-course-overlay.open,#edit-course-overlay.open{display:flex;}
+    #modal-overlay,#book-modal-overlay,#edit-post-overlay,#edit-book-overlay,#edit-service-overlay,#add-service-overlay,#msg-modal-overlay,#preview-overlay,#add-testi-overlay,#add-course-overlay,#edit-course-overlay,#add-module-overlay,#edit-module-overlay,#add-org-overlay,#edit-org-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;}
+    #modal-overlay.open,#book-modal-overlay.open,#edit-post-overlay.open,#edit-book-overlay.open,#edit-service-overlay.open,#add-service-overlay.open,#msg-modal-overlay.open,#preview-overlay.open,#add-testi-overlay.open,#add-course-overlay.open,#edit-course-overlay.open,#add-module-overlay.open,#edit-module-overlay.open,#add-org-overlay.open,#edit-org-overlay.open{display:flex;}
     .ck.ck-editor__editable{min-height:320px;font-family:'Inter',sans-serif;font-size:.875rem;border-radius:0 0 .75rem .75rem!important;}
     .ck.ck-toolbar{border-radius:.75rem .75rem 0 0!important;border-color:#E5E7EB!important;background:#FAFAFA!important;}
     .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused{border-color:#C9922A!important;box-shadow:0 0 0 3px rgba(201,146,42,.1)!important;}
@@ -94,6 +94,7 @@
     <button onclick="showPanel('messages')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="mail" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Messages</span>@if($stats['new_messages']>0)<span class="sidebar-label ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['new_messages'] }}</span>@endif</button>
     <button onclick="showPanel('books')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="book-open" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Books</span></button>
     <button onclick="showPanel('courses')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="play-circle" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Courses</span>@if($stats['courses']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['courses'] }}</span>@endif</button>
+    <button onclick="showPanel('organizations')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="building-2" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Organizations</span>@if($stats['organizations']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['organizations'] }}</span>@endif</button>
     <p class="sidebar-section-label text-white/25 text-xs font-semibold uppercase tracking-widest px-3 mb-2 mt-5">Content</p>
     <button onclick="showPanel('about')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="user" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">About Section</span></button>
     <button onclick="showPanel('services')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="briefcase" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Services</span></button>
@@ -362,40 +363,112 @@
   {{-- ═══ COURSES PANEL ═══ --}}
   <section id="panel-courses" class="panel p-6 fadein">
     <div class="flex items-center justify-between mb-6">
-      <div><h2 class="font-serif text-xl font-bold text-gray-800">Courses &amp; Teachings</h2><p class="text-gray-400 text-sm mt-0.5">Manage YouTube courses and workbook links</p></div>
+      <div><h2 class="font-serif text-xl font-bold text-gray-800">Courses &amp; Teachings</h2><p class="text-gray-400 text-sm mt-0.5">Manage courses and their video modules</p></div>
       <button onclick="openAddCourseModal()" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Course</button>
     </div>
+
     @if($courses->isEmpty())
     <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-12 text-center">
       <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><i data-lucide="play-circle" class="w-7 h-7 text-gray-300"></i></div>
       <p class="font-medium text-gray-400 mb-1">No courses yet</p>
-      <p class="text-gray-300 text-sm">Click "Add Course" to add your first YouTube course.</p>
+      <p class="text-gray-300 text-sm">Click "Add Course" to create your first course, then add video modules to it.</p>
     </div>
     @else
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="space-y-8">
       @foreach($courses as $course)
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
-        <div class="relative aspect-video bg-gray-100 overflow-hidden">
-          @if($course->youtube_id)
-          <img src="https://img.youtube.com/vi/{{ $course->youtube_id }}/hqdefault.jpg" alt="{{ $course->title }}" class="w-full h-full object-cover" />
-          <div class="absolute inset-0 bg-primary/30 flex items-center justify-center">
-            <div class="w-10 h-10 bg-[#FF0000] rounded-full flex items-center justify-center"><svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {{-- Course header --}}
+        <div class="flex items-center justify-between gap-4 px-5 py-4 border-b border-gray-50 bg-gray-50/60">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </div>
+            <div class="min-w-0">
+              <h3 class="font-serif font-bold text-gray-800 text-base leading-tight">{{ $course->title }}</h3>
+              @if($course->description)<p class="text-gray-400 text-xs mt-0.5 truncate max-w-sm">{{ $course->description }}</p>@endif
+            </div>
           </div>
-          @else
-          <div class="flex items-center justify-center h-full"><i data-lucide="youtube" class="w-10 h-10 text-gray-200"></i></div>
-          @endif
-        </div>
-        <div class="p-4">
-          <h3 class="font-semibold text-gray-800 text-sm mb-1 leading-snug">{{ $course->title }}</h3>
-          @if($course->description)<p class="text-gray-400 text-xs leading-relaxed mb-2">{{ Str::limit($course->description,80) }}</p>@endif
-          <div class="flex flex-wrap gap-1.5 mb-3">
-            @if($course->workbook_url)<span class="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full"><i data-lucide="file-text" class="w-3 h-3"></i> Workbook</span>@endif
-          </div>
-          <div class="flex gap-2">
-            <button onclick="openEditCourseModal({{ $course->id }},'{{ addslashes($course->title) }}','{{ addslashes($course->description ?? '') }}','{{ addslashes($course->youtube_url) }}','{{ addslashes($course->workbook_url ?? '') }}','{{ $course->sort_order }}')" class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit</button>
-            <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" class="inline" onsubmit="return confirm('Delete this course?')">@csrf @method('DELETE')<button type="submit" class="p-2 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <span class="text-xs text-gray-400 font-medium">{{ $course->modules->count() }} {{ Str::plural('module', $course->modules->count()) }}</span>
+            <button onclick="openAddModuleModal({{ $course->id }},'{{ addslashes($course->title) }}')" class="inline-flex items-center gap-1.5 bg-gold/10 hover:bg-gold text-gold hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border border-gold/20 hover:border-gold"><i data-lucide="plus" class="w-3 h-3"></i> Add Module</button>
+            <button onclick="openEditCourseModal({{ $course->id }},'{{ addslashes($course->title) }}','{{ addslashes($course->description ?? '') }}','{{ $course->sort_order }}')" class="p-1.5 text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+            <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" class="inline" onsubmit="return confirm('Delete this course and ALL its modules?')">@csrf @method('DELETE')<button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
           </div>
         </div>
+
+        {{-- Modules list --}}
+        @if($course->modules->count())
+        <div class="divide-y divide-gray-50">
+          @foreach($course->modules as $mi => $module)
+          <div class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50/50 transition-colors group">
+            {{-- Thumbnail --}}
+            <div class="w-20 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 relative">
+              @if($module->youtube_id)
+              <img src="https://img.youtube.com/vi/{{ $module->youtube_id }}/default.jpg" alt="{{ $module->title }}" class="w-full h-full object-cover" />
+              <div class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="w-5 h-5 bg-[#FF0000] rounded-full flex items-center justify-center"><svg class="w-2 h-2 text-white ml-px" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              </div>
+              @else
+              <div class="flex items-center justify-center h-full"><svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              @endif
+            </div>
+            {{-- Info --}}
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-gold text-[10px] font-bold uppercase tracking-wider flex-shrink-0">Module {{ $mi + 1 }}</span>
+                @if($module->workbook_url)<span class="inline-flex items-center gap-0.5 text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full"><i data-lucide="book-open" class="w-2.5 h-2.5"></i> Workbook</span>@endif
+              </div>
+              <p class="font-medium text-gray-700 text-sm leading-snug mt-0.5 truncate">{{ $module->title }}</p>
+            </div>
+            {{-- Actions --}}
+            <div class="flex gap-1.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onclick="openEditModuleModal({{ $module->id }},'{{ addslashes($module->title) }}','{{ addslashes($module->youtube_url ?? '') }}','{{ addslashes($module->workbook_url ?? '') }}','{{ $module->sort_order }}')" class="p-1.5 text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+              <form method="POST" action="{{ route('admin.modules.destroy', $module) }}" class="inline" onsubmit="return confirm('Delete this module?')">@csrf @method('DELETE')<button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
+            </div>
+          </div>
+          @endforeach
+        </div>
+        @else
+        <div class="px-5 py-6 text-center">
+          <p class="text-gray-300 text-sm">No modules yet — click <strong class="text-gold font-semibold">Add Module</strong> to add the first video.</p>
+        </div>
+        @endif
+      </div>
+      @endforeach
+    </div>
+    @endif
+  </section>
+
+  {{-- ═══ ORGANIZATIONS PANEL ═══ --}}
+  <section id="panel-organizations" class="panel p-6 fadein">
+    <div class="flex items-center justify-between mb-6">
+      <div><h2 class="font-serif text-xl font-bold text-gray-800">Organizations</h2><p class="text-gray-400 text-sm mt-0.5">Manage the organizations displayed on your portfolio</p></div>
+      <button onclick="document.getElementById('add-org-overlay').classList.add('open');lucide.createIcons();" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Organization</button>
+    </div>
+    @if($organizations->isEmpty())
+    <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-12 text-center">
+      <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><i data-lucide="building-2" class="w-7 h-7 text-gray-300"></i></div>
+      <p class="font-medium text-gray-400 mb-1">No organizations yet</p>
+      <p class="text-gray-300 text-sm">Click "Add Organization" to add an organization.</p>
+    </div>
+    @else
+    <div class="grid md:grid-cols-2 gap-5">
+      @foreach($organizations as $org)
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-start gap-3 mb-3">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background: {{ $org->color }}18">
+            <i data-lucide="{{ $org->icon ?? 'building-2' }}" class="w-5 h-5" style="color: {{ $org->color }}"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-semibold text-gray-800 text-sm leading-snug">{{ $org->name }}</h3>
+            @if($org->website_url)<a href="{{ $org->website_url }}" target="_blank" class="text-xs text-gold hover:underline truncate block mt-0.5">{{ $org->website_url }}</a>@endif
+          </div>
+          <div class="flex gap-1.5 flex-shrink-0">
+            <button onclick="openEditOrgModal({{ $org->id }},'{{ addslashes($org->name) }}','{{ addslashes($org->description ?? '') }}','{{ addslashes($org->icon ?? 'building-2') }}','{{ $org->color }}','{{ addslashes($org->website_url ?? '') }}','{{ $org->sort_order }}')" class="p-1.5 text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+            <form method="POST" action="{{ route('admin.organizations.destroy', $org) }}" class="inline" onsubmit="return confirm('Delete this organization?')">@csrf @method('DELETE')<button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
+          </div>
+        </div>
+        @if($org->description)<p class="text-gray-400 text-xs leading-relaxed">{{ Str::limit($org->description, 120) }}</p>@endif
       </div>
       @endforeach
     </div>
@@ -408,6 +481,11 @@
     <form method="POST" action="{{ route('admin.settings.about') }}" class="max-w-3xl">
       @csrf
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Doctor's Name / Display Initials</label>
+          <input type="text" name="doctor_name" value="{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}" placeholder="e.g. Dr. O.A. Soje" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" />
+          <p class="text-gray-400 text-xs mt-1">Shown in footers, headers, book attributions, and other places across the site.</p>
+        </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Bio — Paragraph 1</label>
           <textarea name="about_bio_1" rows="5" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all resize-none">{{ $settings['about_bio_1'] ?? '' }}</textarea>
@@ -881,27 +959,18 @@
     <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100">
       <div>
         <h3 class="font-serif text-xl font-bold text-gray-800">Add Course</h3>
-        <p class="text-gray-400 text-xs mt-0.5">Add a YouTube video with an optional workbook link</p>
+        <p class="text-gray-400 text-xs mt-0.5">Create a course — then add video modules to it</p>
       </div>
       <button onclick="document.getElementById('add-course-overlay').classList.remove('open')" class="text-gray-400 hover:text-primary p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <form method="POST" action="{{ route('admin.courses.store') }}" class="p-8 space-y-4">
       @csrf
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Title</label><input type="text" name="title" required placeholder="e.g. Overcoming Anxiety — A Faith-Based Approach" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
-      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" rows="2" placeholder="Brief description of what viewers will learn…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none placeholder-gray-300"></textarea></div>
-      <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">YouTube Video URL</label>
-        <input type="text" name="youtube_url" required placeholder="https://www.youtube.com/watch?v=…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
-        <p class="text-gray-300 text-xs mt-1.5">Accepts full YouTube URLs or youtu.be short links.</p>
-      </div>
-      <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Workbook Link (Google Drive) <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
-        <input type="text" name="workbook_url" placeholder="https://drive.google.com/…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
-        <p class="text-gray-300 text-xs mt-1.5">Paste the sharable Google Drive link to your PDF workbook.</p>
-      </div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" rows="3" placeholder="Brief overview of what viewers will learn across all modules…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none placeholder-gray-300"></textarea></div>
+      <p class="text-gray-300 text-xs bg-gold/5 border border-gold/10 rounded-xl px-4 py-3">💡 After creating the course, use the <strong class="text-gold font-semibold">Add Module</strong> button to add individual video modules.</p>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
         <button type="button" onclick="document.getElementById('add-course-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
-        <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Add Course</button>
+        <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Create Course</button>
       </div>
     </form>
   </div>
@@ -917,12 +986,130 @@
     <form method="POST" id="edit-course-form" class="p-8 space-y-4">
       @csrf @method('PUT')
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Title</label><input type="text" name="title" id="ec-title" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
-      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" id="ec-description" rows="2" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none"></textarea></div>
-      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">YouTube Video URL</label><input type="text" name="youtube_url" id="ec-youtube" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
-      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Workbook Link (Google Drive) <span class="text-gray-300 normal-case font-normal">(optional)</span></label><input type="text" name="workbook_url" id="ec-workbook" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" id="ec-description" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none"></textarea></div>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
         <button type="button" onclick="document.getElementById('edit-course-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
         <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Update Course</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ═══ ADD MODULE MODAL ═══ --}}
+<div id="add-module-overlay" onclick="document.getElementById('add-module-overlay').classList.remove('open')">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100">
+      <div>
+        <h3 class="font-serif text-xl font-bold text-gray-800">Add Module</h3>
+        <p class="text-gray-400 text-xs mt-0.5" id="add-module-course-name">Adding to course…</p>
+      </div>
+      <button onclick="document.getElementById('add-module-overlay').classList.remove('open')" class="text-gray-400 hover:text-primary p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <form method="POST" id="add-module-form" class="p-8 space-y-4">
+      @csrf
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Module Title</label><input type="text" name="title" required placeholder="e.g. Module 1 — Understanding Anxiety" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">YouTube Video URL</label>
+        <input type="text" name="youtube_url" required placeholder="https://www.youtube.com/watch?v=…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
+        <p class="text-gray-300 text-xs mt-1.5">Accepts full YouTube URLs or youtu.be short links.</p>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Workbook Link <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+        <input type="text" name="workbook_url" placeholder="https://drive.google.com/…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
+        <p class="text-gray-300 text-xs mt-1.5">Paste the sharable Google Drive link to the PDF workbook for this module.</p>
+      </div>
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="button" onclick="document.getElementById('add-module-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-gold hover:bg-amber-600 text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Add Module</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ═══ EDIT MODULE MODAL ═══ --}}
+<div id="edit-module-overlay" onclick="document.getElementById('edit-module-overlay').classList.remove('open')">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100">
+      <h3 class="font-serif text-xl font-bold text-gray-800">Edit Module</h3>
+      <button onclick="document.getElementById('edit-module-overlay').classList.remove('open')" class="text-gray-400 hover:text-primary p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <form method="POST" id="edit-module-form" class="p-8 space-y-4">
+      @csrf @method('PUT')
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Module Title</label><input type="text" name="title" id="em-title" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">YouTube Video URL</label>
+        <input type="text" name="youtube_url" id="em-youtube" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Workbook Link <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+        <input type="text" name="workbook_url" id="em-workbook" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
+      </div>
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="button" onclick="document.getElementById('edit-module-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Update Module</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ═══ ADD ORGANIZATION MODAL ═══ --}}
+<div id="add-org-overlay" onclick="document.getElementById('add-org-overlay').classList.remove('open')">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100">
+      <div>
+        <h3 class="font-serif text-xl font-bold text-gray-800">Add Organization</h3>
+        <p class="text-gray-400 text-xs mt-0.5">Add an organization to display on your portfolio</p>
+      </div>
+      <button onclick="document.getElementById('add-org-overlay').classList.remove('open')" class="text-gray-400 hover:text-primary p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <form method="POST" action="{{ route('admin.organizations.store') }}" class="p-8 space-y-4">
+      @csrf
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Organization Name</label><input type="text" name="name" required placeholder="e.g. Heirs MultiSpecialist Hospital" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" rows="3" placeholder="Brief description of this organization…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none placeholder-gray-300"></textarea></div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Icon <span class="text-gray-300 normal-case font-normal">(Lucide)</span></label><input type="text" name="icon" placeholder="building-2" value="building-2" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /><p class="text-gray-300 text-xs mt-1">Any lucide.dev icon name</p></div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Accent Color</label>
+          <div class="flex items-center gap-2">
+            <input type="color" value="#C9922A" oninput="this.nextElementSibling.value=this.value" class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5 flex-shrink-0" />
+            <input type="text" name="color" value="#C9922A" placeholder="#C9922A" class="flex-1 border border-gray-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-gold font-mono" />
+          </div>
+        </div>
+      </div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Website URL <span class="text-gray-300 normal-case font-normal">(optional)</span></label><input type="text" name="website_url" placeholder="https://…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" /></div>
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="button" onclick="document.getElementById('add-org-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Add Organization</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ═══ EDIT ORGANIZATION MODAL ═══ --}}
+<div id="edit-org-overlay" onclick="document.getElementById('edit-org-overlay').classList.remove('open')">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100">
+      <h3 class="font-serif text-xl font-bold text-gray-800">Edit Organization</h3>
+      <button onclick="document.getElementById('edit-org-overlay').classList.remove('open')" class="text-gray-400 hover:text-primary p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <form method="POST" id="edit-org-form" class="p-8 space-y-4">
+      @csrf @method('PUT')
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Organization Name</label><input type="text" name="name" id="eo-name" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" id="eo-description" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none"></textarea></div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Icon <span class="text-gray-300 normal-case font-normal">(Lucide)</span></label><input type="text" name="icon" id="eo-icon" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Accent Color</label>
+          <div class="flex items-center gap-2">
+            <input type="color" id="eo-color-picker" oninput="document.getElementById('eo-color').value=this.value" class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5 flex-shrink-0" />
+            <input type="text" name="color" id="eo-color" class="flex-1 border border-gray-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-gold font-mono" oninput="document.getElementById('eo-color-picker').value=this.value" />
+          </div>
+        </div>
+      </div>
+      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Website URL <span class="text-gray-300 normal-case font-normal">(optional)</span></label><input type="text" name="website_url" id="eo-website" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="button" onclick="document.getElementById('edit-org-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Update Organization</button>
       </div>
     </form>
   </div>
@@ -940,12 +1127,13 @@
 
   /* ── Panel navigation ── */
   const panelMeta={
-    dashboard:{title:'Dashboard',sub:'Welcome back, Dr. Soje'},
+    dashboard:{title:'Dashboard',sub:'Welcome back, {{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }}'},
     posts:{title:'Blog Posts',sub:'{{ $stats["posts"] }} total posts'},
     testimonials:{title:'Testimonials',sub:'Add and manage client testimonials'},
     messages:{title:'Contact Messages',sub:'{{ $stats["new_messages"] }} unread messages'},
     books:{title:'Books',sub:'{{ $stats["books"] }} published books'},
     courses:{title:'Courses & Teachings',sub:'{{ $stats["courses"] }} courses'},
+    organizations:{title:'Organizations',sub:'{{ $stats["organizations"] }} organizations'},
     about:{title:'About Section',sub:'Edit your portfolio bio and quote'},
     services:{title:'Services',sub:'Edit service titles and descriptions'},
     settings:{title:'Settings',sub:'Manage account & preferences'},
@@ -1156,14 +1344,44 @@
     lucide.createIcons();
   }
 
-  function openEditCourseModal(id,title,desc,youtubeUrl,workbookUrl,sort){
+  function openEditCourseModal(id,title,desc,sort){
     const form=document.getElementById('edit-course-form');
     form.action='/admin/courses/'+id;
     document.getElementById('ec-title').value=title;
     document.getElementById('ec-description').value=desc||'';
-    document.getElementById('ec-youtube').value=youtubeUrl;
-    document.getElementById('ec-workbook').value=workbookUrl||'';
     document.getElementById('edit-course-overlay').classList.add('open');
+    lucide.createIcons();
+  }
+
+  function openAddModuleModal(courseId,courseTitle){
+    const form=document.getElementById('add-module-form');
+    form.action='/admin/courses/'+courseId+'/modules';
+    form.reset();
+    document.getElementById('add-module-course-name').textContent='Adding to: '+courseTitle;
+    document.getElementById('add-module-overlay').classList.add('open');
+    lucide.createIcons();
+  }
+
+  function openEditModuleModal(id,title,youtubeUrl,workbookUrl,sort){
+    const form=document.getElementById('edit-module-form');
+    form.action='/admin/modules/'+id;
+    document.getElementById('em-title').value=title;
+    document.getElementById('em-youtube').value=youtubeUrl||'';
+    document.getElementById('em-workbook').value=workbookUrl||'';
+    document.getElementById('edit-module-overlay').classList.add('open');
+    lucide.createIcons();
+  }
+
+  function openEditOrgModal(id,name,desc,icon,color,website,sort){
+    const form=document.getElementById('edit-org-form');
+    form.action='/admin/organizations/'+id;
+    document.getElementById('eo-name').value=name;
+    document.getElementById('eo-description').value=desc||'';
+    document.getElementById('eo-icon').value=icon||'building-2';
+    document.getElementById('eo-color').value=color||'#C9922A';
+    document.getElementById('eo-color-picker').value=color||'#C9922A';
+    document.getElementById('eo-website').value=website||'';
+    document.getElementById('edit-org-overlay').classList.add('open');
     lucide.createIcons();
   }
 

@@ -67,13 +67,14 @@ class SettingsController extends Controller
     public function updateAbout(Request $request)
     {
         $request->validate([
+            'doctor_name' => 'nullable|string|max:100',
             'about_bio_1' => 'required|string|max:1000',
             'about_bio_2' => 'required|string|max:1000',
             'about_quote' => 'required|string|max:500',
         ]);
 
-        foreach ($request->only('about_bio_1', 'about_bio_2', 'about_quote') as $key => $value) {
-            SiteSetting::set($key, $value);
+        foreach ($request->only('doctor_name', 'about_bio_1', 'about_bio_2', 'about_quote') as $key => $value) {
+            SiteSetting::set($key, $value ?? '');
         }
 
         return redirect()->route('admin.dashboard', ['panel' => 'about'])

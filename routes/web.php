@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ImageUploadController;
 use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TestimonialController;
@@ -57,10 +58,18 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
 
-    /* Courses */
+    /* Courses & Modules */
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
+    Route::post('/courses/{course}/modules', [CourseController::class, 'storeModule'])->name('courses.modules.store');
+    Route::put('/modules/{module}', [CourseController::class, 'updateModule'])->name('modules.update');
+    Route::delete('/modules/{module}', [CourseController::class, 'destroyModule'])->name('modules.destroy');
+
+    /* Organizations */
+    Route::post('/organizations', [OrganizationController::class, 'store'])->name('organizations.store');
+    Route::put('/organizations/{organization}', [OrganizationController::class, 'update'])->name('organizations.update');
+    Route::delete('/organizations/{organization}', [OrganizationController::class, 'destroy'])->name('organizations.destroy');
 
     /* Services */
     Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
