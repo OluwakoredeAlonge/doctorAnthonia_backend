@@ -30,6 +30,17 @@ class CoursePageController extends Controller
         $course->load('modules');
         $settings = $this->baseSettings();
 
-        return view('course', compact('course', 'settings'));
+        // Pre-compute for JS — avoids complex expression inside @json() in Blade
+        $episodes = $course->modules->values()->map(function ($m, $i) {
+            return [
+                'index'        => $i,
+                'title'        => $m->title,
+                'youtube_id'   => $m->youtube_id,
+                'youtube_url'  => $m->youtube_url,
+                'workbook_url' => $m->workbook_url,
+            ];
+        })->values();
+
+        return view('course', compact('course', 'settings', 'episodes'));
     }
 }
