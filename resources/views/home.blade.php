@@ -90,7 +90,6 @@
       <a href="#about"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">About</a>
       <a href="#services"     class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Services</a>
       <a href="#books"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Books</a>
-      <a href="#courses"      class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Courses</a>
       <a href="#organization" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Organization</a>
       <a href="#testimonials" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Testimonials</a>
       <a href="{{ route('blog') }}" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Blog</a>
@@ -107,7 +106,6 @@
       <a href="#about"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">About</a>
       <a href="#services"     class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Services</a>
       <a href="#books"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Books</a>
-      <a href="#courses"      class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Courses</a>
       <a href="#organization" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Organization</a>
       <a href="#testimonials" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Testimonials</a>
       <a href="{{ route('blog') }}" class="block text-primary font-medium hover:text-gold transition-colors">Blog</a>
@@ -408,105 +406,6 @@
   </div>
 </section>
 
-@if($courses->isNotEmpty())
-<!-- COURSES -->
-<section id="courses" class="py-28 bg-cream overflow-hidden">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16 reveal">
-      <p class="text-gold font-semibold text-xs tracking-widest uppercase mb-3">Learning Resources</p>
-      <h2 class="font-serif text-4xl lg:text-5xl font-bold text-primary">Courses &amp; Teachings</h2>
-      <div class="w-14 h-0.5 bg-gold mx-auto mt-3 mb-6"></div>
-      <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed">Watch, learn, and grow. Each course is paired with a workbook to deepen your journey.</p>
-    </div>
-
-    <div class="space-y-16">
-      @foreach($courses as $course)
-      <div class="reveal">
-        {{-- Course header --}}
-        <div class="flex items-start gap-4 mb-7">
-          <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </div>
-          <div>
-            <h3 class="font-serif text-2xl font-bold text-primary leading-snug">{{ $course->title }}</h3>
-            @if($course->description)
-            <p class="text-gray-400 text-sm leading-relaxed mt-1 max-w-2xl">{{ $course->description }}</p>
-            @endif
-            @if($course->modules->count())
-            <p class="text-gold text-xs font-semibold mt-2">{{ $course->modules->count() }} {{ Str::plural('Module', $course->modules->count()) }}</p>
-            @endif
-          </div>
-        </div>
-
-        {{-- Modules grid --}}
-        @if($course->modules->count())
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 pl-0 lg:pl-14">
-          @foreach($course->modules as $mi => $module)
-          @php $moduleDelay = ($mi % 3) * 0.07; @endphp
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group" style="transition-delay:{{ $moduleDelay }}s">
-            {{-- YouTube thumbnail --}}
-            @if($module->youtube_id)
-            <div class="relative aspect-video bg-primary overflow-hidden">
-              <img src="https://img.youtube.com/vi/{{ $module->youtube_id }}/hqdefault.jpg"
-                   alt="{{ $module->title }}"
-                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <a href="{{ $module->youtube_url }}" target="_blank" rel="noopener"
-                 class="absolute inset-0 flex items-center justify-center bg-primary/40 hover:bg-primary/20 transition-colors">
-                <div class="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center shadow-2xl">
-                  <svg class="w-5 h-5 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </div>
-              </a>
-            </div>
-            @else
-            <div class="aspect-video bg-primary/90 flex flex-col items-center justify-center gap-2">
-              <svg class="w-10 h-10 text-white/20" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-              <p class="text-white/30 text-xs">Coming soon</p>
-            </div>
-            @endif
-
-            <div class="p-4">
-              <div class="flex items-center gap-2 mb-1.5">
-                <span class="text-gold text-[10px] font-bold uppercase tracking-wider">Module {{ $mi + 1 }}</span>
-              </div>
-              <h4 class="font-semibold text-primary text-sm leading-snug mb-3">{{ $module->title }}</h4>
-              <div class="flex flex-wrap gap-2">
-                @if($module->youtube_url)
-                <a href="{{ $module->youtube_url }}" target="_blank" rel="noopener"
-                   class="inline-flex items-center gap-1.5 bg-[#FF0000] hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
-                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                  Watch
-                </a>
-                @endif
-                @if($module->workbook_url)
-                <a href="{{ $module->workbook_url }}" target="_blank" rel="noopener"
-                   class="inline-flex items-center gap-1.5 bg-gold/10 hover:bg-gold text-gold hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border border-gold/20 hover:border-gold">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                  Read Workbook
-                </a>
-                @endif
-              </div>
-            </div>
-          </div>
-          @endforeach
-        </div>
-        @else
-        <div class="pl-0 lg:pl-14">
-          <div class="bg-white border border-dashed border-gray-200 rounded-2xl p-8 text-center">
-            <svg class="w-8 h-8 text-gray-200 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            <p class="text-gray-300 text-sm">Modules coming soon</p>
-          </div>
-        </div>
-        @endif
-
-        @if(!$loop->last)
-        <div class="mt-14 border-b border-gold/10"></div>
-        @endif
-      </div>
-      @endforeach
-    </div>
-  </div>
-</section>
-@endif
 
 @if($organizations->isNotEmpty())
 <!-- ORGANIZATIONS (dynamic) -->
@@ -808,7 +707,6 @@
           <li><a href="#about"        class="text-white/40 hover:text-gold text-sm transition-colors">About</a></li>
           <li><a href="#services"     class="text-white/40 hover:text-gold text-sm transition-colors">Services</a></li>
           <li><a href="#books"        class="text-white/40 hover:text-gold text-sm transition-colors">Books</a></li>
-          <li><a href="#courses"      class="text-white/40 hover:text-gold text-sm transition-colors">Courses</a></li>
           <li><a href="#organization" class="text-white/40 hover:text-gold text-sm transition-colors">Fosterheirs</a></li>
           <li><a href="{{ route('blog') }}" class="text-white/40 hover:text-gold text-sm transition-colors">Blog</a></li>
           <li><a href="#contact"      class="text-white/40 hover:text-gold text-sm transition-colors">Contact</a></li>
