@@ -89,8 +89,9 @@
     <div class="hidden md:flex items-center gap-7">
       <a href="#about"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">About</a>
       <a href="#services"     class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Services</a>
-      <a href="#books"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Books</a>
-      <a href="#organization" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Organization</a>
+      <a href="#books"                       class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Books</a>
+      <a href="{{ route('courses.index') }}" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Courses</a>
+      <a href="#organization"               class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Organization</a>
       <a href="#testimonials" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Testimonials</a>
       <a href="{{ route('blog') }}" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Blog</a>
     </div>
@@ -105,8 +106,9 @@
     <div class="mt-3 bg-white rounded-2xl shadow-2xl p-6 space-y-4">
       <a href="#about"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">About</a>
       <a href="#services"     class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Services</a>
-      <a href="#books"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Books</a>
-      <a href="#organization" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Organization</a>
+      <a href="#books"                       class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Books</a>
+      <a href="{{ route('courses.index') }}" class="block text-primary font-medium hover:text-gold transition-colors">Courses</a>
+      <a href="#organization"               class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Organization</a>
       <a href="#testimonials" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Testimonials</a>
       <a href="{{ route('blog') }}" class="block text-primary font-medium hover:text-gold transition-colors">Blog</a>
       <a href="#contact" onclick="toggleMenu()" class="block bg-gold hover:bg-gold-light text-white font-semibold px-6 py-3 rounded-full text-center transition-colors">Book a Session</a>
@@ -706,8 +708,9 @@
         <ul class="space-y-3">
           <li><a href="#about"        class="text-white/40 hover:text-gold text-sm transition-colors">About</a></li>
           <li><a href="#services"     class="text-white/40 hover:text-gold text-sm transition-colors">Services</a></li>
-          <li><a href="#books"        class="text-white/40 hover:text-gold text-sm transition-colors">Books</a></li>
-          <li><a href="#organization" class="text-white/40 hover:text-gold text-sm transition-colors">Fosterheirs</a></li>
+          <li><a href="#books"                       class="text-white/40 hover:text-gold text-sm transition-colors">Books</a></li>
+          <li><a href="{{ route('courses.index') }}" class="text-white/40 hover:text-gold text-sm transition-colors">Courses</a></li>
+          <li><a href="#organization"               class="text-white/40 hover:text-gold text-sm transition-colors">Fosterheirs</a></li>
           <li><a href="{{ route('blog') }}" class="text-white/40 hover:text-gold text-sm transition-colors">Blog</a></li>
           <li><a href="#contact"      class="text-white/40 hover:text-gold text-sm transition-colors">Contact</a></li>
         </ul>

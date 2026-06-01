@@ -22,6 +22,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{blogPost:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course}', [CoursePageController::class, 'show'])->name('courses.show');
 
 /* ── Auth ── */
