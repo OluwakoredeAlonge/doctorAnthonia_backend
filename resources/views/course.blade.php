@@ -3,8 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="{{ asset('favicon.ico') }}" />
   <title>{{ $course->title }} | {{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}</title>
-  <meta name="description" content="{{ $course->description ?? $course->title }}" />
+  <meta name="description" content="{{ Str::limit($course->description ?? $course->title, 160) }}" />
+  <link rel="canonical" href="{{ route('courses.show', $course) }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ route('courses.show', $course) }}" />
+  <meta property="og:title" content="{{ $course->title }} | {{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}" />
+  <meta property="og:description" content="{{ Str::limit($course->description ?? $course->title, 160) }}" />
+  <meta property="og:site_name" content="{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{ $course->title }}" />
+  <meta name="twitter:description" content="{{ Str::limit($course->description ?? $course->title, 160) }}" />
+  <!-- JSON-LD: Course -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": {{ json_encode($course->title) }},
+    "description": {{ json_encode(Str::limit($course->description ?? $course->title, 500)) }},
+    "url": "{{ route('courses.show', $course) }}",
+    "provider": {
+      "@type": "Person",
+      "name": "{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}",
+      "url": "{{ url('/') }}"
+    }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />

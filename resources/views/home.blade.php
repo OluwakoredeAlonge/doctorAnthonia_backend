@@ -3,8 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="{{ asset('favicon.ico') }}" />
   <title>{{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }} | Mental Health &amp; Wellness</title>
   <meta name="description" content="{{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }} — Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor, Addiction Recovery Therapist &amp; Author. Founder of Fosterheirs Mental Health Consultancy, Oye-Ekiti." />
+  <link rel="canonical" href="{{ url('/') }}" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ url('/') }}" />
+  <meta property="og:title" content="{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }} | Mental Health &amp; Wellness" />
+  <meta property="og:description" content="{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }} — Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor, Addiction Recovery Therapist &amp; Author." />
+  <meta property="og:image" content="{{ asset('asset/DrAnthonia.png') }}" />
+  <meta property="og:site_name" content="{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }} | Mental Health &amp; Wellness" />
+  <meta name="twitter:description" content="Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor &amp; Author. Founder of Fosterheirs Mental Health Consultancy." />
+  <meta name="twitter:image" content="{{ asset('asset/DrAnthonia.png') }}" />
+  <!-- JSON-LD: Person -->
+  @php
+  $sameAs = array_values(array_filter([
+      $settings['social_facebook']  ?? null,
+      $settings['social_instagram'] ?? null,
+      $settings['social_twitter']   ?? null,
+      $settings['social_linkedin']  ?? null,
+      $settings['social_youtube']   ?? null,
+      $settings['social_tiktok']    ?? null,
+  ]));
+  @endphp
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}",
+    "jobTitle": "Medical Practitioner & Psycho-trauma Therapist",
+    "description": "Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor, Addiction Recovery Therapist and Author. Founder of Fosterheirs Mental Health Consultancy.",
+    "url": "{{ url('/') }}",
+    "image": "{{ asset('asset/DrAnthonia.png') }}",
+    "sameAs": {!! json_encode($sameAs) !!}
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />

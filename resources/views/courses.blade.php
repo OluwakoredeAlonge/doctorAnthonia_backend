@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="{{ asset('favicon.ico') }}" />
   <title>Courses &amp; Teachings | {{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}</title>
   <meta name="description" content="Watch and learn from {{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }} — courses on mental health, trauma recovery, marriage restoration, and faith-based wellness." />
+  <link rel="canonical" href="{{ url('/courses') }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ url('/courses') }}" />
+  <meta property="og:title" content="Courses &amp; Teachings | {{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}" />
+  <meta property="og:description" content="Courses on mental health, trauma recovery, marriage restoration, and faith-based wellness." />
+  <meta property="og:site_name" content="{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Courses &amp; Teachings | {{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}" />
+  <meta name="twitter:description" content="Courses on mental health, trauma recovery, marriage restoration, and faith-based wellness." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />

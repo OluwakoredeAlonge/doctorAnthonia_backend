@@ -15,9 +15,17 @@ use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CoursePageController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 /* ── Public ── */
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', function () {
+    return response(
+        "User-agent: *\nDisallow: /admin\nDisallow: /login\nDisallow: /forgot-password\nDisallow: /reset-password\n\nSitemap: " . url('/sitemap.xml') . "\n",
+        200, ['Content-Type' => 'text/plain']
+    );
+});
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
