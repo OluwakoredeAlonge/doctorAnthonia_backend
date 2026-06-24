@@ -16,20 +16,21 @@
   <meta name="twitter:title" content="{{ $course->title }}" />
   <meta name="twitter:description" content="{{ Str::limit($course->description ?? $course->title, 160) }}" />
   <!-- JSON-LD: Course -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Course",
-    "name": {{ json_encode($course->title) }},
-    "description": {{ json_encode(Str::limit($course->description ?? $course->title, 500)) }},
-    "url": "{{ route('courses.show', $course) }}",
-    "provider": {
-      "@type": "Person",
-      "name": "{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}",
-      "url": "{{ url('/') }}"
-    }
-  }
-  </script>
+  @php
+  $courseJsonLd = json_encode([
+      '@context'    => 'https://schema.org',
+      '@type'       => 'Course',
+      'name'        => $course->title,
+      'description' => Str::limit($course->description ?? $course->title, 500),
+      'url'         => route('courses.show', $course),
+      'provider'    => [
+          '@type' => 'Person',
+          'name'  => $settings['doctor_name'] ?? 'Dr. O.A. Soje',
+          'url'   => url('/'),
+      ],
+  ], JSON_UNESCAPED_SLASHES);
+  @endphp
+  <script type="application/ld+json">{!! $courseJsonLd !!}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />

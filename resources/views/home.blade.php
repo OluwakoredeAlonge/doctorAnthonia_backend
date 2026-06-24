@@ -21,27 +21,25 @@
   <meta name="twitter:image" content="{{ asset('asset/DrAnthonia.png') }}" />
   <!-- JSON-LD: Person -->
   @php
-  $sameAs = array_values(array_filter([
-      $settings['social_facebook']  ?? null,
-      $settings['social_instagram'] ?? null,
-      $settings['social_twitter']   ?? null,
-      $settings['social_linkedin']  ?? null,
-      $settings['social_youtube']   ?? null,
-      $settings['social_tiktok']    ?? null,
-  ]));
+  $jsonLd = json_encode([
+      '@context'    => 'https://schema.org',
+      '@type'       => 'Person',
+      'name'        => $settings['doctor_name'] ?? 'Dr. O.A. Soje',
+      'jobTitle'    => 'Medical Practitioner & Psycho-trauma Therapist',
+      'description' => 'Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor, Addiction Recovery Therapist and Author. Founder of Fosterheirs Mental Health Consultancy.',
+      'url'         => url('/'),
+      'image'       => asset('asset/DrAnthonia.png'),
+      'sameAs'      => array_values(array_filter([
+          $settings['social_facebook']  ?? null,
+          $settings['social_instagram'] ?? null,
+          $settings['social_twitter']   ?? null,
+          $settings['social_linkedin']  ?? null,
+          $settings['social_youtube']   ?? null,
+          $settings['social_tiktok']    ?? null,
+      ])),
+  ], JSON_UNESCAPED_SLASHES);
   @endphp
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "{{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}",
-    "jobTitle": "Medical Practitioner & Psycho-trauma Therapist",
-    "description": "Medical Practitioner, Psycho-trauma Therapist, Marriage Counsellor, Addiction Recovery Therapist and Author. Founder of Fosterheirs Mental Health Consultancy.",
-    "url": "{{ url('/') }}",
-    "image": "{{ asset('asset/DrAnthonia.png') }}",
-    "sameAs": {!! json_encode($sameAs) !!}
-  }
-  </script>
+  <script type="application/ld+json">{!! $jsonLd !!}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
