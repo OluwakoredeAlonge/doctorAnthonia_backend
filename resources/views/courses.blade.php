@@ -153,8 +153,14 @@
         @if($course->description)
         <p class="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2">{{ $course->description }}</p>
         @endif
+        @if($course->selar_url)
+        <span class="inline-flex items-center gap-1.5 bg-gold/10 text-gold text-xs font-bold px-2.5 py-1 rounded-full mb-3">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          Paid Course
+        </span>
+        @endif
         <span class="inline-flex items-center gap-1.5 text-gold text-xs font-semibold">
-          Watch All Episodes
+          {{ $course->selar_url ? 'Get Access on Selar' : 'Watch All Episodes' }}
           <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </span>
       </div>

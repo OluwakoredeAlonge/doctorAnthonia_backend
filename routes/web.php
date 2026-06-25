@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CourseController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BlogInteractionController;
 use App\Http\Controllers\CoursePageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
@@ -32,6 +34,8 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{blogPost:slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course}', [CoursePageController::class, 'show'])->name('courses.show');
+Route::post('/blog/{blogPost}/like', [BlogInteractionController::class, 'like'])->name('blog.like');
+Route::post('/blog/{blogPost}/comment', [BlogInteractionController::class, 'comment'])->name('blog.comment');
 
 /* ── Auth ── */
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
@@ -53,6 +57,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/posts', [BlogPostController::class, 'store'])->name('posts.store');
     Route::put('/posts/{blogPost}', [BlogPostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{blogPost}', [BlogPostController::class, 'destroy'])->name('posts.destroy');
+
+    /* Blog Comments */
+    Route::post('/comments/{comment}/reply', [BlogCommentController::class, 'reply'])->name('comments.reply');
+    Route::delete('/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('comments.destroy');
 
     /* Testimonials */
     Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');

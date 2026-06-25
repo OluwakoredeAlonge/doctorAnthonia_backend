@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="{{ asset('favicon.ico') }}" />
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
   <title>{{ $blogPost->title }} | Dr. Anthonia Yemisi Soje</title>
   <meta name="description" content="{{ $blogPost->excerpt }}" />
   <link rel="canonical" href="{{ route('blog.show', $blogPost) }}" />
@@ -381,6 +382,245 @@
     <div class="hidden xl:block flex-shrink-0" style="min-width:52px;"></div>
   </div>
 </div>
+
+<!-- ════════════════════════ LIKES & COMMENTS ════════════════════════ -->
+<style>
+  @keyframes heartPop{0%{transform:scale(1);}30%{transform:scale(1.5);}60%{transform:scale(.9);}100%{transform:scale(1);}}
+  .heart-pop{animation:heartPop .4s cubic-bezier(.36,.07,.19,.97);}
+  .comment-slide-in{animation:slideIn .3s ease both;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+</style>
+
+<section class="border-t border-gray-100">
+  <div class="max-w-3xl mx-auto px-6">
+
+    {{-- ── Reaction bar (Instagram/Facebook style) ── --}}
+    <div class="flex items-center gap-6 py-4 border-b border-gray-100">
+
+      {{-- Heart like --}}
+      <button id="like-btn" onclick="toggleLike()" class="flex items-center gap-1.5 group focus:outline-none">
+        <svg id="like-icon" class="w-6 h-6 transition-colors {{ $userLiked ? 'text-red-500' : 'text-gray-400 group-hover:text-red-400' }}"
+          fill="{{ $userLiked ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+        <span id="like-count" class="text-sm font-semibold {{ $userLiked ? 'text-red-500' : 'text-gray-500' }}">{{ $likeCount }}</span>
+      </button>
+
+      {{-- Comment count --}}
+      <button onclick="focusCommentBox()" class="flex items-center gap-1.5 group focus:outline-none">
+        <svg class="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+        <span id="comment-count" class="text-sm font-semibold text-gray-500">{{ $comments->count() }}</span>
+      </button>
+
+      @if($likeCount > 0)
+      <p class="text-sm text-gray-400 ml-auto">
+        {{ $likeCount }} {{ $likeCount === 1 ? 'person likes' : 'people like' }} this
+      </p>
+      @endif
+    </div>
+
+    {{-- ── Comments ── --}}
+    <div id="comments-section" class="py-6 space-y-5">
+
+      @if(session('comment_posted'))
+      <div id="post-toast" class="flex items-center gap-3 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-2xl text-sm font-medium comment-slide-in">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        Your comment is live, {{ session('comment_posted') }}!
+      </div>
+      @endif
+
+      @forelse($comments as $comment)
+      <div class="comment-slide-in" id="comment-{{ $comment->id }}">
+        {{-- Parent comment --}}
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-sm text-white"
+            style="background: hsl({{ (ord(strtoupper($comment->name[0])) * 47) % 360 }}, 55%, 45%)">
+            {{ strtoupper(substr($comment->name, 0, 1)) }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 inline-block max-w-full">
+              <p class="font-semibold text-primary text-sm leading-none mb-1">{{ $comment->name }}</p>
+              <p class="text-gray-700 text-sm leading-relaxed">{{ $comment->body }}</p>
+            </div>
+            <div class="flex items-center gap-3 mt-1 ml-1">
+              <p class="text-gray-400 text-xs">{{ $comment->created_at->diffForHumans() }}</p>
+              @auth
+                @if($comment->replies->isEmpty())
+                <button onclick="toggleReplyForm({{ $comment->id }})"
+                  class="text-xs font-semibold text-gold hover:text-primary transition-colors">
+                  Reply
+                </button>
+                @endif
+              @endauth
+            </div>
+
+            {{-- Admin reply form (hidden by default) --}}
+            @auth
+              @if($comment->replies->isEmpty())
+              <div id="reply-form-{{ $comment->id }}" class="hidden mt-3">
+                <form action="{{ route('admin.comments.reply', $comment) }}" method="POST" class="flex gap-2 items-end">
+                  @csrf
+                  <div class="w-8 h-8 rounded-full bg-gold flex-shrink-0 flex items-center justify-center font-bold text-xs text-white self-end mb-0.5">
+                    D
+                  </div>
+                  <div class="flex-1 flex items-end bg-gray-100 rounded-2xl px-4 py-2.5 gap-2">
+                    <textarea name="body" rows="1" maxlength="2000" required
+                      placeholder="Write a reply as Dr. Anthonia Soje…"
+                      oninput="autoResize(this)"
+                      class="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none resize-none leading-relaxed max-h-28 overflow-y-auto"></textarea>
+                    <button type="submit"
+                      class="flex-shrink-0 w-7 h-7 bg-gold hover:bg-gold-light rounded-full flex items-center justify-center transition-colors self-end mb-0.5">
+                      <svg class="w-3.5 h-3.5 text-white ml-px" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              @endif
+            @endauth
+
+            {{-- Nested replies --}}
+            @if($comment->replies->isNotEmpty())
+            <div class="mt-3 space-y-3 pl-1">
+              @foreach($comment->replies as $reply)
+              <div class="flex gap-2">
+                <div class="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-xs text-white bg-gold">
+                  D
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="bg-gold/10 border border-gold/20 rounded-2xl rounded-tl-sm px-3 py-2.5 inline-block max-w-full">
+                    <p class="font-semibold text-gold text-xs leading-none mb-1">{{ $reply->name }} <span class="font-normal text-gray-400">· Author</span></p>
+                    <p class="text-gray-700 text-sm leading-relaxed">{{ $reply->body }}</p>
+                  </div>
+                  <p class="text-gray-400 text-xs mt-1 ml-1">{{ $reply->created_at->diffForHumans() }}</p>
+                </div>
+              </div>
+              @endforeach
+            </div>
+            @endif
+
+          </div>
+        </div>
+      </div>
+      @empty
+      <p class="text-gray-400 text-sm text-center py-4">No comments yet. Be the first to share your thoughts!</p>
+      @endforelse
+    </div>
+
+    {{-- ── Comment form (Instagram-style inline) ── --}}
+    <div class="sticky bottom-0 bg-white border-t border-gray-100 py-4">
+      <form action="{{ route('blog.comment', $blogPost) }}" method="POST" id="comment-form">
+        @csrf
+        {{-- Name + email row (collapsible — hidden until textarea is focused) --}}
+        <div id="comment-fields" class="{{ old('name') || old('body') || $errors->any() ? '' : 'hidden' }} grid sm:grid-cols-2 gap-3 mb-3">
+          <div>
+            <input type="text" name="name" value="{{ old('name') }}" maxlength="100" placeholder="Your name"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gold bg-gray-50 transition-all">
+            @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+          </div>
+          <div>
+            <input type="email" name="email" value="{{ old('email') }}" maxlength="200" placeholder="Email (not shown publicly)"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gold bg-gray-50 transition-all">
+            @error('email')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+          </div>
+        </div>
+        {{-- Message bar --}}
+        <div class="flex items-end gap-3">
+          <div class="w-9 h-9 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          </div>
+          <div class="flex-1 flex items-end bg-gray-100 rounded-2xl px-4 py-2.5 gap-2">
+            <textarea id="comment-body" name="body" rows="1" maxlength="2000"
+              onfocus="expandForm()" oninput="autoResize(this)"
+              placeholder="Write a comment…"
+              class="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none resize-none leading-relaxed max-h-32 overflow-y-auto">{{ old('body') }}</textarea>
+            <button type="submit"
+              class="flex-shrink-0 w-8 h-8 bg-primary hover:bg-primary-light rounded-full flex items-center justify-center transition-colors self-end mb-0.5">
+              <svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+          </div>
+        </div>
+        @error('body')<p class="text-red-500 text-xs mt-1.5 ml-12">{{ $message }}</p>@enderror
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<script>
+const likeUrl   = "{{ route('blog.like', $blogPost) }}";
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+async function toggleLike() {
+  const btn   = document.getElementById('like-btn');
+  const icon  = document.getElementById('like-icon');
+  const count = document.getElementById('like-count');
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch(likeUrl, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' } });
+    const data = await res.json();
+
+    count.textContent = data.count;
+
+    if (data.liked) {
+      icon.setAttribute('fill', 'currentColor');
+      icon.classList.add('text-red-500');
+      icon.classList.remove('text-gray-400');
+      count.classList.add('text-red-500');
+      count.classList.remove('text-gray-500');
+      icon.classList.add('heart-pop');
+      icon.addEventListener('animationend', () => icon.classList.remove('heart-pop'), { once: true });
+    } else {
+      icon.setAttribute('fill', 'none');
+      icon.classList.remove('text-red-500');
+      icon.classList.add('text-gray-400');
+      count.classList.remove('text-red-500');
+      count.classList.add('text-gray-500');
+    }
+
+    const likeText = document.querySelector('#like-btn + span + p') || document.querySelector('.ml-auto');
+    if (likeText && likeText.textContent.includes('like')) {
+      likeText.textContent = data.count > 0
+        ? data.count + (data.count === 1 ? ' person likes this' : ' people like this')
+        : '';
+    }
+  } catch(e) { console.error(e); }
+  btn.disabled = false;
+}
+
+function expandForm() {
+  document.getElementById('comment-fields').classList.remove('hidden');
+}
+
+function focusCommentBox() {
+  expandForm();
+  document.getElementById('comment-body').focus();
+}
+
+function toggleReplyForm(id) {
+  const form = document.getElementById('reply-form-' + id);
+  if (!form) return;
+  const hidden = form.classList.toggle('hidden');
+  if (!hidden) form.querySelector('textarea').focus();
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 128) + 'px';
+}
+
+// Auto-resize on load if there's content
+window.addEventListener('DOMContentLoaded', () => {
+  const ta = document.getElementById('comment-body');
+  if (ta && ta.value) { expandForm(); autoResize(ta); }
+
+  // Auto-dismiss the post toast
+  const toast = document.getElementById('post-toast');
+  if (toast) setTimeout(() => toast.style.opacity = '0', 4000);
+});
+</script>
 
 <!-- ════════════════════════ RELATED POSTS ════════════════════════ -->
 @if($related->count() > 0)

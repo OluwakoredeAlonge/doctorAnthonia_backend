@@ -16,6 +16,7 @@ class CourseController extends Controller
         $data = $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'selar_url'   => 'nullable|url|max:500',
             'sort_order'  => 'nullable|integer',
         ]);
 
@@ -32,6 +33,7 @@ class CourseController extends Controller
         $data = $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'selar_url'   => 'nullable|url|max:500',
         ]);
 
         $course->update($data);

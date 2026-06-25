@@ -17,6 +17,21 @@ class BlogPost extends Model
         'published_at' => 'datetime',
     ];
 
+    public function likes()
+    {
+        return $this->hasMany(BlogLike::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(BlogComment::class);
+    }
+
+    public function approvedComments()
+    {
+        return $this->hasMany(BlogComment::class)->where('status', 'approved')->latest();
+    }
+
     protected static function boot(): void
     {
         parent::boot();

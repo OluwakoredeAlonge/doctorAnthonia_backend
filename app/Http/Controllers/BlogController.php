@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlogLike;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,7 @@ class BlogController extends Controller
         return view('blog.index', compact('posts', 'featured', 'categories'));
     }
 
-    public function show(BlogPost $blogPost)
+    public function show(Request $request, BlogPost $blogPost)
     {
         abort_if($blogPost->status !== 'published', 404);
 
@@ -38,6 +39,17 @@ class BlogController extends Controller
             ->take(3)
             ->get();
 
-        return view('blog.show', compact('blogPost', 'related'));
+        $likeCount = $blogPost->likes()->count();
+        $userLiked = BlogLike::where('blog_post_id', $blogPost->id)
+            ->where('ip_address', $request->ip())
+            ->exists();
+        $comments  = $blogPost->comments()
+            ->with('replies')
+            ->where('status', 'approved')
+            ->whereNull('parent_id')
+            ->latest()
+            ->get();
+
+        return view('blog.show', compact('blogPost', 'related', 'likeCount', 'userLiked', 'comments'));
     }
 }

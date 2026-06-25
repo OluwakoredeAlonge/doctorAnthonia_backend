@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BlogComment;
 use App\Models\BlogPost;
 use App\Models\Book;
 use App\Models\ContactMessage;
@@ -22,6 +23,7 @@ class DashboardController extends Controller
             'new_messages'        => ContactMessage::where('status', 'new')->count(),
             'testimonials'        => Testimonial::count(),
             'pending_testimonials'=> Testimonial::where('status', 'pending')->count(),
+            'pending_comments'    => BlogComment::count(),
             'books'               => Book::count(),
             'courses'             => Course::count(),
             'organizations'       => Organization::count(),
@@ -45,11 +47,12 @@ class DashboardController extends Controller
             'contact_phone', 'contact_email',
         ]);
 
-        $panel = request('panel', 'dashboard');
+        $comments = BlogComment::with('post')->latest()->get();
+        $panel    = request('panel', 'dashboard');
 
         return view('admin.dashboard', compact(
             'stats', 'recentMessages', 'recentPosts',
-            'posts', 'testimonials', 'messages',
+            'posts', 'testimonials', 'messages', 'comments',
             'books', 'courses', 'organizations', 'services', 'settings', 'panel'
         ));
     }

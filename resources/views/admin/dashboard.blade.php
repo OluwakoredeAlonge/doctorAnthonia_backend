@@ -91,6 +91,7 @@
     <button onclick="showPanel('dashboard')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white text-sm font-medium"><i data-lucide="layout-dashboard" class="nav-icon w-5 h-5 flex-shrink-0 text-gold"></i><span class="sidebar-label">Dashboard</span></button>
     <button onclick="showPanel('posts')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="file-text" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Blog Posts</span><span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['posts'] }}</span></button>
     <button onclick="showPanel('testimonials')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="message-square" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Testimonials</span></button>
+    <button onclick="showPanel('comments')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="message-circle" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Comments</span>@if($stats['pending_comments']>0)<span class="sidebar-label ml-auto bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['pending_comments'] }}</span>@endif</button>
     <button onclick="showPanel('messages')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="mail" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Messages</span>@if($stats['new_messages']>0)<span class="sidebar-label ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['new_messages'] }}</span>@endif</button>
     <button onclick="showPanel('books')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="book-open" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Books</span></button>
     <button onclick="showPanel('courses')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="play-circle" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Courses</span>@if($stats['courses']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['courses'] }}</span>@endif</button>
@@ -289,6 +290,51 @@
     @endif
   </section>
 
+  {{-- ═══ COMMENTS PANEL ═══ --}}
+  <section id="panel-comments" class="panel p-6 fadein">
+    <div class="mb-6">
+      <h2 class="font-serif text-xl font-bold text-gray-800">Blog Comments</h2>
+      <p class="text-gray-400 text-sm mt-0.5">Review and moderate comments before they appear on blog posts</p>
+    </div>
+    @if($comments->isEmpty())
+    <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-12 text-center">
+      <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><i data-lucide="message-circle" class="w-7 h-7 text-gray-300"></i></div>
+      <p class="font-medium text-gray-400">No comments yet</p>
+    </div>
+    @else
+    <div class="space-y-3">
+      @foreach($comments as $comment)
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-start justify-between gap-4 flex-wrap">
+          <div class="flex items-start gap-3 min-w-0 flex-1">
+            <div class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-sm text-white"
+              style="background: hsl({{ (ord(strtoupper($comment->name[0])) * 47) % 360 }}, 55%, 45%)">
+              {{ strtoupper(substr($comment->name, 0, 1)) }}
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap mb-0.5">
+                <p class="font-semibold text-gray-800 text-sm">{{ $comment->name }}</p>
+                <span class="text-gray-300 text-xs">·</span>
+                <p class="text-xs text-gray-400">{{ $comment->email }}</p>
+                <span class="text-gray-300 text-xs">·</span>
+                <a href="{{ route('blog.show', $comment->post) }}" target="_blank" class="text-xs text-gold hover:underline truncate max-w-xs">{{ Str::limit($comment->post->title ?? '', 45) }}</a>
+                <span class="text-gray-300 text-xs">·</span>
+                <span class="text-xs text-gray-400">{{ $comment->created_at->diffForHumans() }}</span>
+              </div>
+              <p class="text-gray-600 text-sm leading-relaxed">{{ $comment->body }}</p>
+            </div>
+          </div>
+          <form method="POST" action="{{ route('admin.comments.destroy', $comment) }}" class="inline flex-shrink-0" onsubmit="return confirm('Delete this comment?')">
+            @csrf @method('DELETE')
+            <button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </form>
+        </div>
+      </div>
+      @endforeach
+    </div>
+    @endif
+  </section>
+
   {{-- ═══ MESSAGES PANEL ═══ --}}
   <section id="panel-messages" class="panel p-6 fadein">
     <div class="flex items-center justify-between mb-6">
@@ -391,7 +437,7 @@
           <div class="flex items-center gap-2 flex-shrink-0">
             <span class="text-xs text-gray-400 font-medium">{{ $course->modules->count() }} {{ Str::plural('module', $course->modules->count()) }}</span>
             <button onclick="openAddModuleModal({{ $course->id }},'{{ addslashes($course->title) }}')" class="inline-flex items-center gap-1.5 bg-gold/10 hover:bg-gold text-gold hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border border-gold/20 hover:border-gold"><i data-lucide="plus" class="w-3 h-3"></i> Add Module</button>
-            <button onclick="openEditCourseModal({{ $course->id }},'{{ addslashes($course->title) }}','{{ addslashes($course->description ?? '') }}','{{ $course->sort_order }}')" class="p-1.5 text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+            <button onclick="openEditCourseModal({{ $course->id }},'{{ addslashes($course->title) }}','{{ addslashes($course->description ?? '') }}','{{ addslashes($course->selar_url ?? '') }}','{{ $course->sort_order }}')" class="p-1.5 text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
             <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" class="inline" onsubmit="return confirm('Delete this course and ALL its modules?')">@csrf @method('DELETE')<button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
           </div>
         </div>
@@ -967,6 +1013,11 @@
       @csrf
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Title</label><input type="text" name="title" required placeholder="e.g. Overcoming Anxiety — A Faith-Based Approach" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" rows="3" placeholder="Brief overview of what viewers will learn across all modules…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none placeholder-gray-300"></textarea></div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Selar Purchase Link <span class="text-gray-300 normal-case font-normal">(optional — for paid courses)</span></label>
+        <input type="url" name="selar_url" placeholder="https://selar.com/xxxxxxxx" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
+        <p class="text-gray-300 text-xs mt-1.5">When set, a "Get Access on Selar" button will appear on the course page.</p>
+      </div>
       <p class="text-gray-300 text-xs bg-gold/5 border border-gold/10 rounded-xl px-4 py-3">💡 After creating the course, use the <strong class="text-gold font-semibold">Add Module</strong> button to add individual video modules.</p>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
         <button type="button" onclick="document.getElementById('add-course-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
@@ -987,6 +1038,11 @@
       @csrf @method('PUT')
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Title</label><input type="text" name="title" id="ec-title" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" id="ec-description" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none"></textarea></div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Selar Purchase Link <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+        <input type="url" name="selar_url" id="ec-selar-url" placeholder="https://selar.com/xxxxxxxx" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
+        <p class="text-gray-300 text-xs mt-1.5">Leave blank for free courses. When set, a purchase button appears on the course page.</p>
+      </div>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
         <button type="button" onclick="document.getElementById('edit-course-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
         <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-light text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Update Course</button>
@@ -1344,11 +1400,12 @@
     lucide.createIcons();
   }
 
-  function openEditCourseModal(id,title,desc,sort){
+  function openEditCourseModal(id,title,desc,selarUrl,sort){
     const form=document.getElementById('edit-course-form');
     form.action='/admin/courses/'+id;
     document.getElementById('ec-title').value=title;
     document.getElementById('ec-description').value=desc||'';
+    document.getElementById('ec-selar-url').value=selarUrl||'';
     document.getElementById('edit-course-overlay').classList.add('open');
     lucide.createIcons();
   }
