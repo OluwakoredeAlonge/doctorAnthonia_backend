@@ -119,16 +119,32 @@
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         Back to Courses
       </a>
-      <h1 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold leading-snug mb-2">{{ $course->title }}</h1>
-      @if($course->description)
-      <p class="text-white/55 text-sm leading-relaxed max-w-2xl mt-2">{{ $course->description }}</p>
-      @endif
-      <div class="flex items-center gap-4 mt-4">
-        <span class="inline-flex items-center gap-1.5 bg-white/10 text-gold text-xs font-semibold px-3 py-1.5 rounded-full">
-          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          {{ $course->modules->count() }} {{ Str::plural('Episode', $course->modules->count()) }}
-        </span>
-        <span class="text-white/30 text-xs">by {{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}</span>
+      <div class="flex flex-col sm:flex-row gap-6 items-start">
+        @if($course->cover_image)
+        <div class="flex-shrink-0 w-full sm:w-48 md:w-56 aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+          <img src="{{ $course->cover_image }}" alt="{{ $course->title }}" class="w-full h-full object-cover" />
+        </div>
+        @endif
+        <div class="flex-1 min-w-0">
+          <h1 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold leading-snug mb-2">{{ $course->title }}</h1>
+          @if($course->description)
+          <p class="text-white/55 text-sm leading-relaxed max-w-2xl mt-2">{{ $course->description }}</p>
+          @endif
+          <div class="flex flex-wrap items-center gap-3 mt-4">
+            <span class="inline-flex items-center gap-1.5 bg-white/10 text-gold text-xs font-semibold px-3 py-1.5 rounded-full">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              {{ $course->modules->count() }} {{ Str::plural('Episode', $course->modules->count()) }}
+            </span>
+            <span class="text-white/30 text-xs">by {{ $settings['doctor_name'] ?? 'Dr. O.A. Soje' }}</span>
+            @if($course->selar_url)
+            <a href="{{ $course->selar_url }}" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 bg-gold hover:bg-gold-light text-white text-xs font-bold px-4 py-2 rounded-full transition-all shadow-lg shadow-gold/30">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              Get Full Access on Selar
+            </a>
+            @endif
+          </div>
+        </div>
       </div>
     </div>
   </div>

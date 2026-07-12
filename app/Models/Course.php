@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $fillable = ['title', 'description', 'selar_url', 'sort_order'];
+    protected $fillable = ['title', 'description', 'cover_image', 'selar_url', 'sort_order'];
 
     public function modules()
     {

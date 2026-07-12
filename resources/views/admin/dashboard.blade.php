@@ -437,7 +437,7 @@
           <div class="flex items-center gap-2 flex-shrink-0">
             <span class="text-xs text-gray-400 font-medium">{{ $course->modules->count() }} {{ Str::plural('module', $course->modules->count()) }}</span>
             <button onclick="openAddModuleModal({{ $course->id }},'{{ addslashes($course->title) }}')" class="inline-flex items-center gap-1.5 bg-gold/10 hover:bg-gold text-gold hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border border-gold/20 hover:border-gold"><i data-lucide="plus" class="w-3 h-3"></i> Add Module</button>
-            <button onclick="openEditCourseModal({{ $course->id }},'{{ addslashes($course->title) }}','{{ addslashes($course->description ?? '') }}','{{ addslashes($course->selar_url ?? '') }}','{{ $course->sort_order }}')" class="p-1.5 text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+            <button onclick="openEditCourseModal({{ $course->id }},'{{ addslashes($course->title) }}','{{ addslashes($course->description ?? '') }}','{{ $course->sort_order }}','{{ addslashes($course->cover_image ?? '') }}','{{ addslashes($course->selar_url ?? '') }}')" class="p-1.5 text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
             <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" class="inline" onsubmit="return confirm('Delete this course and ALL its modules?')">@csrf @method('DELETE')<button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
           </div>
         </div>
@@ -1013,10 +1013,25 @@
       @csrf
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Title</label><input type="text" name="title" required placeholder="e.g. Overcoming Anxiety — A Faith-Based Approach" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" rows="3" placeholder="Brief overview of what viewers will learn across all modules…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none placeholder-gray-300"></textarea></div>
+      {{-- Cover Image --}}
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Selar Purchase Link <span class="text-gray-300 normal-case font-normal">(optional — for paid courses)</span></label>
-        <input type="url" name="selar_url" placeholder="https://selar.com/xxxxxxxx" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
-        <p class="text-gray-300 text-xs mt-1.5">When set, a "Get Access on Selar" button will appear on the course page.</p>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Cover Image <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+        <div class="flex gap-2 items-center">
+          <input type="text" name="cover_image" id="nc-cover-url" placeholder="Paste image URL or upload →" class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300 min-w-0" />
+          <label id="nc-upload-btn" class="flex-shrink-0 inline-flex items-center gap-1.5 bg-gold/10 hover:bg-gold text-gold hover:text-white text-xs font-semibold px-3 py-3 rounded-xl transition-all border border-gold/20 hover:border-gold cursor-pointer whitespace-nowrap">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload
+            <input type="file" accept="image/*" class="hidden" onchange="uploadBookCoverImage(this,'nc-cover-url','nc-cover-preview','nc-upload-btn')" />
+          </label>
+        </div>
+        <div id="nc-cover-preview" class="hidden mt-2 relative rounded-xl overflow-hidden border border-gray-100 h-28">
+          <img class="w-full h-full object-cover" alt="Cover preview" />
+        </div>
+      </div>
+      {{-- Selar Link --}}
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Selar Purchase Link <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+        <input type="url" name="selar_url" id="nc-selar-url" placeholder="https://selar.co/…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
+        <p class="text-gray-300 text-xs mt-1">Link to the Selar product page where customers can purchase access.</p>
       </div>
       <p class="text-gray-300 text-xs bg-gold/5 border border-gold/10 rounded-xl px-4 py-3">💡 After creating the course, use the <strong class="text-gold font-semibold">Add Module</strong> button to add individual video modules.</p>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
@@ -1038,10 +1053,24 @@
       @csrf @method('PUT')
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Title</label><input type="text" name="title" id="ec-title" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
       <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Short Description <span class="text-gray-300 normal-case font-normal">(optional)</span></label><textarea name="description" id="ec-description" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none"></textarea></div>
+      {{-- Cover Image --}}
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Course Cover Image <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+        <div class="flex gap-2 items-center">
+          <input type="text" name="cover_image" id="ec-cover-url" placeholder="Paste image URL or upload →" class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300 min-w-0" />
+          <label id="ec-upload-btn" class="flex-shrink-0 inline-flex items-center gap-1.5 bg-gold/10 hover:bg-gold text-gold hover:text-white text-xs font-semibold px-3 py-3 rounded-xl transition-all border border-gold/20 hover:border-gold cursor-pointer whitespace-nowrap">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload
+            <input type="file" accept="image/*" class="hidden" onchange="uploadBookCoverImage(this,'ec-cover-url','ec-cover-preview','ec-upload-btn')" />
+          </label>
+        </div>
+        <div id="ec-cover-preview" class="hidden mt-2 relative rounded-xl overflow-hidden border border-gray-100 h-28">
+          <img class="w-full h-full object-cover" alt="Cover preview" />
+        </div>
+      </div>
+      {{-- Selar Link --}}
       <div>
         <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Selar Purchase Link <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
-        <input type="url" name="selar_url" id="ec-selar-url" placeholder="https://selar.com/xxxxxxxx" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
-        <p class="text-gray-300 text-xs mt-1.5">Leave blank for free courses. When set, a purchase button appears on the course page.</p>
+        <input type="url" name="selar_url" id="ec-selar-url" placeholder="https://selar.co/…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold placeholder-gray-300" />
       </div>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
         <button type="button" onclick="document.getElementById('edit-course-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
@@ -1400,12 +1429,16 @@
     lucide.createIcons();
   }
 
-  function openEditCourseModal(id,title,desc,selarUrl,sort){
+  function openEditCourseModal(id,title,desc,sort,coverImage,selarUrl){
     const form=document.getElementById('edit-course-form');
     form.action='/admin/courses/'+id;
     document.getElementById('ec-title').value=title;
     document.getElementById('ec-description').value=desc||'';
+    document.getElementById('ec-cover-url').value=coverImage||'';
     document.getElementById('ec-selar-url').value=selarUrl||'';
+    const prev=document.getElementById('ec-cover-preview');
+    if(coverImage){prev.querySelector('img').src=coverImage;prev.classList.remove('hidden');}
+    else{prev.classList.add('hidden');}
     document.getElementById('edit-course-overlay').classList.add('open');
     lucide.createIcons();
   }

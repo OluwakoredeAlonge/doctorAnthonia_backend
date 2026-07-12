@@ -123,9 +123,13 @@
     <a href="{{ route('courses.show', $course) }}"
        class="course-card fade-in group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm block"
        style="animation-delay: {{ $ci * 0.07 }}s">
-      {{-- Thumbnail --}}
+      {{-- Thumbnail: course cover image, fallback to YouTube thumbnail, fallback to placeholder --}}
       <div class="relative aspect-video bg-primary overflow-hidden">
-        @if($firstModule?->youtube_id)
+        @if($course->cover_image)
+        <img src="{{ $course->cover_image }}"
+             alt="{{ $course->title }}"
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        @elseif($firstModule?->youtube_id)
         <img src="https://img.youtube.com/vi/{{ $firstModule->youtube_id }}/hqdefault.jpg"
              alt="{{ $course->title }}"
              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
