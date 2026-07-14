@@ -5,16 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reset Password | Dr. A.Y. Soje Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script>
-    tailwind.config = {
-      theme: { extend: {
-        colors: { primary:'#0F2444','primary-light':'#1C3A5E','primary-dark':'#081526',gold:'#C9922A','gold-light':'#D4A847',cream:'#FDF9F4' },
-        fontFamily: { serif:['Playfair Display','Georgia','serif'] },
-      }}
-    }
-  </script>
   <style>
     body{font-family:'Inter',sans-serif;}
     input:focus{outline:none;border-color:#C9922A;box-shadow:0 0 0 3px rgba(201,146,42,.12);}

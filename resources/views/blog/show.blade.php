@@ -39,16 +39,8 @@
   @endphp
   <script type="application/ld+json">{!! $articleJsonLd !!}</script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script>
-    tailwind.config = {
-      theme: { extend: {
-        colors: { primary:'#0F2444','primary-light':'#1C3A5E','primary-dark':'#081526',gold:'#C9922A','gold-light':'#D4A847',cream:'#FDF9F4' },
-        fontFamily: { serif:['Playfair Display','Georgia','serif'] },
-      }}
-    }
-  </script>
   <style>
     body { font-family: 'Inter', sans-serif; background: #fff; }
     .font-serif { font-family: 'Playfair Display', serif !important; }
