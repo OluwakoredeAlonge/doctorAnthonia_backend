@@ -12,7 +12,7 @@ class OrganizationController extends Controller
     {
         $data = $request->validate([
             'name'        => 'required|string|max:255',
-            'description' => 'nullable|string|max:600',
+            'description' => 'nullable|string',
             'icon'        => 'nullable|string|max:50',
             'color'       => 'nullable|string|max:20',
             'website_url' => 'nullable|string|max:500',
@@ -33,7 +33,7 @@ class OrganizationController extends Controller
     {
         $data = $request->validate([
             'name'        => 'required|string|max:255',
-            'description' => 'nullable|string|max:600',
+            'description' => 'nullable|string',
             'icon'        => 'nullable|string|max:50',
             'color'       => 'nullable|string|max:20',
             'website_url' => 'nullable|string|max:500',

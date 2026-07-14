@@ -509,7 +509,15 @@
             @if($org->website_url)<a href="{{ $org->website_url }}" target="_blank" class="text-xs text-gold hover:underline truncate block mt-0.5">{{ $org->website_url }}</a>@endif
           </div>
           <div class="flex gap-1.5 flex-shrink-0">
-            <button onclick="openEditOrgModal({{ $org->id }},'{{ addslashes($org->name) }}','{{ addslashes($org->description ?? '') }}','{{ addslashes($org->icon ?? 'building-2') }}','{{ $org->color }}','{{ addslashes($org->website_url ?? '') }}','{{ $org->sort_order }}')" class="p-1.5 text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+            <button onclick="openEditOrgModal(this)"
+              data-org-id="{{ $org->id }}"
+              data-org-name="{{ e($org->name) }}"
+              data-org-desc="{{ e($org->description ?? '') }}"
+              data-org-icon="{{ e($org->icon ?? 'building-2') }}"
+              data-org-color="{{ $org->color }}"
+              data-org-website="{{ e($org->website_url ?? '') }}"
+              data-org-sort="{{ $org->sort_order }}"
+              class="p-1.5 text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
             <form method="POST" action="{{ route('admin.organizations.destroy', $org) }}" class="inline" onsubmit="return confirm('Delete this organization?')">@csrf @method('DELETE')<button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
           </div>
         </div>
@@ -1462,10 +1470,11 @@
     lucide.createIcons();
   }
 
-  function openEditOrgModal(id,name,desc,icon,color,website,sort){
+  function openEditOrgModal(btn){
+    const {orgId:id,orgName:name,orgDesc:desc,orgIcon:icon,orgColor:color,orgWebsite:website}=btn.dataset;
     const form=document.getElementById('edit-org-form');
     form.action='/admin/organizations/'+id;
-    document.getElementById('eo-name').value=name;
+    document.getElementById('eo-name').value=name||'';
     document.getElementById('eo-description').value=desc||'';
     document.getElementById('eo-icon').value=icon||'building-2';
     document.getElementById('eo-color').value=color||'#C9922A';
