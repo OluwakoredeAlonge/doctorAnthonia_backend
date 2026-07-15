@@ -67,10 +67,10 @@ class SettingsController extends Controller
     public function updateAbout(Request $request)
     {
         $request->validate([
-            'doctor_name' => 'nullable|string|max:100',
-            'about_bio_1' => 'required|string|max:1000',
-            'about_bio_2' => 'required|string|max:1000',
-            'about_quote' => 'required|string|max:500',
+            'doctor_name' => 'nullable|string',
+            'about_bio_1' => 'nullable|string',
+            'about_bio_2' => 'nullable|string',
+            'about_quote' => 'nullable|string',
         ]);
 
         foreach ($request->only('doctor_name', 'about_bio_1', 'about_bio_2', 'about_quote') as $key => $value) {
