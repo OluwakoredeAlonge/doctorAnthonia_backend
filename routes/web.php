@@ -70,6 +70,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     /* Messages */
     Route::patch('/messages/{message}/read', [MessageController::class, 'markRead'])->name('messages.read');
+    Route::patch('/messages/{message}/unread', [MessageController::class, 'markUnread'])->name('messages.unread');
     Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
 
     /* Books */

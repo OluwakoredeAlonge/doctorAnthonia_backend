@@ -13,6 +13,12 @@ class MessageController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function markUnread(ContactMessage $message)
+    {
+        $message->update(['status' => 'new']);
+        return response()->json(['success' => true]);
+    }
+
     public function destroy(ContactMessage $message)
     {
         $message->delete();
