@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -151,7 +151,7 @@
         </div>
         <div class="divide-y divide-gray-50">
           @forelse($recentMessages as $msg)
-          <div class="px-6 py-4 flex items-start gap-4 hover:bg-gray-50 transition-colors cursor-pointer" onclick="openMessageModal({{ $msg->id }},'{{ addslashes($msg->name) }}','{{ addslashes($msg->email) }}','{{ addslashes($msg->phone ?? '') }}','{{ addslashes($msg->service ?? '') }}','{{ addslashes($msg->preferred_feedback ?? '') }}','{{ addslashes($msg->message) }}','{{ $msg->created_at->diffForHumans() }}')">
+          <div class="px-6 py-4 flex items-start gap-4 hover:bg-gray-50 transition-colors cursor-pointer" onclick="openMessageModal(this)" data-msg-id="{{ $msg->id }}" data-msg-name="{{ e($msg->name) }}" data-msg-email="{{ e($msg->email) }}" data-msg-phone="{{ e($msg->phone ?? '') }}" data-msg-service="{{ e($msg->service ?? '') }}" data-msg-feedback="{{ e($msg->preferred_feedback ?? '') }}" data-msg-message="{{ e($msg->message) }}" data-msg-date="{{ e($msg->created_at->diffForHumans()) }}">
             <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="user" class="w-4 h-4 text-white/40"></i></div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-0.5">
@@ -352,7 +352,7 @@
               <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">{{ $msg->created_at->format('M j, Y') }}</td>
               <td class="px-4 py-4"><span class="badge-{{ $msg->status }} text-xs font-semibold px-2.5 py-1 rounded-full" id="msgbadge-{{ $msg->id }}">{{ ucfirst($msg->status) }}</span></td>
               <td class="px-6 py-4 text-right">
-                <button class="inline-flex items-center gap-1.5 text-primary hover:text-gold text-xs font-semibold transition-colors" onclick="openMessageModal({{ $msg->id }},'{{ addslashes($msg->name) }}','{{ addslashes($msg->email) }}','{{ addslashes($msg->phone ?? '') }}','{{ addslashes($msg->service ?? '') }}','{{ addslashes($msg->preferred_feedback ?? '') }}','{{ addslashes($msg->message) }}','{{ $msg->created_at->format('M j, Y') }}')">
+                <button class="inline-flex items-center gap-1.5 text-primary hover:text-gold text-xs font-semibold transition-colors" onclick="openMessageModal(this)" data-msg-id="{{ $msg->id }}" data-msg-name="{{ e($msg->name) }}" data-msg-email="{{ e($msg->email) }}" data-msg-phone="{{ e($msg->phone ?? '') }}" data-msg-service="{{ e($msg->service ?? '') }}" data-msg-feedback="{{ e($msg->preferred_feedback ?? '') }}" data-msg-message="{{ e($msg->message) }}" data-msg-date="{{ e($msg->created_at->format('M j, Y')) }}">
                   <i data-lucide="mail-open" class="w-3.5 h-3.5"></i> Read
                 </button>
               </td>
@@ -1484,7 +1484,8 @@
     lucide.createIcons();
   }
 
-  function openMessageModal(id,name,email,phone,service,feedback,message,date){
+  function openMessageModal(btn){
+    const id=btn.dataset.msgId,name=btn.dataset.msgName,email=btn.dataset.msgEmail,phone=btn.dataset.msgPhone,service=btn.dataset.msgService,feedback=btn.dataset.msgFeedback,message=btn.dataset.msgMessage,date=btn.dataset.msgDate;
     document.getElementById('msg-modal-name').textContent=name;
     document.getElementById('msg-modal-date').textContent=date;
     // Email (always present) — clickable mailto link
