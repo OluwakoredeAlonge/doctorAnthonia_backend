@@ -87,7 +87,7 @@
 <!-- COURSE GRID -->
 <main class="max-w-7xl mx-auto px-6 py-16">
 
-  @if($courses->isEmpty())
+  @if($courses->isEmpty() && empty($partnerCourses))
   <div class="text-center py-20">
     <div class="w-20 h-20 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center mx-auto mb-5">
       <svg class="w-10 h-10 text-gray-200" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
@@ -151,6 +151,66 @@
         @endif
         <span class="inline-flex items-center gap-1.5 text-gold text-xs font-semibold">
           {{ $course->selar_url ? 'Get Access on Selar' : 'Watch All Episodes' }}
+          <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        </span>
+      </div>
+    </a>
+    @endforeach
+
+    {{-- Courses pulled from the Heirs app: link out to the course's real page there --}}
+    @foreach($partnerCourses as $pi => $pc)
+    @php
+      $pcPrice = is_numeric($pc['price'] ?? null)
+        ? ($pc['price'] == 0 ? 'Free' : '₦' . number_format($pc['price'], 0))
+        : null;
+      $pcAccess = ($pc['is_lifetime_access'] ?? false)
+        ? 'Lifetime Access'
+        : (!empty($pc['access_duration_months']) ? $pc['access_duration_months'] . '-Month Access' : null);
+    @endphp
+    <a href="{{ $pc['url'] }}" target="_blank" rel="noopener"
+       class="course-card fade-in group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm block"
+       style="animation-delay: {{ ($courses->count() + $pi) * 0.07 }}s">
+      <div class="relative aspect-video bg-primary overflow-hidden">
+        @if(!empty($pc['image_url']))
+        <img src="{{ $pc['image_url'] }}" alt="{{ $pc['title'] }}" loading="lazy"
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        @else
+        <div class="w-full h-full flex items-center justify-center">
+          <i data-lucide="graduation-cap" class="w-12 h-12 text-white/20"></i>
+        </div>
+        @endif
+        @if(($pc['discount_percentage'] ?? 0) > 0)
+        <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">-{{ $pc['discount_percentage'] }}%</span>
+        @endif
+      </div>
+      <div class="p-5">
+        @if(!empty($pc['category']['name']))
+        <p class="text-gold text-[11px] font-bold uppercase tracking-wider mb-2">{{ $pc['category']['name'] }}</p>
+        @endif
+        <h2 class="font-serif text-base font-bold text-primary mb-2 leading-snug group-hover:text-gold transition-colors">{{ $pc['title'] }}</h2>
+        @if(!empty($pc['details']))
+        <p class="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2">{{ \Illuminate\Support\Str::limit(trim(strip_tags($pc['details'])), 160) }}</p>
+        @endif
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          @if($pcPrice)
+          <span class="inline-flex items-baseline gap-1.5">
+            <span class="text-primary text-base font-extrabold">{{ $pcPrice }}</span>
+            @if(!empty($pc['original_price']))
+            <span class="text-gray-300 text-xs line-through">₦{{ number_format($pc['original_price'], 0) }}</span>
+            @endif
+          </span>
+          @endif
+          @if($pcAccess)
+          <span class="text-gray-400 text-xs font-medium">{{ $pcAccess }}</span>
+          @endif
+          @if($pc['has_certificate'] ?? false)
+          <span class="inline-flex items-center gap-1 bg-gold/10 text-gold text-xs font-bold px-2.5 py-1 rounded-full">
+            <i data-lucide="award" class="w-3 h-3"></i> Certificate
+          </span>
+          @endif
+        </div>
+        <span class="inline-flex items-center gap-1.5 text-gold text-xs font-semibold">
+          Get Access
           <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </span>
       </div>

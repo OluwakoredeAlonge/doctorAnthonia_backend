@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\SiteSetting;
+use App\Services\PartnerCoursesClient;
 
 class CoursePageController extends Controller
 {
+    public function __construct(protected PartnerCoursesClient $partnerCourses) {}
+
     private function baseSettings(): array
     {
         return SiteSetting::bulk([
@@ -21,8 +24,9 @@ class CoursePageController extends Controller
     {
         $courses  = Course::with('modules')->orderBy('sort_order')->orderBy('id')->get();
         $settings = $this->baseSettings();
+        $partnerCourses = $this->partnerCourses->publicList();
 
-        return view('courses', compact('courses', 'settings'));
+        return view('courses', compact('courses', 'settings', 'partnerCourses'));
     }
 
     public function show(Course $course)
