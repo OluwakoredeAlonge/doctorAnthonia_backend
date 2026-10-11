@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BlogComment;
 use App\Models\BlogPost;
 use App\Models\Book;
+use App\Models\BookOrder;
 use App\Models\ContactMessage;
 use App\Models\Course;
 use App\Models\Organization;
@@ -25,6 +26,8 @@ class DashboardController extends Controller
             'pending_testimonials'=> Testimonial::where('status', 'pending')->count(),
             'pending_comments'    => BlogComment::count(),
             'books'               => Book::count(),
+            'orders'              => BookOrder::count(),
+            'pending_orders'      => BookOrder::where('payment_status', 'pending')->count(),
             'courses'             => Course::count(),
             'organizations'       => Organization::count(),
         ];
@@ -35,6 +38,7 @@ class DashboardController extends Controller
         $testimonials    = Testimonial::latest()->get();
         $messages        = ContactMessage::latest()->get();
         $books           = Book::orderBy('sort_order')->orderBy('id')->get();
+        $bookOrders      = BookOrder::with('book')->latest()->get();
         $courses         = Course::with('modules')->orderBy('sort_order')->orderBy('id')->get();
         $organizations   = Organization::orderBy('sort_order')->get();
         $services        = Service::orderBy('sort_order')->get();
@@ -53,7 +57,7 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact(
             'stats', 'recentMessages', 'recentPosts',
             'posts', 'testimonials', 'messages', 'comments',
-            'books', 'courses', 'organizations', 'services', 'settings', 'panel'
+            'books', 'bookOrders', 'courses', 'organizations', 'services', 'settings', 'panel'
         ));
     }
 }

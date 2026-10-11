@@ -85,7 +85,8 @@
     <button onclick="showPanel('testimonials')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="message-square" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Testimonials</span></button>
     <button onclick="showPanel('comments')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="message-circle" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Comments</span>@if($stats['pending_comments']>0)<span class="sidebar-label ml-auto bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['pending_comments'] }}</span>@endif</button>
     <button onclick="showPanel('messages')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="mail" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Messages</span>@if($stats['new_messages']>0)<span class="sidebar-label ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['new_messages'] }}</span>@endif</button>
-    <button onclick="showPanel('books')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="book-open" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Books</span></button>
+    <button onclick="showPanel('books')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="book-open" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Books</span>@if($stats['books']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['books'] }}</span>@endif</button>
+    <button onclick="showPanel('orders')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="shopping-bag" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Book Orders</span>@if($stats['pending_orders']>0)<span class="sidebar-label ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['pending_orders'] }}</span>@endif</button>
     <button onclick="showPanel('courses')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="play-circle" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Courses</span>@if($stats['courses']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['courses'] }}</span>@endif</button>
     <button onclick="showPanel('organizations')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="building-2" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Organizations</span>@if($stats['organizations']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['organizations'] }}</span>@endif</button>
     <p class="sidebar-section-label text-white/25 text-xs font-semibold uppercase tracking-widest px-3 mb-2 mt-5">Content</p>
@@ -369,32 +370,114 @@
   {{-- ═══ BOOKS PANEL ═══ --}}
   <section id="panel-books" class="panel p-6 fadein">
     <div class="flex items-center justify-between mb-6">
-      <div><h2 class="font-serif text-xl font-bold text-gray-800">Books &amp; Publications</h2><p class="text-gray-400 text-sm mt-0.5">Manage published works and publication info</p></div>
-      <button onclick="openBookModal()" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Book</button>
+      <div><h2 class="font-serif text-xl font-bold text-gray-800">Books &amp; Publications</h2><p class="text-gray-400 text-sm mt-0.5">Manage books, pricing, and homepage featuring</p></div>
+      <div class="flex gap-2">
+        <button onclick="showPanel('orders')" class="inline-flex items-center gap-2 border border-gray-200 text-gray-600 hover:border-primary hover:text-primary text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"><i data-lucide="shopping-bag" class="w-4 h-4"></i> Orders@if($stats['pending_orders'] > 0) <span class="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full ml-1">{{ $stats['pending_orders'] }}</span>@endif</button>
+        <button onclick="openBookModal()" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Book</button>
+      </div>
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
       @foreach($books as $book)
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+      <div class="bg-white rounded-2xl border {{ $book->featured ? 'border-gold/40 ring-1 ring-gold/20' : 'border-gray-100' }} shadow-sm overflow-hidden group" id="bookcard-{{ $book->id }}">
         @if($book->cover_image)
-        <div class="h-32 overflow-hidden">
+        <div class="h-32 overflow-hidden relative">
           <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          @if($book->featured)<span class="absolute top-2 left-2 bg-gold text-white text-xs font-bold px-2 py-0.5 rounded-full">Featured</span>@endif
         </div>
         @else
-        <div class="h-24 flex items-center justify-center {{ $book->cover_gradient }}">
+        <div class="h-24 flex items-center justify-center {{ $book->cover_gradient }} relative">
           <i data-lucide="{{ $book->icon }}" class="w-8 h-8 text-white/30"></i>
+          @if($book->featured)<span class="absolute top-2 left-2 bg-gold text-white text-xs font-bold px-2 py-0.5 rounded-full">Featured</span>@endif
         </div>
         @endif
         <div class="p-4">
-          <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{{ $book->category }}</span>
-          <h3 class="font-serif font-bold text-gray-800 text-sm mt-2 mb-1">{{ $book->title }}</h3>
-          <p class="text-gray-400 text-xs leading-relaxed">{{ Str::limit($book->description,80) }}</p>
-          <div class="flex gap-2 mt-4">
-            <button onclick="openEditBookModal({{ $book->id }},'{{ addslashes($book->title) }}','{{ addslashes($book->description) }}','{{ addslashes($book->category) }}','{{ $book->cover_gradient }}','{{ $book->icon }}','{{ addslashes($book->buy_link ?? '') }}','{{ $book->sort_order }}','{{ addslashes($book->cover_image ?? '') }}')" class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit</button>
+          <div class="flex items-center gap-1.5 flex-wrap mb-2">
+            <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{{ $book->category }}</span>
+            @if($book->is_digital)<span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">Digital</span>@else<span class="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">Physical</span>@endif
+          </div>
+          <h3 class="font-serif font-bold text-gray-800 text-sm mb-1">{{ $book->title }}</h3>
+          @if($book->price)<p class="text-gold font-bold text-sm mb-1">₦{{ number_format($book->price, 0) }}</p>@endif
+          <p class="text-gray-400 text-xs leading-relaxed">{{ Str::limit($book->description,70) }}</p>
+          <div class="flex gap-2 mt-3">
+            <button
+              class="p-2 text-{{ $book->featured ? 'gold' : 'gray-400' }} bg-{{ $book->featured ? 'gold/10' : 'gray-50' }} hover:bg-gold/10 hover:text-gold rounded-lg transition-colors"
+              title="{{ $book->featured ? 'Remove from homepage' : 'Feature on homepage' }}"
+              onclick="toggleBookFeatured({{ $book->id }}, this)"
+              id="featbtn-{{ $book->id }}"
+            ><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
+            <button
+              class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1"
+              onclick="openEditBookModal(this)"
+              data-book-id="{{ $book->id }}"
+              data-book-title="{{ e($book->title) }}"
+              data-book-desc="{{ e($book->description) }}"
+              data-book-category="{{ e($book->category) }}"
+              data-book-gradient="{{ $book->cover_gradient }}"
+              data-book-icon="{{ $book->icon }}"
+              data-book-buylink="{{ e($book->buy_link ?? '') }}"
+              data-book-sort="{{ $book->sort_order }}"
+              data-book-cover="{{ e($book->cover_image ?? '') }}"
+              data-book-price="{{ $book->price ?? '' }}"
+              data-book-digital="{{ $book->is_digital ? '1' : '0' }}"
+              data-book-featured="{{ $book->featured ? '1' : '0' }}"
+              data-book-filepath="{{ e($book->file_path ?? '') }}"
+            ><i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit</button>
             <form method="POST" action="{{ route('admin.books.destroy', $book) }}" class="inline" onsubmit="return confirm('Delete this book?')">@csrf @method('DELETE')<button type="submit" class="p-2 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
           </div>
         </div>
       </div>
       @endforeach
+    </div>
+  </section>
+
+  {{-- ═══ ORDERS PANEL ═══ --}}
+  <section id="panel-orders" class="panel p-6 fadein">
+    <div class="flex items-center justify-between mb-6">
+      <div><h2 class="font-serif text-xl font-bold text-gray-800">Book Orders</h2><p class="text-gray-400 text-sm mt-0.5">{{ $stats['pending_orders'] }} pending · {{ $stats['orders'] }} total</p></div>
+      <button onclick="showPanel('books')" class="inline-flex items-center gap-2 border border-gray-200 text-gray-600 hover:border-primary hover:text-primary text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Books</button>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="border-b border-gray-100 bg-gray-50/60">
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Customer</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Book</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden lg:table-cell">Phone</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Amount</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden lg:table-cell">Date</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-50">
+            @forelse($bookOrders as $order)
+            <tr id="orderrow-{{ $order->id }}">
+              <td class="px-6 py-4"><p class="font-semibold text-gray-800 text-sm">{{ $order->customer_name }}</p><p class="text-gray-400 text-xs">{{ $order->customer_email }}</p>@if($order->customer_address)<p class="text-gray-400 text-xs mt-0.5 truncate max-w-xs">{{ $order->customer_address }}</p>@endif</td>
+              <td class="px-4 py-4 hidden md:table-cell"><p class="text-gray-700 text-sm font-medium">{{ $order->book?->title ?? '—' }}</p></td>
+              <td class="px-4 py-4 hidden lg:table-cell text-gray-500 text-xs">{{ $order->customer_phone ?? '—' }}</td>
+              <td class="px-4 py-4 text-gold font-bold text-sm">{{ $order->amount > 0 ? '₦'.number_format($order->amount, 0) : '—' }}</td>
+              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">{{ $order->created_at->format('M j, Y') }}</td>
+              <td class="px-4 py-4">
+                @if($order->payment_status === 'paid')
+                <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full" id="orderbadge-{{ $order->id }}">Paid</span>
+                @else
+                <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full" id="orderbadge-{{ $order->id }}">Pending</span>
+                @endif
+              </td>
+              <td class="px-6 py-4 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  @if($order->payment_status === 'pending')
+                  <button onclick="markOrderPaid({{ $order->id }})" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">Mark Paid</button>
+                  @endif
+                  <form method="POST" action="{{ route('admin.orders.destroy', $order) }}" class="inline" onsubmit="return confirm('Delete this order?')">@csrf @method('DELETE')<button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
+                </div>
+              </td>
+            </tr>
+            @empty
+            <tr><td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">No orders yet.</td></tr>
+            @endforelse
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -801,7 +884,13 @@
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Style</label><select name="cover_gradient" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option value="bg-b1">Blue Dark</option><option value="bg-b2">Green Dark</option><option value="bg-b3">Purple Dark</option><option value="bg-b4">Red Dark</option><option value="bg-b5">Navy</option><option value="bg-b6">Brown</option><option value="bg-b7">Forest</option><option value="bg-b8">Violet</option></select></div>
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Icon</label><select name="icon" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option>book</option><option>book-open</option><option>navigation</option><option>unlock</option><option>eye</option><option>anchor</option><option>shield</option><option>key</option><option>smile</option><option>heart</option></select></div>
       </div>
-      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Buy Link (optional)</label><input type="text" name="buy_link" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Price (₦) <span class="text-gray-300 normal-case font-normal">(optional)</span></label><input type="number" name="price" min="0" step="0.01" placeholder="e.g. 3500" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+        <div class="flex flex-col gap-3 pt-6">
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
+        </div>
+      </div>
       <div>
         <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Image <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
         <div class="flex gap-2">
@@ -839,7 +928,13 @@
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Style</label><select name="cover_gradient" id="eb-gradient" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option value="bg-b1">Blue Dark</option><option value="bg-b2">Green Dark</option><option value="bg-b3">Purple Dark</option><option value="bg-b4">Red Dark</option><option value="bg-b5">Navy</option><option value="bg-b6">Brown</option><option value="bg-b7">Forest</option><option value="bg-b8">Violet</option></select></div>
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Icon</label><select name="icon" id="eb-icon" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option>book</option><option>book-open</option><option>navigation</option><option>unlock</option><option>eye</option><option>anchor</option><option>shield</option><option>key</option><option>smile</option><option>heart</option></select></div>
       </div>
-      <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Buy Link</label><input type="text" name="buy_link" id="eb-buylink" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Price (₦)</label><input type="number" name="price" id="eb-price" min="0" step="0.01" placeholder="e.g. 3500" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
+        <div class="flex flex-col gap-3 pt-6">
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" id="eb-featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" id="eb-digital" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
+        </div>
+      </div>
       <div>
         <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Image <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
         <div class="flex gap-2">
@@ -1223,7 +1318,8 @@
     posts:{title:'Blog Posts',sub:'{{ $stats["posts"] }} total posts'},
     testimonials:{title:'Testimonials',sub:'Add and manage client testimonials'},
     messages:{title:'Contact Messages',sub:'{{ $stats["new_messages"] }} unread messages'},
-    books:{title:'Books',sub:'{{ $stats["books"] }} published books'},
+    books:{title:'Books',sub:'{{ $stats["books"] }} books · {{ $stats["orders"] }} orders'},
+    orders:{title:'Book Orders',sub:'{{ $stats["pending_orders"] }} pending · {{ $stats["orders"] }} total'},
     courses:{title:'Courses & Teachings',sub:'{{ $stats["courses"] }} courses'},
     organizations:{title:'Organizations',sub:'{{ $stats["organizations"] }} organizations'},
     about:{title:'About Section',sub:'Edit your portfolio bio and quote'},
@@ -1408,7 +1504,8 @@
   }
   function closeEditPostModal(e){if(e.target===document.getElementById('edit-post-overlay'))document.getElementById('edit-post-overlay').classList.remove('open');}
 
-  function openEditBookModal(id,title,desc,cat,grad,icon,buyLink,sort,coverImage){
+  function openEditBookModal(btn){
+    const {bookId:id,bookTitle:title,bookDesc:desc,bookCategory:cat,bookGradient:grad,bookIcon:icon,bookSort:sort,bookCover:coverImage,bookPrice:price,bookDigital:digital,bookFilepath:filepath}=btn.dataset;
     const form=document.getElementById('edit-book-form');
     form.action='/admin/books/'+id;
     document.getElementById('eb-title').value=title;
@@ -1416,7 +1513,9 @@
     document.getElementById('eb-category').value=cat;
     document.getElementById('eb-gradient').value=grad;
     document.getElementById('eb-icon').value=icon;
-    document.getElementById('eb-buylink').value=buyLink||'';
+    document.getElementById('eb-price').value=price||'';
+    document.getElementById('eb-featured').checked=btn.dataset.bookFeatured==='1'||document.getElementById('featbtn-'+id)?.classList.contains('text-gold');
+    document.getElementById('eb-digital').checked=digital==='1';
     const coverUrl=document.getElementById('eb-cover-url');
     const coverPrev=document.getElementById('eb-cover-preview');
     coverUrl.value=coverImage||'';
@@ -1429,6 +1528,31 @@
     }
     document.getElementById('edit-book-overlay').classList.add('open');
     lucide.createIcons();
+  }
+
+  function toggleBookFeatured(id,btn){
+    fetch('/admin/books/'+id+'/featured',{method:'PATCH',headers:{'X-CSRF-TOKEN':csrfToken,'Content-Type':'application/json'}})
+      .then(r=>r.json()).then(data=>{
+        const featured=data.featured;
+        btn.className=featured
+          ?'p-2 text-gold bg-gold/10 hover:bg-gold/10 rounded-lg transition-colors'
+          :'p-2 text-gray-400 bg-gray-50 hover:bg-gold/10 hover:text-gold rounded-lg transition-colors';
+        const card=document.getElementById('bookcard-'+id);
+        if(card){card.className=card.className.replace(/border-gold\/40 ring-1 ring-gold\/20|border-gray-100/g,'');card.classList.add(featured?'border-gold/40':'border-gray-100');if(featured)card.classList.add('ring-1','ring-gold/20');else{card.classList.remove('ring-1','ring-gold/20');}}
+        const badge=card?.querySelector('.absolute.top-2.left-2');
+        if(badge){badge.style.display=featured?'':'none';}
+      });
+  }
+
+  function markOrderPaid(id){
+    fetch('/admin/orders/'+id+'/paid',{method:'PATCH',headers:{'X-CSRF-TOKEN':csrfToken,'Content-Type':'application/json'}})
+      .then(r=>r.json()).then(()=>{
+        const badge=document.getElementById('orderbadge-'+id);
+        if(badge){badge.textContent='Paid';badge.className='text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full';}
+        const row=document.getElementById('orderrow-'+id);
+        const btn=row?.querySelector('button[onclick*="markOrderPaid"]');
+        if(btn)btn.remove();
+      });
   }
 
   function openAddCourseModal(){

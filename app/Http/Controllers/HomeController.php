@@ -16,7 +16,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $books         = Book::orderBy('sort_order')->orderBy('id')->get();
+        $books         = Book::where('featured', true)->orderBy('sort_order')->orderBy('id')->limit(3)->get();
         $courses       = Course::with('modules')->orderBy('sort_order')->orderBy('id')->get();
         $organizations = Organization::orderBy('sort_order')->get();
         $services      = Service::orderBy('sort_order')->get();

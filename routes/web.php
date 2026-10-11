@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\BookOrderController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ImageUploadController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BlogInteractionController;
+use App\Http\Controllers\BooksController;
 use App\Http\Controllers\CoursePageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
@@ -32,6 +34,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{blogPost:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/books', [BooksController::class, 'index'])->name('books.index');
+Route::post('/books/{book}/order', [BooksController::class, 'order'])->name('books.order');
 Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course}', [CoursePageController::class, 'show'])->name('courses.show');
 Route::post('/blog/{blogPost}/like', [BlogInteractionController::class, 'like'])->name('blog.like');
@@ -76,7 +80,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     /* Books */
     Route::post('/books', [BookController::class, 'store'])->name('books.store');
     Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
+    Route::patch('/books/{book}/featured', [BookController::class, 'toggleFeatured'])->name('books.featured');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+
+    /* Book Orders */
+    Route::patch('/orders/{order}/paid', [BookOrderController::class, 'markPaid'])->name('orders.paid');
+    Route::delete('/orders/{order}', [BookOrderController::class, 'destroy'])->name('orders.destroy');
 
     /* Courses & Modules */
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');

@@ -116,7 +116,7 @@
     <div class="hidden md:flex items-center gap-7">
       <a href="#about"        class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">About</a>
       <a href="#services"     class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Services</a>
-      <a href="#books"                       class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Books</a>
+      <a href="{{ route('books.index') }}"   class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Books</a>
       <a href="{{ route('courses.index') }}" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Courses</a>
       <a href="#organization"               class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Organization</a>
       <a href="#testimonials" class="nav-link text-white/80 hover:text-gold text-sm font-medium transition-colors">Testimonials</a>
@@ -133,7 +133,7 @@
     <div class="mt-3 bg-white rounded-2xl shadow-2xl p-6 space-y-4">
       <a href="#about"        class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">About</a>
       <a href="#services"     class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Services</a>
-      <a href="#books"                       class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Books</a>
+      <a href="{{ route('books.index') }}"   class="block text-primary font-medium hover:text-gold transition-colors">Books</a>
       <a href="{{ route('courses.index') }}" class="block text-primary font-medium hover:text-gold transition-colors">Courses</a>
       <a href="#organization"               class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Organization</a>
       <a href="#testimonials" class="block text-primary font-medium hover:text-gold transition-colors" onclick="toggleMenu()">Testimonials</a>
@@ -402,10 +402,12 @@
       <div class="w-14 h-0.5 bg-gold mx-auto mt-3 mb-6"></div>
       <p class="text-white/50 max-w-xl mx-auto text-sm leading-relaxed">A growing library of works on mental health, relationships, addiction recovery, and faith-based healing — each one a lamp on the path to wholeness.</p>
     </div>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    @if($books->isEmpty())
+    <p class="text-center text-white/30 text-sm py-12">No featured books yet.</p>
+    @else
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
       @foreach($books as $i => $book)
         <div class="book-card rounded-2xl overflow-hidden border border-white/8 cursor-default flex flex-col">
-          {{-- Cover image (if uploaded) or gradient placeholder --}}
           @if($book->cover_image)
             <div class="h-52 overflow-hidden">
               <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-full object-cover" />
@@ -418,20 +420,28 @@
           <div class="bg-primary-light flex-1 p-5 flex flex-col">
             <span class="text-xs bg-white/10 text-white/55 px-2.5 py-1 rounded-full inline-block mb-3 self-start">{{ $book->category }}</span>
             <h3 class="font-serif text-base font-bold text-white mb-2">{{ $book->title }}</h3>
-            <p class="text-white/50 text-sm leading-relaxed flex-1">{{ $book->description }}</p>
+            <p class="text-white/50 text-sm leading-relaxed flex-1">{{ Str::limit($book->description, 120) }}</p>
             <div class="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
+              @if($book->price)
+              <span class="text-gold font-bold">₦{{ number_format($book->price, 0) }}</span>
+              @else
               <span class="text-gold text-xs font-medium">{{ $settings["doctor_name"] ?? "Dr. O.A. Soje" }}</span>
-              @if($book->buy_link)
-              <a href="{{ $book->buy_link }}" target="_blank" rel="noopener"
-                 class="inline-flex items-center gap-1.5 bg-gold hover:bg-gold-light text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all shadow-lg shadow-gold/30 hover:-translate-y-0.5 transform">
-                <i data-lucide="shopping-bag" class="w-3 h-3"></i> Buy Now
-              </a>
               @endif
+              <a href="{{ route('books.index') }}"
+                 class="inline-flex items-center gap-1.5 bg-gold hover:bg-gold-light text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all shadow-lg shadow-gold/30 hover:-translate-y-0.5 transform">
+                <i data-lucide="shopping-bag" class="w-3 h-3"></i> Order
+              </a>
             </div>
           </div>
         </div>
       @endforeach
     </div>
+    <div class="text-center mt-10">
+      <a href="{{ route('books.index') }}" class="inline-flex items-center gap-2 border border-white/20 hover:border-gold text-white hover:text-gold text-sm font-semibold px-8 py-3.5 rounded-full transition-all">
+        See All Books <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+    @endif
   </div>
 </section>
 
