@@ -155,6 +155,43 @@
     </div>
     @endif
 
+    {{-- Pagination --}}
+    @if($books->hasPages())
+    <div class="mt-12 flex items-center justify-center gap-1">
+      {{-- Previous --}}
+      @if($books->onFirstPage())
+      <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-gray-200 text-gray-300 cursor-not-allowed text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </span>
+      @else
+      <a href="{{ $books->previousPageUrl() }}" class="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-gray-200 hover:border-primary text-gray-500 hover:text-primary transition-colors text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </a>
+      @endif
+
+      {{-- Page numbers --}}
+      @foreach($books->getUrlRange(max(1, $books->currentPage() - 2), min($books->lastPage(), $books->currentPage() + 2)) as $page => $url)
+        @if($page == $books->currentPage())
+        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-white font-semibold text-sm">{{ $page }}</span>
+        @else
+        <a href="{{ $url }}" class="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-gray-200 hover:border-primary text-gray-600 hover:text-primary transition-colors text-sm font-medium">{{ $page }}</a>
+        @endif
+      @endforeach
+
+      {{-- Next --}}
+      @if($books->hasMorePages())
+      <a href="{{ $books->nextPageUrl() }}" class="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-gray-200 hover:border-primary text-gray-500 hover:text-primary transition-colors text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+      @else
+      <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-gray-200 text-gray-300 cursor-not-allowed text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </span>
+      @endif
+    </div>
+    <p class="text-center text-gray-400 text-xs mt-4">Showing {{ $books->firstItem() }}–{{ $books->lastItem() }} of {{ $books->total() }} books</p>
+    @endif
+
   </div>
 </main>
 

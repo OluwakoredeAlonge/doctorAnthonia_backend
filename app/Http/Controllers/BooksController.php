@@ -11,7 +11,7 @@ class BooksController extends Controller
 {
     public function index()
     {
-        $books    = Book::orderBy('sort_order')->orderBy('created_at')->get();
+        $books    = Book::orderBy('sort_order')->orderBy('created_at')->paginate(12);
         $settings = SiteSetting::bulk([
             'doctor_name', 'social_facebook', 'social_instagram',
             'social_twitter', 'social_linkedin', 'social_youtube',
