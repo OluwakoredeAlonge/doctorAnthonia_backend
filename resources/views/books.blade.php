@@ -148,6 +148,12 @@
               <i data-lucide="shopping-bag" class="w-4 h-4"></i>
               Order This Book
             </button>
+            @if($book->is_digital && $book->file_path)
+            <a href="{{ route('books.reader.show', $book) }}" class="mt-1.5 w-full inline-flex items-center justify-center gap-2 border border-primary text-primary hover:bg-primary/5 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all">
+              <i data-lucide="book-open" class="w-4 h-4"></i>
+              Read My Book
+            </a>
+            @endif
           </div>
         </div>
       </div>

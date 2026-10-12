@@ -888,7 +888,7 @@
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Price (₦) <span class="text-gray-300 normal-case font-normal">(optional)</span></label><input type="number" name="price" min="0" step="0.01" placeholder="e.g. 3500" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
         <div class="flex flex-col gap-3 pt-6">
           <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" value="1" id="nb-digital" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="document.getElementById('nb-pdf-section').classList.toggle('hidden',!this.checked)" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
         </div>
       </div>
       <div>
@@ -903,6 +903,17 @@
         <div id="nb-cover-preview" class="hidden mt-2 rounded-xl overflow-hidden h-32 bg-gray-50 border border-gray-100">
           <img src="" alt="Cover preview" class="w-full h-full object-cover" />
         </div>
+      </div>
+      <div id="nb-pdf-section" class="hidden">
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">PDF File <span class="text-gray-300 normal-case font-normal">(digital books only)</span></label>
+        <div class="flex gap-2">
+          <input type="text" name="file_path" id="nb-filepath" placeholder="Upload PDF to get URL" class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300 min-w-0 bg-gray-50" readonly />
+          <label class="cursor-pointer flex-shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl px-3 py-3 flex items-center gap-1.5 transition-colors whitespace-nowrap" id="nb-pdf-btn">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Upload PDF
+            <input type="file" accept="application/pdf" class="hidden" onchange="uploadBookPdf(this,'nb-filepath','nb-pdf-btn','nb-pdf-status')" />
+          </label>
+        </div>
+        <p id="nb-pdf-status" class="text-xs text-gray-400 mt-1 hidden"></p>
       </div>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
         <button type="button" onclick="closeBookModal()" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
@@ -932,7 +943,7 @@
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Price (₦)</label><input type="number" name="price" id="eb-price" min="0" step="0.01" placeholder="e.g. 3500" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
         <div class="flex flex-col gap-3 pt-6">
           <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" id="eb-featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" id="eb-digital" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" id="eb-digital" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="document.getElementById('eb-pdf-section').classList.toggle('hidden',!this.checked)" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
         </div>
       </div>
       <div>
@@ -947,6 +958,17 @@
         <div id="eb-cover-preview" class="hidden mt-2 rounded-xl overflow-hidden h-32 bg-gray-50 border border-gray-100">
           <img src="" alt="Cover preview" class="w-full h-full object-cover" />
         </div>
+      </div>
+      <div id="eb-pdf-section" class="hidden">
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">PDF File <span class="text-gray-300 normal-case font-normal">(digital books only)</span></label>
+        <div class="flex gap-2">
+          <input type="text" name="file_path" id="eb-filepath" placeholder="Upload PDF to get URL" class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300 min-w-0 bg-gray-50" readonly />
+          <label class="cursor-pointer flex-shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl px-3 py-3 flex items-center gap-1.5 transition-colors whitespace-nowrap" id="eb-pdf-btn">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Upload PDF
+            <input type="file" accept="application/pdf" class="hidden" onchange="uploadBookPdf(this,'eb-filepath','eb-pdf-btn','eb-pdf-status')" />
+          </label>
+        </div>
+        <p id="eb-pdf-status" class="text-xs text-gray-400 mt-1 hidden"></p>
       </div>
       <div class="flex gap-3 pt-2 border-t border-gray-100">
         <button type="button" onclick="document.getElementById('edit-book-overlay').classList.remove('open')" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
@@ -1424,6 +1446,42 @@
     input.value = '';
   }
 
+  /* ── Cloudinary Book PDF Upload ── */
+  async function uploadBookPdf(input, urlFieldId, btnId, statusId) {
+    if (!input.files[0]) return;
+    const btn = document.getElementById(btnId);
+    const status = document.getElementById(statusId);
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = '<svg class="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Uploading…';
+    btn.style.pointerEvents = 'none';
+    if (status) { status.textContent = 'Uploading PDF…'; status.classList.remove('hidden','text-red-500'); status.classList.add('text-gray-400'); }
+    const formData = new FormData();
+    formData.append('pdf', input.files[0]);
+    try {
+      const res = await fetch('{{ route("admin.pdfs.upload") }}', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': csrfToken },
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.url) {
+        document.getElementById(urlFieldId).value = data.url;
+        if (status) { status.textContent = '✓ PDF uploaded: ' + input.files[0].name; status.classList.remove('hidden','text-red-500'); status.classList.add('text-emerald-600'); }
+        showToast('PDF uploaded successfully!');
+      } else {
+        if (status) { status.textContent = data.error || 'Upload failed'; status.classList.remove('hidden','text-gray-400'); status.classList.add('text-red-500'); }
+        showToast((data.error || 'PDF upload failed'), 'bg-red-600');
+      }
+    } catch(e) {
+      if (status) { status.textContent = 'Upload error. Check connection.'; status.classList.remove('hidden','text-gray-400'); status.classList.add('text-red-500'); }
+      showToast('Upload error. Check connection.', 'bg-red-600');
+    }
+    btn.innerHTML = origHTML;
+    btn.style.pointerEvents = '';
+    lucide.createIcons();
+    input.value = '';
+  }
+
   /* ── Cloudinary Featured Image Upload ── */
   async function uploadFeaturedImage(input, urlFieldId, previewId, btnId) {
     if (!input.files[0]) return;
@@ -1482,7 +1540,15 @@
   function closePostModal(){document.getElementById('modal-overlay').classList.remove('open');}
   function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closePostModal();}
 
-  function openBookModal(){document.getElementById('book-modal-overlay').classList.add('open');lucide.createIcons();}
+  function openBookModal(){
+    // reset PDF section state
+    document.getElementById('nb-digital').checked=false;
+    document.getElementById('nb-pdf-section').classList.add('hidden');
+    document.getElementById('nb-filepath').value='';
+    const st=document.getElementById('nb-pdf-status');if(st){st.textContent='';st.classList.add('hidden');}
+    document.getElementById('book-modal-overlay').classList.add('open');
+    lucide.createIcons();
+  }
   function closeBookModal(e){if(e&&e.target===document.getElementById('book-modal-overlay')){document.getElementById('book-modal-overlay').classList.remove('open');}else{document.getElementById('book-modal-overlay').classList.remove('open');}}
 
   function openEditPostModal(id,title,category,status,excerpt,readTime,image){
@@ -1516,6 +1582,9 @@
     document.getElementById('eb-price').value=price||'';
     document.getElementById('eb-featured').checked=btn.dataset.bookFeatured==='1'||document.getElementById('featbtn-'+id)?.classList.contains('text-gold');
     document.getElementById('eb-digital').checked=digital==='1';
+    const pdfSection=document.getElementById('eb-pdf-section');
+    const fpInput=document.getElementById('eb-filepath');
+    if(digital==='1'){pdfSection.classList.remove('hidden');fpInput.value=filepath||'';}else{pdfSection.classList.add('hidden');fpInput.value=filepath||'';}
     const coverUrl=document.getElementById('eb-cover-url');
     const coverPrev=document.getElementById('eb-cover-preview');
     coverUrl.value=coverImage||'';

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\BookOrderController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ImageUploadController;
+use App\Http\Controllers\Admin\PdfUploadController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\ServiceController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BlogInteractionController;
+use App\Http\Controllers\BookReaderController;
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\CoursePageController;
 use App\Http\Controllers\HomeController;
@@ -36,6 +38,9 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{blogPost:slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/books', [BooksController::class, 'index'])->name('books.index');
 Route::post('/books/{book}/order', [BooksController::class, 'order'])->name('books.order');
+Route::match(['get','post'], '/books/{book}/read', [BookReaderController::class, 'show'])->name('books.reader.show');
+Route::get('/books/{book}/read/{token}', [BookReaderController::class, 'read'])->name('books.reader.read');
+Route::get('/books/{book}/stream/{token}', [BookReaderController::class, 'stream'])->name('books.reader.stream');
 Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course}', [CoursePageController::class, 'show'])->name('courses.show');
 Route::post('/blog/{blogPost}/like', [BlogInteractionController::class, 'like'])->name('blog.like');
@@ -56,6 +61,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/images/upload', [ImageUploadController::class, 'upload'])->name('images.upload');
+    Route::post('/pdfs/upload', [PdfUploadController::class, 'upload'])->name('pdfs.upload');
 
     /* Blog Posts */
     Route::post('/posts', [BlogPostController::class, 'store'])->name('posts.store');
