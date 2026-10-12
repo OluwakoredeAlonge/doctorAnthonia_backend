@@ -9,13 +9,17 @@ use App\Models\Book;
 use App\Models\BookOrder;
 use App\Models\ContactMessage;
 use App\Models\Course;
+use App\Models\HiddenPartnerCourse;
 use App\Models\Organization;
 use App\Models\Service;
 use App\Models\SiteSetting;
 use App\Models\Testimonial;
+use App\Services\PartnerCoursesClient;
 
 class DashboardController extends Controller
 {
+    public function __construct(protected PartnerCoursesClient $partnerCourses) {}
+
     public function index()
     {
         $stats = [
@@ -54,10 +58,16 @@ class DashboardController extends Controller
         $comments = BlogComment::with('post')->latest()->get();
         $panel    = request('panel', 'dashboard');
 
+        $partnerCourses    = $this->partnerCourses->allCourses();
+        $partnerConfigured = $this->partnerCourses->isConfigured();
+        $partnerFailed     = $this->partnerCourses->hasFailed();
+        $hiddenPartnerSlugs = HiddenPartnerCourse::slugs();
+
         return view('admin.dashboard', compact(
             'stats', 'recentMessages', 'recentPosts',
             'posts', 'testimonials', 'messages', 'comments',
-            'books', 'bookOrders', 'courses', 'organizations', 'services', 'settings', 'panel'
+            'books', 'bookOrders', 'courses', 'organizations', 'services', 'settings', 'panel',
+            'partnerCourses', 'partnerConfigured', 'partnerFailed', 'hiddenPartnerSlugs'
         ));
     }
 }

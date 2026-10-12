@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\HiddenPartnerCourse;
+use App\Models\User;
 use App\Services\PartnerCoursesClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
@@ -124,5 +126,86 @@ class PartnerCoursesTest extends TestCase
         Http::fake(['partner.test/api/courses*' => Http::response('boom', 500)]);
 
         $this->get('/courses')->assertOk()->assertSee('Courses Coming Soon');
+    }
+
+    private function fakeTwoCourses(): void
+    {
+        Http::fake(['partner.test/api/courses*' => Http::response([
+            'data' => [$this->course('shown', ['title' => 'Shown Course']), $this->course('secret', ['title' => 'Secret Course'])],
+            'meta' => ['last_page' => 1],
+        ])]);
+    }
+
+    public function test_hidden_course_is_off_the_public_list_but_still_in_the_admin_list(): void
+    {
+        $this->fakeTwoCourses();
+        HiddenPartnerCourse::create(['slug' => 'secret']);
+
+        $client = app(PartnerCoursesClient::class);
+
+        $this->assertSame(['shown'], array_column($client->publicList(), 'slug'));
+        $this->assertSame(['shown', 'secret'], array_column($client->allCourses(), 'slug'));
+
+        $this->get('/courses')->assertOk()->assertSee('Shown Course')->assertDontSee('Secret Course');
+    }
+
+    public function test_admin_can_hide_and_show_a_pulled_course(): void
+    {
+        $this->fakeTwoCourses();
+        $this->actingAs(User::factory()->create());
+
+        $this->post(route('admin.partner-courses.toggle', 'secret'))
+            ->assertRedirect(route('admin.dashboard', ['panel' => 'courses']));
+        $this->assertDatabaseHas('hidden_partner_courses', ['slug' => 'secret']);
+
+        $this->post(route('admin.partner-courses.toggle', 'secret'));
+        $this->assertDatabaseMissing('hidden_partner_courses', ['slug' => 'secret']);
+    }
+
+    public function test_guests_cannot_hide_courses_or_refresh(): void
+    {
+        $this->post(route('admin.partner-courses.toggle', 'secret'))->assertRedirect(route('login'));
+        $this->post(route('admin.partner-courses.refresh'))->assertRedirect(route('login'));
+        $this->assertDatabaseCount('hidden_partner_courses', 0);
+    }
+
+    public function test_refresh_drops_the_cache_so_new_courses_appear(): void
+    {
+        $this->actingAs(User::factory()->create());
+        Http::fake(['partner.test/api/courses*' => Http::sequence()
+            ->push(['data' => [$this->course('old')], 'meta' => ['last_page' => 1]])
+            ->push(['data' => [$this->course('old'), $this->course('new')], 'meta' => ['last_page' => 1]])]);
+
+        $client = app(PartnerCoursesClient::class);
+        $this->assertSame(['old'], array_column($client->allCourses(), 'slug'));
+        $this->assertSame(['old'], array_column($client->allCourses(), 'slug'), 'still cached');
+
+        $this->post(route('admin.partner-courses.refresh'))->assertRedirect();
+        $this->assertSame(['old', 'new'], array_column($client->allCourses(), 'slug'));
+    }
+
+    public function test_admin_dashboard_lists_pulled_courses_with_their_status(): void
+    {
+        $this->fakeTwoCourses();
+        HiddenPartnerCourse::create(['slug' => 'secret']);
+        $this->actingAs(User::factory()->create());
+
+        $this->get(route('admin.dashboard', ['panel' => 'courses']))
+            ->assertOk()
+            ->assertSee('From Heirs')
+            ->assertSee('Shown Course')
+            ->assertSee('Secret Course')
+            ->assertSee('Hidden')
+            ->assertSee('https://partner.test/courses/secret', false);
+    }
+
+    public function test_admin_dashboard_explains_when_not_connected(): void
+    {
+        config(['course_catalog.base_url' => null, 'course_catalog.token' => null]);
+        $this->actingAs(User::factory()->create());
+
+        $this->get(route('admin.dashboard', ['panel' => 'courses']))
+            ->assertOk()
+            ->assertSee('Not connected yet');
     }
 }

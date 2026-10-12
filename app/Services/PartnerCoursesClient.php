@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\PartnerCoursesApiException;
+use App\Models\HiddenPartnerCourse;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
@@ -23,14 +24,44 @@ class PartnerCoursesClient
     }
 
     /**
-     * Every published partner course, reduced to the public allow-list with
-     * a link back to the course's real page on the partner site. Never
-     * throws: a missing config or an unreachable API yields an empty list
-     * so the page still renders its local courses.
+     * The partner courses a visitor should see: everything pulled, minus
+     * the ones the admin has hidden.
      *
      * @return array<int, array<string, mixed>>
      */
     public function publicList(): array
+    {
+        $hidden = HiddenPartnerCourse::slugs();
+
+        return array_values(array_filter(
+            $this->allCourses(),
+            fn (array $course) => ! in_array($course['slug'] ?? null, $hidden, true)
+        ));
+    }
+
+    /** True when the last fetch failed and the API is being skipped for a short while. */
+    public function hasFailed(): bool
+    {
+        return Cache::has(self::BACKOFF_KEY);
+    }
+
+    /** Drops the cached catalogue (and any failure backoff) so the next load re-fetches. */
+    public function refresh(): void
+    {
+        Cache::forget(self::CACHE_KEY);
+        Cache::forget(self::BACKOFF_KEY);
+    }
+
+    /**
+     * Every published partner course, reduced to the public allow-list with
+     * a link back to the course's real page on the partner site, hidden
+     * ones included (the admin needs to see those too). Never throws: a
+     * missing config or an unreachable API yields an empty list so pages
+     * still render.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function allCourses(): array
     {
         if (! $this->isConfigured() || Cache::has(self::BACKOFF_KEY)) {
             return [];

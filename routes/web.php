@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ImageUploadController;
 use App\Http\Controllers\Admin\PdfUploadController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\OrganizationController;
+use App\Http\Controllers\Admin\PartnerCourseController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TestimonialController;
@@ -100,6 +101,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/courses/{course}/modules', [CourseController::class, 'storeModule'])->name('courses.modules.store');
     Route::put('/modules/{module}', [CourseController::class, 'updateModule'])->name('modules.update');
     Route::delete('/modules/{module}', [CourseController::class, 'destroyModule'])->name('modules.destroy');
+
+    /* Courses pulled from Heirs */
+    Route::post('/partner-courses/refresh', [PartnerCourseController::class, 'refresh'])->name('partner-courses.refresh');
+    Route::post('/partner-courses/{slug}/toggle', [PartnerCourseController::class, 'toggle'])
+        ->where('slug', '[A-Za-z0-9._-]+')
+        ->name('partner-courses.toggle');
 
     /* Organizations */
     Route::post('/organizations', [OrganizationController::class, 'store'])->name('organizations.store');

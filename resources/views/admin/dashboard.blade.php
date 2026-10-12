@@ -613,6 +613,70 @@
       @endforeach
     </div>
     @endif
+
+    {{-- Courses pulled automatically from the Heirs platform --}}
+    <div class="mt-12">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div>
+          <h3 class="font-serif text-lg font-bold text-gray-800 flex items-center gap-2">
+            From Heirs
+            @if(count($partnerCourses))<span class="bg-gold/10 text-gold text-xs font-bold px-2 py-0.5 rounded-full">{{ count($partnerCourses) }}</span>@endif
+          </h3>
+          <p class="text-gray-400 text-sm mt-0.5">Courses pulled automatically from the Heirs platform. Hide any you don't want on your Courses page.</p>
+        </div>
+        @if($partnerConfigured)
+        <form method="POST" action="{{ route('admin.partner-courses.refresh') }}">
+          @csrf
+          <button type="submit" class="inline-flex items-center gap-2 border border-gray-200 hover:bg-gray-50 text-gray-600 text-sm font-semibold px-4 py-2 rounded-xl transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh</button>
+        </form>
+        @endif
+      </div>
+
+      @if(! $partnerConfigured)
+      <div class="bg-amber-50 border border-amber-100 rounded-2xl p-6 text-sm text-amber-800">
+        Not connected yet. Set <code class="font-mono text-xs">COURSES_API_BASE_URL</code> and <code class="font-mono text-xs">COURSES_API_TOKEN</code> in the site's environment to start pulling Heirs courses.
+      </div>
+      @elseif(empty($partnerCourses))
+      <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-10 text-center">
+        <p class="font-medium text-gray-400 mb-1">{{ $partnerFailed ? 'Could not reach Heirs' : 'No courses from Heirs yet' }}</p>
+        <p class="text-gray-300 text-sm">{{ $partnerFailed ? 'The connection failed just now. Click Refresh to try again.' : 'Only published Heirs courses appear here.' }}</p>
+      </div>
+      @else
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-50 overflow-hidden">
+        @foreach($partnerCourses as $pc)
+        @php
+          $isHidden = in_array($pc['slug'], $hiddenPartnerSlugs, true);
+          $pcPrice = is_numeric($pc['price'] ?? null)
+            ? ($pc['price'] == 0 ? 'Free' : '₦' . number_format($pc['price'], 0))
+            : null;
+        @endphp
+        <div class="flex flex-wrap items-center gap-4 p-4 {{ $isHidden ? 'bg-gray-50/60' : '' }}">
+          <div class="w-20 h-12 rounded-lg bg-primary/5 overflow-hidden flex-shrink-0 flex items-center justify-center {{ $isHidden ? 'opacity-50' : '' }}">
+            @if(!empty($pc['image_url']))
+            <img src="{{ $pc['image_url'] }}" alt="" loading="lazy" class="w-full h-full object-cover" />
+            @else
+            <i data-lucide="graduation-cap" class="w-5 h-5 text-gray-300"></i>
+            @endif
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="font-semibold text-gray-800 text-sm leading-snug {{ $isHidden ? 'text-gray-400' : '' }}">{{ $pc['title'] }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">
+              {{ $pc['category']['name'] ?? 'Course' }}@if($pcPrice) · {{ $pcPrice }}@endif
+            </p>
+          </div>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full {{ $isHidden ? 'bg-gray-100 text-gray-500' : 'bg-green-50 text-green-700' }}">{{ $isHidden ? 'Hidden' : 'Showing' }}</span>
+          <div class="flex items-center gap-2">
+            <a href="{{ $pc['url'] }}" target="_blank" rel="noopener" class="text-xs font-semibold text-gray-500 hover:text-gold px-2 py-1.5">View on Heirs</a>
+            <form method="POST" action="{{ route('admin.partner-courses.toggle', $pc['slug']) }}">
+              @csrf
+              <button type="submit" class="text-xs font-semibold px-3.5 py-1.5 rounded-lg border transition-colors {{ $isHidden ? 'bg-primary text-white border-primary hover:bg-primary-light' : 'border-gray-200 text-gray-600 hover:bg-gray-50' }}">{{ $isHidden ? 'Show' : 'Hide' }}</button>
+            </form>
+          </div>
+        </div>
+        @endforeach
+      </div>
+      @endif
+    </div>
   </section>
 
   {{-- ═══ ORGANIZATIONS PANEL ═══ --}}
