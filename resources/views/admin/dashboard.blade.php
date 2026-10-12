@@ -376,6 +376,54 @@
         <button onclick="openBookModal()" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Book</button>
       </div>
     </div>
+
+    {{-- How digital books work info card --}}
+    <div class="mb-6 rounded-2xl border border-blue-100 bg-blue-50/60 overflow-hidden">
+      <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron-icon').classList.toggle('rotate-180')" class="w-full flex items-center justify-between px-5 py-4 text-left">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="info" class="w-4 h-4 text-blue-600"></i>
+          </div>
+          <span class="text-sm font-semibold text-blue-800">How digital books work for your customers</span>
+        </div>
+        <i data-lucide="chevron-down" class="chevron-icon w-4 h-4 text-blue-400 transition-transform duration-200 flex-shrink-0"></i>
+      </button>
+      <div class="hidden px-5 pb-5">
+        <div class="grid sm:grid-cols-2 gap-4 mb-4">
+          <div class="bg-white rounded-xl p-4 border border-blue-100">
+            <p class="text-xs font-bold text-blue-700 uppercase tracking-wide mb-3 flex items-center gap-1.5"><i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> When a customer orders</p>
+            <ol class="space-y-2 text-sm text-gray-600">
+              <li class="flex gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span><span>Customer fills the order form on the Books page with their name, email, phone and delivery details.</span></li>
+              <li class="flex gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span><span>Their order appears here under <strong>Book Orders</strong> with status <em>Pending</em>.</span></li>
+              <li class="flex gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span><span>Once you confirm payment, click <strong>Mark as Paid</strong> — this unlocks their access to the PDF reader.</span></li>
+            </ol>
+          </div>
+          <div class="bg-white rounded-xl p-4 border border-blue-100">
+            <p class="text-xs font-bold text-emerald-700 uppercase tracking-wide mb-3 flex items-center gap-1.5"><i data-lucide="book-open" class="w-3.5 h-3.5"></i> When a customer reads</p>
+            <ol class="space-y-2 text-sm text-gray-600">
+              <li class="flex gap-2"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span><span>Customer clicks <strong>Read My Book</strong> on the Books page and enters the email they ordered with.</span></li>
+              <li class="flex gap-2"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span><span>The system checks their email against orders. If matched, the PDF opens in a secure reader — <strong>no download, no printing</strong>.</span></li>
+              <li class="flex gap-2"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span><span>Their browser remembers them, so they go straight to reading on every return visit — no re-entering email.</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-3">
+          <div class="bg-white rounded-xl p-3.5 border border-amber-100 flex gap-3 items-start">
+            <i data-lucide="upload-cloud" class="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0"></i>
+            <div><p class="text-xs font-semibold text-gray-700 mb-0.5">Uploading a PDF</p><p class="text-xs text-gray-500">Edit a book, tick <em>Digital book</em>, then click <em>Upload PDF</em>. The file goes to Cloudinary. Max 50 MB per file.</p></div>
+          </div>
+          <div class="bg-white rounded-xl p-3.5 border border-amber-100 flex gap-3 items-start">
+            <i data-lucide="star" class="w-4 h-4 text-gold mt-0.5 flex-shrink-0"></i>
+            <div><p class="text-xs font-semibold text-gray-700 mb-0.5">Featuring a book</p><p class="text-xs text-gray-500">Click the <em>star</em> on any book card to show it on the homepage. Up to 3 featured books display there.</p></div>
+          </div>
+          <div class="bg-white rounded-xl p-3.5 border border-amber-100 flex gap-3 items-start">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0"></i>
+            <div><p class="text-xs font-semibold text-gray-700 mb-0.5">PDF security</p><p class="text-xs text-gray-500">The PDF file URL is never exposed. It streams through a private server link, so it cannot be shared or downloaded.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
       @foreach($books as $book)
       <div class="bg-white rounded-2xl border {{ $book->featured ? 'border-gold/40 ring-1 ring-gold/20' : 'border-gray-100' }} shadow-sm overflow-hidden group" id="bookcard-{{ $book->id }}">
