@@ -372,7 +372,7 @@
     <div class="flex items-center justify-between mb-6">
       <div><h2 class="font-serif text-xl font-bold text-gray-800">Books &amp; Publications</h2><p class="text-gray-400 text-sm mt-0.5">Manage books, pricing, and homepage featuring</p></div>
       <div class="flex gap-2">
-        <button onclick="showPanel('orders')" class="inline-flex items-center gap-2 border border-gray-200 text-gray-600 hover:border-primary hover:text-primary text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"><i data-lucide="shopping-bag" class="w-4 h-4"></i> Orders@if($stats['pending_orders'] > 0) <span class="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full ml-1">{{ $stats['pending_orders'] }}</span>@endif</button>
+        <button onclick="showPanel('orders')" class="inline-flex items-center gap-2 border border-gray-200 text-gray-600 hover:border-primary hover:text-primary text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"><i data-lucide="shopping-bag" class="w-4 h-4"></i> Orders{{ $stats['pending_orders'] ? ' ('.$stats['pending_orders'].')' : '' }}</button>
         <button onclick="openBookModal()" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"><i data-lucide="plus" class="w-4 h-4"></i> Add Book</button>
       </div>
     </div>
