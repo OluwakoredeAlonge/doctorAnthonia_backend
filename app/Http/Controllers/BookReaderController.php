@@ -15,8 +15,16 @@ class BookReaderController extends Controller
             abort(404);
         }
 
-        $error    = null;
-        $verified = false;
+        // If already verified in this session, go straight to reader
+        $sessionKey = 'book_reader_' . $book->id;
+        if ($request->session()->has($sessionKey)) {
+            $email = $request->session()->get($sessionKey);
+            $token = $this->makeToken($book->id, $email);
+            $url   = route('books.reader.read', ['book' => $book, 'token' => $token]) . '?' . http_build_query(['e' => $email]);
+            return redirect($url);
+        }
+
+        $error = null;
 
         if ($request->isMethod('post')) {
             $email = strtolower(trim($request->input('email', '')));
@@ -25,6 +33,8 @@ class BookReaderController extends Controller
                 ->first();
 
             if ($order) {
+                // Remember this email for the book across the session
+                $request->session()->put($sessionKey, $email);
                 $token = $this->makeToken($book->id, $email);
                 $url   = route('books.reader.read', ['book' => $book, 'token' => $token]) . '?' . http_build_query(['e' => $email]);
                 return redirect($url);
@@ -42,11 +52,9 @@ class BookReaderController extends Controller
             abort(404);
         }
 
-        $expected = $this->makeToken($book->id, $request->query('e', ''));
+        $email    = $request->query('e', '');
+        $expected = $this->makeToken($book->id, $email);
 
-        // Validate token carries a valid email in query string
-        // Token is embedded in the redirect URL: /books/{book}/read/{token}?e={email}
-        // We recompute from the email query param
         if (!hash_equals($expected, $token)) {
             abort(403, 'Invalid or expired access link.');
         }
