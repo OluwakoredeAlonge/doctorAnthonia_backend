@@ -230,7 +230,7 @@
     @php $streamUrl = route('books.reader.stream', ['book' => $book, 'token' => $token]) . '?' . http_build_query(['e' => request()->query('e', '')]); @endphp
     const PDF_URL           = @json($streamUrl);
     const WATERMARK_ENABLED = @json($watermarkEnabled ?? false);
-    const WATERMARK_TEXT    = @json($email ?? '');
+    const WATERMARK_TEXT    = @json($watermarkText ?? $email ?? '');
 
     let pageFlip   = null;
     let totalPages = 0;

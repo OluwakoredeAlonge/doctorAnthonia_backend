@@ -134,23 +134,45 @@
               </div>
               <span class="text-xs font-semibold px-2 py-0.5 rounded-full {{ !is_null($book->digital_price) && !is_null($book->hardcopy_price) ? 'bg-blue-50 text-blue-700' : (!is_null($book->digital_price) ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-700') }} whitespace-nowrap flex-shrink-0">{{ $book->type_label }}</span>
             </div>
-            @if(!is_null($book->digital_price) || !is_null($book->hardcopy_price))
+            @php
+              $freeDigital  = !is_null($book->digital_price) && (float)$book->digital_price === 0.0;
+              $paidDigital  = !is_null($book->digital_price) && (float)$book->digital_price > 0;
+              $hasHardcopy  = !is_null($book->hardcopy_price);
+              // Show order button when there's something to pay for
+              $showOrder    = $paidDigital || $hasHardcopy;
+              // digital_price for the order modal should exclude free (already accessible via Read button)
+              $modalDigitalPrice  = $paidDigital  ? $book->digital_price  : '';
+              $modalHasDigital    = $paidDigital  ? '1' : '0';
+            @endphp
+
+            {{-- Free digital: direct read button --}}
+            @if($freeDigital && $book->file_path)
+            <a href="{{ route('books.reader.show', $book) }}" class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all">
+              <i data-lucide="book-open" class="w-4 h-4"></i>
+              Read Free
+            </a>
+            @endif
+
+            {{-- Order button for anything that has a price --}}
+            @if($showOrder)
             <button
-              class="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
+              class="{{ $freeDigital ? 'mt-1.5 ' : '' }}w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
               onclick="openOrderModal(this)"
               data-book-id="{{ $book->id }}"
               data-book-title="{{ e($book->title) }}"
-              data-book-digital-price="{{ $book->digital_price ?? '' }}"
+              data-book-digital-price="{{ $modalDigitalPrice }}"
               data-book-hardcopy-price="{{ $book->hardcopy_price ?? '' }}"
-              data-book-has-digital="{{ !is_null($book->digital_price) ? '1' : '0' }}"
-              data-book-has-hardcopy="{{ !is_null($book->hardcopy_price) ? '1' : '0' }}"
+              data-book-has-digital="{{ $modalHasDigital }}"
+              data-book-has-hardcopy="{{ $hasHardcopy ? '1' : '0' }}"
               data-book-additional-info="{{ e($book->additional_info ?? '') }}"
             >
               <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-              Order This Book
+              {{ $hasHardcopy && !$paidDigital ? 'Order Hardcopy' : 'Order This Book' }}
             </button>
             @endif
-            @if($book->is_digital && $book->file_path)
+
+            {{-- Paid digital read: after order confirmed, show "Read My Book" --}}
+            @if($paidDigital && $book->file_path)
             <a href="{{ route('books.reader.show', $book) }}" class="mt-1.5 w-full inline-flex items-center justify-center gap-2 border border-primary text-primary hover:bg-primary/5 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all">
               <i data-lucide="book-open" class="w-4 h-4"></i>
               Read My Book

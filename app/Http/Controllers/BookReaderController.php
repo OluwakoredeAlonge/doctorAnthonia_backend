@@ -15,6 +15,14 @@ class BookReaderController extends Controller
             abort(404);
         }
 
+        // Free digital books: open directly — no email or order required
+        if (!is_null($book->digital_price) && (float) $book->digital_price === 0.0) {
+            $email = '__free__';
+            $token = $this->makeToken($book->id, $email);
+            $url   = route('books.reader.read', ['book' => $book, 'token' => $token]) . '?' . http_build_query(['e' => $email]);
+            return redirect($url);
+        }
+
         // If already verified in this session, go straight to reader
         $sessionKey = 'book_reader_' . $book->id;
         if ($request->session()->has($sessionKey)) {
@@ -35,7 +43,6 @@ class BookReaderController extends Controller
                 ->first();
 
             if ($order) {
-                // Remember this email for the book across the session
                 $request->session()->put($sessionKey, $email);
                 $token = $this->makeToken($book->id, $email);
                 $url   = route('books.reader.read', ['book' => $book, 'token' => $token]) . '?' . http_build_query(['e' => $email]);
@@ -62,7 +69,9 @@ class BookReaderController extends Controller
         }
 
         $watermarkEnabled = $book->watermark_enabled;
-        return view('book-reader', compact('book', 'token', 'email', 'watermarkEnabled'));
+        // For free books the watermark label is generic, not a personal email
+        $watermarkText = ($email === '__free__') ? 'Free Copy' : $email;
+        return view('book-reader', compact('book', 'token', 'email', 'watermarkEnabled', 'watermarkText'));
     }
 
     public function stream(Request $request, Book $book, string $token)
