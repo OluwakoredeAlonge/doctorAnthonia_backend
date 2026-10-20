@@ -469,6 +469,7 @@
               data-book-digital="{{ $book->is_digital ? '1' : '0' }}"
               data-book-featured="{{ $book->featured ? '1' : '0' }}"
               data-book-filepath="{{ e($book->file_path ?? '') }}"
+              data-book-watermark="{{ $book->watermark_enabled ? '1' : '0' }}"
             ><i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit</button>
             <form method="POST" action="{{ route('admin.books.destroy', $book) }}" class="inline" onsubmit="return confirm('Delete this book?')">@csrf @method('DELETE')<button type="submit" class="p-2 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
           </div>
@@ -1001,7 +1002,12 @@
         <div class="flex flex-col gap-3 pt-6">
           <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
           <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" value="1" id="nb-digital" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="document.getElementById('nb-pdf-section').classList.toggle('hidden',!this.checked)" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="watermark_enabled" value="1" id="nb-watermark" checked class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Watermark pages</span></label>
         </div>
+      </div>
+      <div class="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 flex gap-3 items-start">
+        <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="text-xs text-amber-700 leading-relaxed"><strong>Why watermark?</strong> Web browsers cannot block screenshots — it's an OS-level action no website can prevent. Watermarking prints the buyer's email faintly across every page: if they share a screenshot, it's instantly traceable back to them. This is how major publishers deter piracy online.</p>
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Image <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
@@ -1056,7 +1062,12 @@
         <div class="flex flex-col gap-3 pt-6">
           <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" id="eb-featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
           <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" id="eb-digital" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="document.getElementById('eb-pdf-section').classList.toggle('hidden',!this.checked)" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="watermark_enabled" id="eb-watermark" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Watermark pages</span></label>
         </div>
+      </div>
+      <div class="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 flex gap-3 items-start">
+        <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="text-xs text-amber-700 leading-relaxed"><strong>Why watermark?</strong> Web browsers cannot block screenshots — it's an OS-level action no website can prevent. Watermarking prints the buyer's email faintly across every page: if they share a screenshot, it's instantly traceable back to them. This is how major publishers deter piracy online.</p>
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Cover Image <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
@@ -1683,7 +1694,7 @@
   function closeEditPostModal(e){if(e.target===document.getElementById('edit-post-overlay'))document.getElementById('edit-post-overlay').classList.remove('open');}
 
   function openEditBookModal(btn){
-    const {bookId:id,bookTitle:title,bookDesc:desc,bookCategory:cat,bookGradient:grad,bookIcon:icon,bookSort:sort,bookCover:coverImage,bookPrice:price,bookDigital:digital,bookFilepath:filepath}=btn.dataset;
+    const {bookId:id,bookTitle:title,bookDesc:desc,bookCategory:cat,bookGradient:grad,bookIcon:icon,bookSort:sort,bookCover:coverImage,bookPrice:price,bookDigital:digital,bookFilepath:filepath,bookWatermark:watermark}=btn.dataset;
     const form=document.getElementById('edit-book-form');
     form.action='/admin/books/'+id;
     document.getElementById('eb-title').value=title;
@@ -1694,6 +1705,7 @@
     document.getElementById('eb-price').value=price||'';
     document.getElementById('eb-featured').checked=btn.dataset.bookFeatured==='1'||document.getElementById('featbtn-'+id)?.classList.contains('text-gold');
     document.getElementById('eb-digital').checked=digital==='1';
+    document.getElementById('eb-watermark').checked=watermark!=='0';
     const pdfSection=document.getElementById('eb-pdf-section');
     const fpInput=document.getElementById('eb-filepath');
     if(digital==='1'){pdfSection.classList.remove('hidden');fpInput.value=filepath||'';}else{pdfSection.classList.add('hidden');fpInput.value=filepath||'';}

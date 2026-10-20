@@ -21,12 +21,14 @@ class BookController extends Controller
             'sort_order'     => 'nullable|integer',
             'price'          => 'nullable|numeric|min:0',
             'featured'       => 'nullable|boolean',
-            'is_digital'     => 'nullable|boolean',
-            'file_path'      => 'nullable|string|max:500',
+            'is_digital'         => 'nullable|boolean',
+            'file_path'          => 'nullable|string|max:500',
+            'watermark_enabled'  => 'nullable|boolean',
         ]);
 
-        $data['featured']   = $request->boolean('featured');
-        $data['is_digital'] = $request->boolean('is_digital');
+        $data['featured']          = $request->boolean('featured');
+        $data['is_digital']        = $request->boolean('is_digital');
+        $data['watermark_enabled'] = $request->boolean('watermark_enabled');
 
         Book::create($data);
 
@@ -47,12 +49,14 @@ class BookController extends Controller
             'sort_order'     => 'nullable|integer',
             'price'          => 'nullable|numeric|min:0',
             'featured'       => 'nullable|boolean',
-            'is_digital'     => 'nullable|boolean',
-            'file_path'      => 'nullable|string|max:500',
+            'is_digital'         => 'nullable|boolean',
+            'file_path'          => 'nullable|string|max:500',
+            'watermark_enabled'  => 'nullable|boolean',
         ]);
 
-        $data['featured']   = $request->boolean('featured');
-        $data['is_digital'] = $request->boolean('is_digital');
+        $data['featured']          = $request->boolean('featured');
+        $data['is_digital']        = $request->boolean('is_digital');
+        $data['watermark_enabled'] = $request->boolean('watermark_enabled');
 
         $book->update($data);
 

@@ -228,7 +228,9 @@
       'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
     @php $streamUrl = route('books.reader.stream', ['book' => $book, 'token' => $token]) . '?' . http_build_query(['e' => request()->query('e', '')]); @endphp
-    const PDF_URL = @json($streamUrl);
+    const PDF_URL           = @json($streamUrl);
+    const WATERMARK_ENABLED = @json($watermarkEnabled ?? false);
+    const WATERMARK_TEXT    = @json($email ?? '');
 
     let pageFlip   = null;
     let totalPages = 0;
@@ -358,6 +360,35 @@
       canvas.width  = vp.width;
       canvas.height = vp.height;
       await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+      if (WATERMARK_ENABLED && WATERMARK_TEXT) applyWatermark(canvas, WATERMARK_TEXT);
+    }
+
+    function applyWatermark(canvas, text) {
+      const ctx  = canvas.getContext('2d');
+      const w    = canvas.width;
+      const h    = canvas.height;
+      const size = Math.max(10, Math.round(w * 0.034)); // ~3.4% of page width
+
+      ctx.save();
+      ctx.font        = `600 ${size}px Inter, Arial, sans-serif`;
+      ctx.fillStyle   = 'rgba(80, 80, 80, 0.13)';
+      ctx.textAlign   = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Rotate the whole context and tile the watermark text in a grid
+      ctx.translate(w / 2, h / 2);
+      ctx.rotate(-Math.PI / 6); // 30° diagonal
+
+      const colSpacing = Math.max(w * 0.55, 200);
+      const rowSpacing = Math.max(h * 0.18, 60);
+
+      for (let row = -h; row < h * 1.5; row += rowSpacing) {
+        for (let col = -w; col < w * 1.5; col += colSpacing) {
+          ctx.fillText(text, col, row);
+        }
+      }
+
+      ctx.restore();
     }
 
     function sleep(ms) {

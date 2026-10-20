@@ -59,7 +59,8 @@ class BookReaderController extends Controller
             abort(403, 'Invalid or expired access link.');
         }
 
-        return view('book-reader', compact('book', 'token'));
+        $watermarkEnabled = $book->watermark_enabled;
+        return view('book-reader', compact('book', 'token', 'email', 'watermarkEnabled'));
     }
 
     public function stream(Request $request, Book $book, string $token)
