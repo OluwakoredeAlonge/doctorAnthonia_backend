@@ -227,11 +227,8 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    const PDF_URL = @json(
-      route('books.reader.stream', ['book' => $book, 'token' => $token])
-      . '?'
-      . http_build_query(['e' => request()->query('e', '')])
-    );
+    @php $streamUrl = route('books.reader.stream', ['book' => $book, 'token' => $token]) . '?' . http_build_query(['e' => request()->query('e', '')]); @endphp
+    const PDF_URL = @json($streamUrl);
 
     let pageFlip   = null;
     let totalPages = 0;
