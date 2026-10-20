@@ -31,7 +31,7 @@ class DashboardController extends Controller
             'pending_comments'    => BlogComment::count(),
             'books'               => Book::count(),
             'orders'              => BookOrder::count(),
-            'pending_orders'      => BookOrder::where('payment_status', 'pending')->count(),
+            'pending_orders'      => BookOrder::where('payment_status', 'awaiting_confirmation')->count(),
             'courses'             => Course::count(),
             'organizations'       => Organization::count(),
         ];
@@ -53,6 +53,7 @@ class DashboardController extends Controller
             'social_facebook', 'social_instagram', 'social_twitter', 'social_linkedin',
             'social_youtube', 'social_tiktok', 'social_spotify',
             'contact_phone', 'contact_email',
+            'books_bank_name', 'books_bank_number', 'books_account_name', 'books_payment_note',
         ]);
 
         $comments = BlogComment::with('post')->latest()->get();

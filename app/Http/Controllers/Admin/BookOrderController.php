@@ -7,17 +7,16 @@ use App\Models\BookOrder;
 
 class BookOrderController extends Controller
 {
-    public function index()
+    public function confirm(BookOrder $order)
     {
-        $orders = BookOrder::with('book')->latest()->get();
-        return redirect()->route('admin.dashboard', ['panel' => 'orders'])
-            ->with('orders', $orders);
+        $order->confirm();
+        return response()->json(['status' => 'confirmed']);
     }
 
-    public function markPaid(BookOrder $order)
+    public function reject(BookOrder $order)
     {
-        $order->update(['payment_status' => 'paid']);
-        return response()->json(['success' => true]);
+        $order->reject();
+        return response()->json(['status' => 'rejected']);
     }
 
     public function destroy(BookOrder $order)

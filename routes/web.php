@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BlogInteractionController;
+use App\Http\Controllers\BookOrderStatusController;
 use App\Http\Controllers\BookReaderController;
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\CoursePageController;
@@ -39,6 +40,8 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{blogPost:slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/books', [BooksController::class, 'index'])->name('books.index');
 Route::post('/books/{book}/order', [BooksController::class, 'order'])->name('books.order');
+Route::get('/books/my-order/{order:payment_reference}', [BookOrderStatusController::class, 'show'])->name('books.order.show');
+Route::patch('/books/my-order/{order:payment_reference}/claim', [BookOrderStatusController::class, 'claimPaid'])->name('books.order.claim');
 Route::match(['get','post'], '/books/{book}/read', [BookReaderController::class, 'show'])->name('books.reader.show');
 Route::get('/books/{book}/read/{token}', [BookReaderController::class, 'read'])->name('books.reader.read');
 Route::get('/books/{book}/stream/{token}', [BookReaderController::class, 'stream'])->name('books.reader.stream');
@@ -91,7 +94,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
 
     /* Book Orders */
-    Route::patch('/orders/{order}/paid', [BookOrderController::class, 'markPaid'])->name('orders.paid');
+    Route::patch('/orders/{order}/confirm', [BookOrderController::class, 'confirm'])->name('orders.confirm');
+    Route::patch('/orders/{order}/reject', [BookOrderController::class, 'reject'])->name('orders.reject');
     Route::delete('/orders/{order}', [BookOrderController::class, 'destroy'])->name('orders.destroy');
 
     /* Courses & Modules */
@@ -124,4 +128,5 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/settings/social', [SettingsController::class, 'updateSocial'])->name('settings.social');
     Route::post('/settings/about', [SettingsController::class, 'updateAbout'])->name('settings.about');
     Route::post('/settings/stats', [SettingsController::class, 'updateStats'])->name('settings.stats');
+    Route::post('/settings/book-payment', [SettingsController::class, 'updateBookPayment'])->name('settings.book-payment');
 });

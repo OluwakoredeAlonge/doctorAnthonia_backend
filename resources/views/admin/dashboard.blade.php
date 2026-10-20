@@ -441,10 +441,13 @@
         <div class="p-4">
           <div class="flex items-center gap-1.5 flex-wrap mb-2">
             <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{{ $book->category }}</span>
-            @if($book->is_digital)<span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">Digital</span>@else<span class="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">Physical</span>@endif
+            <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">{{ $book->type_label }}</span>
           </div>
           <h3 class="font-serif font-bold text-gray-800 text-sm mb-1">{{ $book->title }}</h3>
-          @if($book->price)<p class="text-gold font-bold text-sm mb-1">₦{{ number_format($book->price, 0) }}</p>@endif
+          <div class="flex flex-wrap gap-1.5 mb-1">
+            @if(!is_null($book->digital_price))<span class="text-xs text-gold font-bold">{{ $book->digital_price > 0 ? '₦'.number_format($book->digital_price,0).' digital' : 'Free digital' }}</span>@endif
+            @if(!is_null($book->hardcopy_price))<span class="text-xs text-amber-600 font-bold">{{ $book->hardcopy_price > 0 ? '₦'.number_format($book->hardcopy_price,0).' hardcopy' : 'Free hardcopy' }}</span>@endif
+          </div>
           <p class="text-gray-400 text-xs leading-relaxed">{{ Str::limit($book->description,70) }}</p>
           <div class="flex gap-2 mt-3">
             <button
@@ -462,11 +465,13 @@
               data-book-category="{{ e($book->category) }}"
               data-book-gradient="{{ $book->cover_gradient }}"
               data-book-icon="{{ $book->icon }}"
-              data-book-buylink="{{ e($book->buy_link ?? '') }}"
               data-book-sort="{{ $book->sort_order }}"
               data-book-cover="{{ e($book->cover_image ?? '') }}"
-              data-book-price="{{ $book->price ?? '' }}"
-              data-book-digital="{{ $book->is_digital ? '1' : '0' }}"
+              data-book-digital-price="{{ $book->digital_price ?? '' }}"
+              data-book-hardcopy-price="{{ $book->hardcopy_price ?? '' }}"
+              data-book-additional-info="{{ e($book->additional_info ?? '') }}"
+              data-book-digital="{{ !is_null($book->digital_price) ? '1' : '0' }}"
+              data-book-hardcopy="{{ !is_null($book->hardcopy_price) ? '1' : '0' }}"
               data-book-featured="{{ $book->featured ? '1' : '0' }}"
               data-book-filepath="{{ e($book->file_path ?? '') }}"
               data-book-watermark="{{ $book->watermark_enabled ? '1' : '0' }}"
@@ -481,48 +486,84 @@
 
   {{-- ═══ ORDERS PANEL ═══ --}}
   <section id="panel-orders" class="panel p-6 fadein">
-    <div class="flex items-center justify-between mb-6">
-      <div><h2 class="font-serif text-xl font-bold text-gray-800">Book Orders</h2><p class="text-gray-400 text-sm mt-0.5">{{ $stats['pending_orders'] }} pending · {{ $stats['orders'] }} total</p></div>
+    <div class="flex items-center justify-between mb-5">
+      <div><h2 class="font-serif text-xl font-bold text-gray-800">Book Orders</h2><p class="text-gray-400 text-sm mt-0.5">{{ $stats['pending_orders'] }} awaiting confirmation · {{ $stats['orders'] }} total</p></div>
       <button onclick="showPanel('books')" class="inline-flex items-center gap-2 border border-gray-200 text-gray-600 hover:border-primary hover:text-primary text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Books</button>
     </div>
+
+    {{-- Status filter tabs --}}
+    <div class="flex gap-2 flex-wrap mb-4" id="order-tabs">
+      @php
+        $tabCounts = [
+          'awaiting_confirmation' => $bookOrders->where('payment_status','awaiting_confirmation')->count(),
+          'pending'               => $bookOrders->where('payment_status','pending')->count(),
+          'confirmed'             => $bookOrders->where('payment_status','confirmed')->count(),
+          'rejected'              => $bookOrders->where('payment_status','rejected')->count(),
+          'all'                   => $bookOrders->count(),
+        ];
+      @endphp
+      @foreach(['awaiting_confirmation'=>'Awaiting','pending'=>'Pending','confirmed'=>'Confirmed','rejected'=>'Rejected','all'=>'All'] as $tab => $label)
+      <button
+        onclick="filterOrders('{{ $tab }}')"
+        id="ordertab-{{ $tab }}"
+        class="order-tab text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors {{ $tab === 'awaiting_confirmation' ? 'bg-amber-500 text-white border-amber-500' : 'border-gray-200 text-gray-500 hover:border-gray-300' }}"
+      >{{ $label }} ({{ $tabCounts[$tab] }})</button>
+      @endforeach
+    </div>
+
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead><tr class="border-b border-gray-100 bg-gray-50/60">
-            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Customer</th>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Customer</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Book</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden lg:table-cell">Phone</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Type</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Amount</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden lg:table-cell">Date</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
+            <th class="px-5 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
           </tr></thead>
-          <tbody class="divide-y divide-gray-50">
+          <tbody class="divide-y divide-gray-50" id="orders-tbody">
             @forelse($bookOrders as $order)
-            <tr id="orderrow-{{ $order->id }}">
-              <td class="px-6 py-4"><p class="font-semibold text-gray-800 text-sm">{{ $order->customer_name }}</p><p class="text-gray-400 text-xs">{{ $order->customer_email }}</p>@if($order->customer_address)<p class="text-gray-400 text-xs mt-0.5 truncate max-w-xs">{{ $order->customer_address }}</p>@endif</td>
-              <td class="px-4 py-4 hidden md:table-cell"><p class="text-gray-700 text-sm font-medium">{{ $order->book?->title ?? '—' }}</p></td>
-              <td class="px-4 py-4 hidden lg:table-cell text-gray-500 text-xs">{{ $order->customer_phone ?? '—' }}</td>
-              <td class="px-4 py-4 text-gold font-bold text-sm">{{ $order->amount > 0 ? '₦'.number_format($order->amount, 0) : '—' }}</td>
-              <td class="px-4 py-4 text-gray-400 text-xs hidden lg:table-cell">{{ $order->created_at->format('M j, Y') }}</td>
-              <td class="px-4 py-4">
-                @if($order->payment_status === 'paid')
-                <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full" id="orderbadge-{{ $order->id }}">Paid</span>
-                @else
-                <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full" id="orderbadge-{{ $order->id }}">Pending</span>
-                @endif
+            <tr id="orderrow-{{ $order->id }}" data-status="{{ $order->payment_status }}">
+              <td class="px-5 py-3.5">
+                <p class="font-semibold text-gray-800 text-sm">{{ $order->customer_name }}</p>
+                <p class="text-gray-400 text-xs">{{ $order->customer_email }}</p>
+                @if($order->customer_phone)<p class="text-gray-400 text-xs">{{ $order->customer_phone }}</p>@endif
+                @if($order->customer_address)<p class="text-gray-400 text-xs truncate max-w-xs">{{ $order->customer_address }}</p>@endif
               </td>
-              <td class="px-6 py-4 text-right">
-                <div class="flex items-center justify-end gap-2">
-                  @if($order->payment_status === 'pending')
-                  <button onclick="markOrderPaid({{ $order->id }})" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">Mark Paid</button>
+              <td class="px-4 py-3.5 hidden md:table-cell">
+                <p class="text-gray-700 text-sm font-medium">{{ $order->book?->title ?? '—' }}</p>
+                <p class="text-gray-400 text-xs">{{ $order->created_at->format('M j, Y') }}</p>
+              </td>
+              <td class="px-4 py-3.5 hidden sm:table-cell">
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full {{ $order->order_type === 'digital' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">{{ ucfirst($order->order_type) }}</span>
+              </td>
+              <td class="px-4 py-3.5 text-gold font-bold text-sm">{{ $order->amount > 0 ? '₦'.number_format($order->amount,0) : 'Free' }}</td>
+              <td class="px-4 py-3.5">
+                @php
+                  $badges = [
+                    'pending'               => ['Pending','bg-gray-100 text-gray-600'],
+                    'awaiting_confirmation' => ['Awaiting','bg-amber-50 text-amber-600'],
+                    'confirmed'             => ['Confirmed','bg-emerald-50 text-emerald-600'],
+                    'rejected'              => ['Rejected','bg-red-50 text-red-500'],
+                  ];
+                  [$blabel,$bclass] = $badges[$order->payment_status] ?? ['Unknown','bg-gray-50 text-gray-400'];
+                @endphp
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full {{ $bclass }}" id="orderbadge-{{ $order->id }}">{{ $blabel }}</span>
+              </td>
+              <td class="px-5 py-3.5 text-right">
+                <div class="flex items-center justify-end gap-1.5" id="orderactions-{{ $order->id }}">
+                  @if($order->payment_status === 'awaiting_confirmation')
+                  <button onclick="confirmOrder({{ $order->id }})" class="text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1"><i data-lucide="check" class="w-3 h-3"></i> Confirm</button>
+                  <button onclick="rejectOrder({{ $order->id }})" class="text-xs font-semibold bg-red-50 text-red-500 hover:bg-red-100 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1"><i data-lucide="x" class="w-3 h-3"></i> Reject</button>
                   @endif
+                  <a href="{{ route('books.order.show', $order->payment_reference) }}" target="_blank" class="p-1.5 text-gray-400 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors" title="View order page"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>
                   <form method="POST" action="{{ route('admin.orders.destroy', $order) }}" class="inline" onsubmit="return confirm('Delete this order?')">@csrf @method('DELETE')<button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
                 </div>
               </td>
             </tr>
             @empty
-            <tr><td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">No orders yet.</td></tr>
+            <tr><td colspan="6" class="px-6 py-12 text-center text-gray-400 text-sm">No orders yet.</td></tr>
             @endforelse
           </tbody>
         </table>
@@ -853,6 +894,20 @@
           <button class="mt-4 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Save Statistics</button>
         </form>
 
+        <!-- Book Payment Details -->
+        <form method="POST" action="{{ route('admin.settings.book-payment') }}" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          @csrf
+          <h3 class="font-semibold text-gray-800 mb-1 flex items-center gap-2"><i data-lucide="banknote" class="w-4 h-4 text-gold"></i> Book Payment Details</h3>
+          <p class="text-xs text-gray-400 mb-5">Customers will see these bank details when they place a book order.</p>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Bank Name</label><input type="text" name="books_bank_name" value="{{ $settings['books_bank_name'] ?? '' }}" placeholder="e.g. Zenith Bank" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" /></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Account Number</label><input type="text" name="books_bank_number" value="{{ $settings['books_bank_number'] ?? '' }}" placeholder="0123456789" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" /></div>
+            <div class="sm:col-span-2"><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Account Name</label><input type="text" name="books_account_name" value="{{ $settings['books_account_name'] ?? '' }}" placeholder="e.g. Dr. Adebimpe Yemisi Soje" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" /></div>
+            <div class="sm:col-span-2"><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Payment Note <span class="text-gray-300 normal-case font-normal">(shown to customer)</span></label><textarea name="books_payment_note" rows="2" placeholder="e.g. After payment, your order will be confirmed within 24 hours." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none transition-all">{{ $settings['books_payment_note'] ?? '' }}</textarea></div>
+          </div>
+          <button class="mt-4 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Save Payment Details</button>
+        </form>
+
       </div>
 
       <!-- Social + Contact -->
@@ -998,13 +1053,28 @@
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Icon</label><select name="icon" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option>book</option><option>book-open</option><option>navigation</option><option>unlock</option><option>eye</option><option>anchor</option><option>shield</option><option>key</option><option>smile</option><option>heart</option></select></div>
       </div>
       <div class="grid grid-cols-2 gap-4">
-        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Price (₦) <span class="text-gray-300 normal-case font-normal">(optional)</span></label><input type="number" name="price" min="0" step="0.01" placeholder="e.g. 3500" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
-        <div class="flex flex-col gap-3 pt-6">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" value="1" id="nb-digital" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="document.getElementById('nb-pdf-section').classList.toggle('hidden',!this.checked)" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="watermark_enabled" value="1" id="nb-watermark" checked class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Watermark pages</span></label>
+        <div>
+          <label class="flex items-center gap-2 cursor-pointer mb-2"><input type="checkbox" id="nb-has-digital" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="toggleNbDigital()" /><span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Digital Copy</span></label>
+          <div id="nb-digital-price-wrap" class="hidden">
+            <input type="number" name="digital_price" id="nb-digital-price" min="0" step="0.01" placeholder="Price in ₦ (0 = Free)" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
+          </div>
+        </div>
+        <div>
+          <label class="flex items-center gap-2 cursor-pointer mb-2"><input type="checkbox" id="nb-has-hardcopy" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="toggleNbHardcopy()" /><span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Hardcopy</span></label>
+          <div id="nb-hardcopy-price-wrap" class="hidden">
+            <input type="number" name="hardcopy_price" id="nb-hardcopy-price" min="0" step="0.01" placeholder="Price in ₦ (0 = Free)" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
+          </div>
         </div>
       </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Additional Info <span class="text-gray-300 normal-case font-normal">(optional note for customers)</span></label>
+        <textarea name="additional_info" rows="2" placeholder="e.g. delivery takes 3–5 days, PDF emailed on confirmation…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none placeholder-gray-300"></textarea>
+      </div>
+      <div class="flex gap-4">
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="watermark_enabled" value="1" id="nb-watermark" checked class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Watermark pages</span></label>
+      </div>
+      <input type="hidden" name="is_digital" id="nb-is-digital-hidden" value="0" />
       <div class="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 flex gap-3 items-start">
         <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <p class="text-xs text-amber-700 leading-relaxed"><strong>Why watermark?</strong> Web browsers cannot block screenshots — it's an OS-level action no website can prevent. Watermarking prints the buyer's email faintly across every page: if they share a screenshot, it's instantly traceable back to them. This is how major publishers deter piracy online.</p>
@@ -1023,7 +1093,7 @@
         </div>
       </div>
       <div id="nb-pdf-section" class="hidden">
-        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">PDF File <span class="text-gray-300 normal-case font-normal">(digital books only)</span></label>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">PDF File <span class="text-gray-300 normal-case font-normal">(required for digital copy)</span></label>
         <div class="flex gap-2">
           <input type="text" name="file_path" id="nb-filepath" placeholder="Upload PDF to get URL" class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300 min-w-0 bg-gray-50" readonly />
           <label class="cursor-pointer flex-shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl px-3 py-3 flex items-center gap-1.5 transition-colors whitespace-nowrap" id="nb-pdf-btn">
@@ -1058,13 +1128,28 @@
         <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Icon</label><select name="icon" id="eb-icon" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold"><option>book</option><option>book-open</option><option>navigation</option><option>unlock</option><option>eye</option><option>anchor</option><option>shield</option><option>key</option><option>smile</option><option>heart</option></select></div>
       </div>
       <div class="grid grid-cols-2 gap-4">
-        <div><label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Price (₦)</label><input type="number" name="price" id="eb-price" min="0" step="0.01" placeholder="e.g. 3500" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" /></div>
-        <div class="flex flex-col gap-3 pt-6">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" id="eb-featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="is_digital" id="eb-digital" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="document.getElementById('eb-pdf-section').classList.toggle('hidden',!this.checked)" /><span class="text-sm text-gray-700 font-medium">Digital book</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="watermark_enabled" id="eb-watermark" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Watermark pages</span></label>
+        <div>
+          <label class="flex items-center gap-2 cursor-pointer mb-2"><input type="checkbox" id="eb-has-digital" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="toggleEbDigital()" /><span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Digital Copy</span></label>
+          <div id="eb-digital-price-wrap" class="hidden">
+            <input type="number" name="digital_price" id="eb-digital-price" min="0" step="0.01" placeholder="Price in ₦ (0 = Free)" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
+          </div>
+        </div>
+        <div>
+          <label class="flex items-center gap-2 cursor-pointer mb-2"><input type="checkbox" id="eb-has-hardcopy" class="w-4 h-4 rounded border-gray-300 text-gold" onchange="toggleEbHardcopy()" /><span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Hardcopy</span></label>
+          <div id="eb-hardcopy-price-wrap" class="hidden">
+            <input type="number" name="hardcopy_price" id="eb-hardcopy-price" min="0" step="0.01" placeholder="Price in ₦ (0 = Free)" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold" />
+          </div>
         </div>
       </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Additional Info <span class="text-gray-300 normal-case font-normal">(optional note for customers)</span></label>
+        <textarea name="additional_info" id="eb-additional-info" rows="2" placeholder="e.g. delivery takes 3–5 days, PDF emailed on confirmation…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none placeholder-gray-300"></textarea>
+      </div>
+      <div class="flex gap-4">
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="featured" id="eb-featured" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Feature on homepage</span></label>
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="watermark_enabled" id="eb-watermark" value="1" class="w-4 h-4 rounded border-gray-300 text-gold" /><span class="text-sm text-gray-700 font-medium">Watermark pages</span></label>
+      </div>
+      <input type="hidden" name="is_digital" id="eb-is-digital-hidden" value="0" />
       <div class="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 flex gap-3 items-start">
         <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <p class="text-xs text-amber-700 leading-relaxed"><strong>Why watermark?</strong> Web browsers cannot block screenshots — it's an OS-level action no website can prevent. Watermarking prints the buyer's email faintly across every page: if they share a screenshot, it's instantly traceable back to them. This is how major publishers deter piracy online.</p>
@@ -1663,9 +1748,36 @@
   function closePostModal(){document.getElementById('modal-overlay').classList.remove('open');}
   function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closePostModal();}
 
+  function toggleNbDigital(){
+    const on=document.getElementById('nb-has-digital').checked;
+    document.getElementById('nb-digital-price-wrap').classList.toggle('hidden',!on);
+    document.getElementById('nb-pdf-section').classList.toggle('hidden',!on);
+    document.getElementById('nb-is-digital-hidden').value=on?'1':'0';
+    if(!on){document.getElementById('nb-digital-price').value='';}
+  }
+  function toggleNbHardcopy(){
+    const on=document.getElementById('nb-has-hardcopy').checked;
+    document.getElementById('nb-hardcopy-price-wrap').classList.toggle('hidden',!on);
+    if(!on){document.getElementById('nb-hardcopy-price').value='';}
+  }
+  function toggleEbDigital(){
+    const on=document.getElementById('eb-has-digital').checked;
+    document.getElementById('eb-digital-price-wrap').classList.toggle('hidden',!on);
+    document.getElementById('eb-pdf-section').classList.toggle('hidden',!on);
+    document.getElementById('eb-is-digital-hidden').value=on?'1':'0';
+    if(!on){document.getElementById('eb-digital-price').value='';}
+  }
+  function toggleEbHardcopy(){
+    const on=document.getElementById('eb-has-hardcopy').checked;
+    document.getElementById('eb-hardcopy-price-wrap').classList.toggle('hidden',!on);
+    if(!on){document.getElementById('eb-hardcopy-price').value='';}
+  }
+
   function openBookModal(){
-    // reset PDF section state
-    document.getElementById('nb-digital').checked=false;
+    document.getElementById('nb-has-digital').checked=false;
+    document.getElementById('nb-has-hardcopy').checked=false;
+    document.getElementById('nb-digital-price-wrap').classList.add('hidden');
+    document.getElementById('nb-hardcopy-price-wrap').classList.add('hidden');
     document.getElementById('nb-pdf-section').classList.add('hidden');
     document.getElementById('nb-filepath').value='';
     const st=document.getElementById('nb-pdf-status');if(st){st.textContent='';st.classList.add('hidden');}
@@ -1694,31 +1806,38 @@
   function closeEditPostModal(e){if(e.target===document.getElementById('edit-post-overlay'))document.getElementById('edit-post-overlay').classList.remove('open');}
 
   function openEditBookModal(btn){
-    const {bookId:id,bookTitle:title,bookDesc:desc,bookCategory:cat,bookGradient:grad,bookIcon:icon,bookSort:sort,bookCover:coverImage,bookPrice:price,bookDigital:digital,bookFilepath:filepath,bookWatermark:watermark}=btn.dataset;
+    const d=btn.dataset;
     const form=document.getElementById('edit-book-form');
-    form.action='/admin/books/'+id;
-    document.getElementById('eb-title').value=title;
-    document.getElementById('eb-description').value=desc;
-    document.getElementById('eb-category').value=cat;
-    document.getElementById('eb-gradient').value=grad;
-    document.getElementById('eb-icon').value=icon;
-    document.getElementById('eb-price').value=price||'';
-    document.getElementById('eb-featured').checked=btn.dataset.bookFeatured==='1'||document.getElementById('featbtn-'+id)?.classList.contains('text-gold');
-    document.getElementById('eb-digital').checked=digital==='1';
-    document.getElementById('eb-watermark').checked=watermark!=='0';
+    form.action='/admin/books/'+d.bookId;
+    document.getElementById('eb-title').value=d.bookTitle||'';
+    document.getElementById('eb-description').value=d.bookDesc||'';
+    document.getElementById('eb-category').value=d.bookCategory||'';
+    document.getElementById('eb-gradient').value=d.bookGradient||'';
+    document.getElementById('eb-icon').value=d.bookIcon||'';
+    document.getElementById('eb-additional-info').value=d.bookAdditionalInfo||'';
+    document.getElementById('eb-featured').checked=d.bookFeatured==='1'||!!document.getElementById('featbtn-'+d.bookId)?.classList.contains('text-gold');
+    document.getElementById('eb-watermark').checked=d.bookWatermark!=='0';
+    // Digital copy
+    const hasDigital=d.bookDigital==='1';
+    document.getElementById('eb-has-digital').checked=hasDigital;
+    document.getElementById('eb-digital-price-wrap').classList.toggle('hidden',!hasDigital);
+    document.getElementById('eb-digital-price').value=d.bookDigitalPrice||'';
+    document.getElementById('eb-is-digital-hidden').value=hasDigital?'1':'0';
+    // Hardcopy
+    const hasHardcopy=d.bookHardcopy==='1';
+    document.getElementById('eb-has-hardcopy').checked=hasHardcopy;
+    document.getElementById('eb-hardcopy-price-wrap').classList.toggle('hidden',!hasHardcopy);
+    document.getElementById('eb-hardcopy-price').value=d.bookHardcopyPrice||'';
+    // PDF section
     const pdfSection=document.getElementById('eb-pdf-section');
-    const fpInput=document.getElementById('eb-filepath');
-    if(digital==='1'){pdfSection.classList.remove('hidden');fpInput.value=filepath||'';}else{pdfSection.classList.add('hidden');fpInput.value=filepath||'';}
+    pdfSection.classList.toggle('hidden',!hasDigital);
+    document.getElementById('eb-filepath').value=d.bookFilepath||'';
+    // Cover
     const coverUrl=document.getElementById('eb-cover-url');
     const coverPrev=document.getElementById('eb-cover-preview');
-    coverUrl.value=coverImage||'';
-    if(coverImage){
-      coverPrev.querySelector('img').src=coverImage;
-      coverPrev.classList.remove('hidden');
-    } else {
-      coverPrev.classList.add('hidden');
-      coverPrev.querySelector('img').src='';
-    }
+    coverUrl.value=d.bookCover||'';
+    if(d.bookCover){coverPrev.querySelector('img').src=d.bookCover;coverPrev.classList.remove('hidden');}
+    else{coverPrev.classList.add('hidden');coverPrev.querySelector('img').src='';}
     document.getElementById('edit-book-overlay').classList.add('open');
     lucide.createIcons();
   }
@@ -1737,15 +1856,49 @@
       });
   }
 
-  function markOrderPaid(id){
-    fetch('/admin/orders/'+id+'/paid',{method:'PATCH',headers:{'X-CSRF-TOKEN':csrfToken,'Content-Type':'application/json'}})
-      .then(r=>r.json()).then(()=>{
+  function confirmOrder(id){
+    if(!confirm('Confirm this order? The customer will have access.'))return;
+    fetch('/admin/orders/'+id+'/confirm',{method:'PATCH',headers:{'X-CSRF-TOKEN':csrfToken,'Content-Type':'application/json'}})
+      .then(r=>r.json()).then(data=>{
+        if(!data.success){alert(data.message||'Error');return;}
         const badge=document.getElementById('orderbadge-'+id);
-        if(badge){badge.textContent='Paid';badge.className='text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full';}
+        if(badge){badge.textContent='Confirmed';badge.className='text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full';}
+        const actions=document.getElementById('orderactions-'+id);
+        if(actions){const btns=actions.querySelectorAll('button[onclick*="Order"]');btns.forEach(b=>b.remove());}
         const row=document.getElementById('orderrow-'+id);
-        const btn=row?.querySelector('button[onclick*="markOrderPaid"]');
-        if(btn)btn.remove();
+        if(row)row.dataset.status='confirmed';
       });
+  }
+  function rejectOrder(id){
+    if(!confirm('Reject this order?'))return;
+    fetch('/admin/orders/'+id+'/reject',{method:'PATCH',headers:{'X-CSRF-TOKEN':csrfToken,'Content-Type':'application/json'}})
+      .then(r=>r.json()).then(data=>{
+        if(!data.success){alert(data.message||'Error');return;}
+        const badge=document.getElementById('orderbadge-'+id);
+        if(badge){badge.textContent='Rejected';badge.className='text-xs font-semibold text-red-500 bg-red-50 px-2.5 py-1 rounded-full';}
+        const actions=document.getElementById('orderactions-'+id);
+        if(actions){const btns=actions.querySelectorAll('button[onclick*="Order"]');btns.forEach(b=>b.remove());}
+        const row=document.getElementById('orderrow-'+id);
+        if(row)row.dataset.status='rejected';
+      });
+  }
+  function filterOrders(tab){
+    document.querySelectorAll('.order-tab').forEach(t=>{
+      const active=t.id==='ordertab-'+tab;
+      t.classList.toggle('bg-amber-500',active&&tab==='awaiting_confirmation');
+      t.classList.toggle('bg-emerald-500',active&&tab==='confirmed');
+      t.classList.toggle('bg-red-500',active&&tab==='rejected');
+      t.classList.toggle('bg-primary',active&&tab==='all');
+      t.classList.toggle('bg-gray-200',active&&tab==='pending');
+      t.classList.toggle('text-white',active);
+      t.classList.toggle('border-transparent',active);
+      t.classList.toggle('border-gray-200',!active);
+      t.classList.toggle('text-gray-500',!active);
+    });
+    document.querySelectorAll('#orders-tbody tr[data-status]').forEach(row=>{
+      if(tab==='all')row.style.display='';
+      else row.style.display=row.dataset.status===tab?'':'none';
+    });
   }
 
   function openAddCourseModal(){

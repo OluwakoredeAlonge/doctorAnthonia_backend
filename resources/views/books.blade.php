@@ -120,34 +120,36 @@
           <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ $book->description }}</p>
 
           <div class="mt-5 pt-4 border-t border-gray-100">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                @if($book->price)
-                <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">Price</p>
-                <p class="text-gold font-bold text-lg">₦{{ number_format($book->price, 0) }}</p>
-                @else
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div class="space-y-0.5">
+                @if(!is_null($book->digital_price))
+                <p class="text-sm font-semibold text-emerald-700">{{ $book->digital_price > 0 ? '₦'.number_format($book->digital_price,0) : 'Free' }} <span class="font-normal text-gray-400 text-xs">digital</span></p>
+                @endif
+                @if(!is_null($book->hardcopy_price))
+                <p class="text-sm font-semibold text-amber-700">{{ $book->hardcopy_price > 0 ? '₦'.number_format($book->hardcopy_price,0) : 'Free' }} <span class="font-normal text-gray-400 text-xs">hardcopy</span></p>
+                @endif
+                @if(is_null($book->digital_price) && is_null($book->hardcopy_price))
                 <p class="text-gray-400 text-sm italic">Price TBA</p>
                 @endif
               </div>
-              <div class="flex flex-col gap-1.5">
-                @if($book->is_digital)
-                <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-medium text-center">Digital</span>
-                @else
-                <span class="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium text-center">Physical</span>
-                @endif
-              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full {{ !is_null($book->digital_price) && !is_null($book->hardcopy_price) ? 'bg-blue-50 text-blue-700' : (!is_null($book->digital_price) ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-700') }} whitespace-nowrap flex-shrink-0">{{ $book->type_label }}</span>
             </div>
+            @if(!is_null($book->digital_price) || !is_null($book->hardcopy_price))
             <button
-              class="mt-3 w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
+              class="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
               onclick="openOrderModal(this)"
               data-book-id="{{ $book->id }}"
               data-book-title="{{ e($book->title) }}"
-              data-book-price="{{ $book->price ?? '' }}"
-              data-book-digital="{{ $book->is_digital ? '1' : '0' }}"
+              data-book-digital-price="{{ $book->digital_price ?? '' }}"
+              data-book-hardcopy-price="{{ $book->hardcopy_price ?? '' }}"
+              data-book-has-digital="{{ !is_null($book->digital_price) ? '1' : '0' }}"
+              data-book-has-hardcopy="{{ !is_null($book->hardcopy_price) ? '1' : '0' }}"
+              data-book-additional-info="{{ e($book->additional_info ?? '') }}"
             >
               <i data-lucide="shopping-bag" class="w-4 h-4"></i>
               Order This Book
             </button>
+            @endif
             @if($book->is_digital && $book->file_path)
             <a href="{{ route('books.reader.show', $book) }}" class="mt-1.5 w-full inline-flex items-center justify-center gap-2 border border-primary text-primary hover:bg-primary/5 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all">
               <i data-lucide="book-open" class="w-4 h-4"></i>
@@ -226,15 +228,30 @@
       <button onclick="closeOrderModal()" class="text-gray-400 hover:text-primary p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <div class="px-7 py-5">
-      <div id="om-price-row" class="hidden bg-gold/8 rounded-xl px-4 py-3 mb-5 flex items-center justify-between">
-        <span class="text-gray-500 text-sm">Total</span>
-        <span class="font-bold text-gold text-xl" id="om-price"></span>
+      {{-- Type selector (shown when both types available) --}}
+      <div id="om-type-selector" class="hidden mb-5">
+        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Copy Type</p>
+        <div class="flex gap-2">
+          <button type="button" id="om-btn-digital" onclick="selectOrderType('digital')" class="flex-1 border-2 rounded-xl py-3 text-sm font-semibold transition-colors border-gray-200 text-gray-500">
+            <span class="block text-xs text-gray-400 mb-0.5">Digital</span>
+            <span id="om-digital-price-label"></span>
+          </button>
+          <button type="button" id="om-btn-hardcopy" onclick="selectOrderType('hardcopy')" class="flex-1 border-2 rounded-xl py-3 text-sm font-semibold transition-colors border-gray-200 text-gray-500">
+            <span class="block text-xs text-gray-400 mb-0.5">Hardcopy</span>
+            <span id="om-hardcopy-price-label"></span>
+          </button>
+        </div>
       </div>
-      <div id="om-type-row" class="hidden mb-5">
-        <span id="om-type-badge" class="text-xs font-semibold px-3 py-1 rounded-full"></span>
+      {{-- Single type badge (shown when only one type) --}}
+      <div id="om-type-badge-row" class="hidden mb-4 flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
+        <span id="om-single-type-label" class="text-sm text-gray-600"></span>
+        <span class="font-bold text-gold text-lg" id="om-single-price"></span>
       </div>
+      {{-- Additional info --}}
+      <div id="om-info-row" class="hidden mb-4 bg-blue-50 rounded-xl px-4 py-3 text-sm text-blue-700 leading-relaxed" id="om-info-text"></div>
       <form id="order-form" class="space-y-4">
         <input type="hidden" id="om-book-id" name="book_id" />
+        <input type="hidden" id="om-order-type" name="order_type" value="digital" />
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Full Name <span class="text-red-400">*</span></label>
           <input type="text" name="customer_name" id="om-name" required placeholder="Your full name" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-colors" />
@@ -259,7 +276,7 @@
           </button>
         </div>
         <p class="text-gray-400 text-xs text-center leading-relaxed">
-          After submitting, our team will contact you within 24 hours with payment details and delivery information.
+          After placing your order you'll receive bank details to complete payment.
         </p>
       </form>
     </div>
@@ -272,12 +289,16 @@
     <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-5">
       <i data-lucide="check-circle" class="w-8 h-8 text-emerald-500"></i>
     </div>
-    <h3 class="font-serif text-2xl font-bold text-gray-800 mb-3">Order Received!</h3>
-    <p class="text-gray-500 text-sm leading-relaxed mb-6">
-      Thank you for your order. We'll reach out to <strong id="success-email" class="text-primary"></strong> within 24 hours with payment details and delivery information.
+    <h3 class="font-serif text-2xl font-bold text-gray-800 mb-3">Order Placed!</h3>
+    <p class="text-gray-500 text-sm leading-relaxed mb-3">
+      Your order reference is <strong id="success-ref" class="text-primary font-mono"></strong>.
     </p>
-    <button onclick="document.getElementById('success-overlay').classList.remove('open')" class="bg-primary hover:bg-primary-light text-white font-semibold px-8 py-3 rounded-xl transition-colors text-sm">
-      Done
+    <p class="text-gray-500 text-sm leading-relaxed mb-6">Complete your payment using the bank details on the order page, then tap <em>I've Paid</em> and we'll confirm within 24 hours.</p>
+    <a id="success-order-link" href="#" class="block w-full bg-primary hover:bg-primary-light text-white font-semibold px-8 py-3 rounded-xl transition-colors text-sm mb-3">
+      View My Order &amp; Pay
+    </a>
+    <button onclick="document.getElementById('success-overlay').classList.remove('open')" class="text-gray-400 text-sm hover:text-gray-600 transition-colors">
+      Close
     </button>
   </div>
 </div>
@@ -298,43 +319,75 @@
   }
 
   let currentBookId = null;
+  let selectedOrderType = 'digital';
+
+  function fmtPrice(p) {
+    return p !== '' && p !== null && p !== undefined
+      ? (Number(p) === 0 ? 'Free' : '₦' + Number(p).toLocaleString('en-NG', {minimumFractionDigits: 0}))
+      : '';
+  }
+
+  function selectOrderType(type) {
+    selectedOrderType = type;
+    document.getElementById('om-order-type').value = type;
+    ['digital','hardcopy'].forEach(t => {
+      const btn = document.getElementById('om-btn-' + t);
+      if (t === type) {
+        btn.classList.add('border-primary','text-primary');
+        btn.classList.remove('border-gray-200','text-gray-500');
+      } else {
+        btn.classList.remove('border-primary','text-primary');
+        btn.classList.add('border-gray-200','text-gray-500');
+      }
+    });
+    const addrRow = document.getElementById('om-address-row');
+    addrRow.classList.toggle('hidden', type === 'digital');
+  }
 
   function openOrderModal(btn) {
-    currentBookId = btn.dataset.bookId;
-    const title    = btn.dataset.bookTitle;
-    const price    = btn.dataset.bookPrice;
-    const digital  = btn.dataset.bookDigital === '1';
+    const d = btn.dataset;
+    currentBookId = d.bookId;
+    const hasDigital  = d.bookHasDigital === '1';
+    const hasHardcopy = d.bookHasHardcopy === '1';
+    const bothTypes   = hasDigital && hasHardcopy;
 
-    document.getElementById('om-title').textContent = title;
-    document.getElementById('om-subtitle').textContent = digital ? 'Digital book — delivered via email' : 'Physical book — delivered to your address';
+    document.getElementById('om-title').textContent = d.bookTitle;
     document.getElementById('om-book-id').value = currentBookId;
-
-    const priceRow = document.getElementById('om-price-row');
-    if (price) {
-      document.getElementById('om-price').textContent = '₦' + Number(price).toLocaleString('en-NG', {minimumFractionDigits: 0});
-      priceRow.classList.remove('hidden');
-    } else {
-      priceRow.classList.add('hidden');
-    }
-
-    const typeRow   = document.getElementById('om-type-row');
-    const typeBadge = document.getElementById('om-type-badge');
-    typeRow.classList.remove('hidden');
-    typeBadge.textContent = digital ? 'Digital Download' : 'Physical Copy';
-    typeBadge.className   = digital
-      ? 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-600'
-      : 'text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700';
-
-    const addrRow = document.getElementById('om-address-row');
-    if (digital) {
-      addrRow.classList.add('hidden');
-    } else {
-      addrRow.classList.remove('hidden');
-    }
-
     document.getElementById('om-error').classList.add('hidden');
     document.getElementById('order-form').reset();
     document.getElementById('om-book-id').value = currentBookId;
+
+    // Additional info
+    const infoRow = document.getElementById('om-info-row');
+    if (d.bookAdditionalInfo) {
+      infoRow.textContent = d.bookAdditionalInfo;
+      infoRow.classList.remove('hidden');
+    } else {
+      infoRow.classList.add('hidden');
+    }
+
+    if (bothTypes) {
+      // Show type selector
+      document.getElementById('om-type-selector').classList.remove('hidden');
+      document.getElementById('om-type-badge-row').classList.add('hidden');
+      document.getElementById('om-subtitle').textContent = 'Choose your copy type below';
+      document.getElementById('om-digital-price-label').textContent = fmtPrice(d.bookDigitalPrice);
+      document.getElementById('om-hardcopy-price-label').textContent = fmtPrice(d.bookHardcopyPrice);
+      selectOrderType('digital');
+    } else {
+      document.getElementById('om-type-selector').classList.add('hidden');
+      const type   = hasDigital ? 'digital' : 'hardcopy';
+      const price  = hasDigital ? d.bookDigitalPrice : d.bookHardcopyPrice;
+      selectedOrderType = type;
+      document.getElementById('om-order-type').value = type;
+      document.getElementById('om-subtitle').textContent = type === 'digital' ? 'Digital book' : 'Hardcopy — physical delivery';
+      const badgeRow = document.getElementById('om-type-badge-row');
+      badgeRow.classList.remove('hidden');
+      document.getElementById('om-single-type-label').textContent = type === 'digital' ? 'Digital copy' : 'Hardcopy';
+      document.getElementById('om-single-price').textContent = fmtPrice(price);
+      document.getElementById('om-address-row').classList.toggle('hidden', type === 'digital');
+    }
+
     document.getElementById('order-overlay').classList.add('open');
     lucide.createIcons();
   }
@@ -364,8 +417,8 @@
       const data = await res.json();
       if (res.ok && data.success) {
         document.getElementById('order-overlay').classList.remove('open');
-        const email = document.getElementById('om-email').value;
-        document.getElementById('success-email').textContent = email;
+        document.getElementById('success-ref').textContent  = data.reference || '';
+        document.getElementById('success-order-link').href  = data.order_url  || '#';
         document.getElementById('success-overlay').classList.add('open');
         lucide.createIcons();
       } else {

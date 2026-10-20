@@ -30,6 +30,8 @@ class BookReaderController extends Controller
             $email = strtolower(trim($request->input('email', '')));
             $order = BookOrder::where('book_id', $book->id)
                 ->where('customer_email', $email)
+                ->where('order_type', 'digital')
+                ->where('payment_status', 'confirmed')
                 ->first();
 
             if ($order) {
@@ -40,7 +42,7 @@ class BookReaderController extends Controller
                 return redirect($url);
             }
 
-            $error = 'No order found for that email address. Please use the email you ordered with.';
+            $error = 'No confirmed digital order found for that email. Please check your email address or contact support if you believe this is an error.';
         }
 
         return view('book-reader-verify', compact('book', 'error'));

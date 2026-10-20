@@ -81,6 +81,23 @@ class SettingsController extends Controller
             ->with('success', 'About section updated successfully.');
     }
 
+    public function updateBookPayment(Request $request)
+    {
+        $request->validate([
+            'books_bank_name'     => 'nullable|string|max:200',
+            'books_bank_number'   => 'nullable|string|max:50',
+            'books_account_name'  => 'nullable|string|max:200',
+            'books_payment_note'  => 'nullable|string',
+        ]);
+
+        foreach ($request->only('books_bank_name', 'books_bank_number', 'books_account_name', 'books_payment_note') as $key => $value) {
+            SiteSetting::set($key, $value ?? '');
+        }
+
+        return redirect()->route('admin.dashboard', ['panel' => 'settings'])
+            ->with('success', 'Book payment details updated.');
+    }
+
     public function updateStats(Request $request)
     {
         $request->validate([
