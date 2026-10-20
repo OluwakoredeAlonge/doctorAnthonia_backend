@@ -409,8 +409,8 @@
       @foreach($books as $i => $book)
         <div class="book-card rounded-2xl overflow-hidden border border-white/8 cursor-default flex flex-col">
           @if($book->cover_image)
-            <div class="h-52 overflow-hidden">
-              <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-full object-cover" />
+            <div class="flex items-center justify-center">
+              <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full object-contain" />
             </div>
           @else
             <div class="{{ $book->cover_gradient }} h-36 flex items-center justify-center">

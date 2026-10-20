@@ -104,8 +104,8 @@
       <div class="book-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm flex flex-col fade-in" style="animation-delay:{{ $i * 0.07 }}s">
         {{-- Cover --}}
         @if($book->cover_image)
-        <div class="h-64 overflow-hidden bg-gray-50">
-          <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-full object-cover" />
+        <div class="bg-gray-50 flex items-center justify-center">
+          <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full object-contain" />
         </div>
         @else
         <div class="{{ $book->cover_gradient }} h-48 flex items-center justify-center">
