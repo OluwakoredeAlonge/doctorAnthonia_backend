@@ -266,10 +266,17 @@
 
         const scaleByH  = availH / native.height;
         const scaleByW  = availW / native.width;
-        const renderScale = Math.min(scaleByH, scaleByW, 2.0); // max 2x for quality
+        // layoutScale drives the CSS display size (how big the page is on screen)
+        const layoutScale = Math.min(scaleByH, scaleByW, 2.0);
 
-        const pgW = Math.floor(native.width  * renderScale);
-        const pgH = Math.floor(native.height * renderScale);
+        // renderScale multiplies by devicePixelRatio so each canvas pixel = 1 physical
+        // pixel on Retina/high-DPI screens — eliminates blurriness
+        const dpr         = Math.min(window.devicePixelRatio || 1, 2);
+        const renderScale = layoutScale * dpr;
+
+        // CSS (layout) dimensions — what PageFlip and the divs use
+        const pgW = Math.floor(native.width  * layoutScale);
+        const pgH = Math.floor(native.height * layoutScale);
 
         // ── Create all page divs upfront (empty canvases) ──
         const container  = document.getElementById('flipbook');
