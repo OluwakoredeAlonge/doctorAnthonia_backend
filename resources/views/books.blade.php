@@ -290,6 +290,16 @@
           <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Delivery Address</label>
           <textarea name="customer_address" id="om-address" rows="2" placeholder="Street address, city, state" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold resize-none transition-colors"></textarea>
         </div>
+        {{-- Coupon code --}}
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Coupon Code <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+          <div class="flex gap-2">
+            <input type="text" id="om-coupon-input" placeholder="Enter code" maxlength="50" onkeydown="if(event.key==='Enter'){event.preventDefault();applyCoupon();}" class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-colors uppercase placeholder-gray-300" style="text-transform:uppercase" />
+            <button type="button" onclick="applyCoupon()" id="om-coupon-btn" class="flex-shrink-0 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold px-4 py-3 rounded-xl transition-colors">Apply</button>
+          </div>
+          <div id="om-coupon-result" class="hidden mt-2 text-xs font-semibold px-3 py-2 rounded-lg"></div>
+          <input type="hidden" name="coupon_code" id="om-coupon-code" />
+        </div>
         <div id="om-error" class="hidden text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3"></div>
         <div class="flex gap-3 pt-2">
           <button type="button" onclick="closeOrderModal()" class="flex-1 py-3 border border-gray-200 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors">Cancel</button>
@@ -349,6 +359,14 @@
       : '';
   }
 
+  function resetCoupon() {
+    document.getElementById('om-coupon-input').value = '';
+    document.getElementById('om-coupon-code').value  = '';
+    const r = document.getElementById('om-coupon-result');
+    r.classList.add('hidden');
+    r.textContent = '';
+  }
+
   function selectOrderType(type) {
     selectedOrderType = type;
     document.getElementById('om-order-type').value = type;
@@ -364,6 +382,56 @@
     });
     const addrRow = document.getElementById('om-address-row');
     addrRow.classList.toggle('hidden', type === 'digital');
+    resetCoupon();
+  }
+
+  async function applyCoupon() {
+    const input  = document.getElementById('om-coupon-input');
+    const code   = input.value.trim().toUpperCase();
+    const result = document.getElementById('om-coupon-result');
+    const hidden = document.getElementById('om-coupon-code');
+
+    if (!code) { return; }
+
+    const btn = document.getElementById('om-coupon-btn');
+    btn.disabled   = true;
+    btn.textContent = 'Checking…';
+
+    try {
+      const res  = await fetch('{{ route("books.coupons.validate") }}', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept':       'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code, book_id: currentBookId, order_type: selectedOrderType }),
+      });
+      const data = await res.json();
+
+      result.classList.remove('hidden', 'text-green-700', 'bg-green-50', 'text-red-600', 'bg-red-50');
+
+      if (data.valid) {
+        hidden.value = code;
+        const label = data.final === 0
+          ? data.discount + '% off — Free!'
+          : data.discount + '% off — now ₦' + Number(data.final).toLocaleString('en-NG', {minimumFractionDigits: 0});
+        result.textContent = label;
+        result.classList.add('text-green-700', 'bg-green-50');
+      } else {
+        hidden.value = '';
+        result.textContent = data.message || 'Invalid coupon code.';
+        result.classList.add('text-red-600', 'bg-red-50');
+      }
+    } catch {
+      hidden.value = '';
+      result.textContent = 'Could not check coupon. Try again.';
+      result.classList.remove('hidden');
+      result.classList.add('text-red-600', 'bg-red-50');
+    }
+
+    btn.disabled    = false;
+    btn.textContent = 'Apply';
   }
 
   function openOrderModal(btn) {
@@ -378,6 +446,7 @@
     document.getElementById('om-error').classList.add('hidden');
     document.getElementById('order-form').reset();
     document.getElementById('om-book-id').value = currentBookId;
+    resetCoupon();
 
     // Additional info
     const infoRow = document.getElementById('om-info-row');

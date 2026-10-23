@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\BookCouponController;
 use App\Http\Controllers\Admin\BookOrderController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -39,6 +40,7 @@ Route::post('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{blogPost:slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/books', [BooksController::class, 'index'])->name('books.index');
+Route::post('/books/coupons/validate', [BooksController::class, 'validateCoupon'])->name('books.coupons.validate');
 Route::post('/books/{book}/order', [BooksController::class, 'order'])->name('books.order');
 Route::get('/books/my-order/{order:payment_reference}', [BookOrderStatusController::class, 'show'])->name('books.order.show');
 Route::patch('/books/my-order/{order:payment_reference}/claim', [BookOrderStatusController::class, 'claimPaid'])->name('books.order.claim');
@@ -97,6 +99,11 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::patch('/orders/{order}/confirm', [BookOrderController::class, 'confirm'])->name('orders.confirm');
     Route::patch('/orders/{order}/reject', [BookOrderController::class, 'reject'])->name('orders.reject');
     Route::delete('/orders/{order}', [BookOrderController::class, 'destroy'])->name('orders.destroy');
+
+    /* Book Coupons */
+    Route::post('/coupons', [BookCouponController::class, 'store'])->name('coupons.store');
+    Route::patch('/coupons/{coupon}/toggle', [BookCouponController::class, 'toggle'])->name('coupons.toggle');
+    Route::delete('/coupons/{coupon}', [BookCouponController::class, 'destroy'])->name('coupons.destroy');
 
     /* Courses & Modules */
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');

@@ -87,6 +87,7 @@
     <button onclick="showPanel('messages')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="mail" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Messages</span>@if($stats['new_messages']>0)<span class="sidebar-label ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['new_messages'] }}</span>@endif</button>
     <button onclick="showPanel('books')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="book-open" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Books</span>@if($stats['books']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['books'] }}</span>@endif</button>
     <button onclick="showPanel('orders')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="shopping-bag" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Book Orders</span>@if($stats['pending_orders']>0)<span class="sidebar-label ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['pending_orders'] }}</span>@endif</button>
+    <button onclick="showPanel('coupons')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="ticket" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Coupons</span>@if($bookCoupons->count()>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $bookCoupons->count() }}</span>@endif</button>
     <button onclick="showPanel('courses')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="play-circle" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Courses</span>@if($stats['courses']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['courses'] }}</span>@endif</button>
     <button onclick="showPanel('organizations')" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 text-sm font-medium"><i data-lucide="building-2" class="nav-icon w-5 h-5 flex-shrink-0"></i><span class="sidebar-label">Organizations</span>@if($stats['organizations']>0)<span class="sidebar-label ml-auto bg-gold text-white text-xs px-1.5 py-0.5 rounded-full">{{ $stats['organizations'] }}</span>@endif</button>
     <p class="sidebar-section-label text-white/25 text-xs font-semibold uppercase tracking-widest px-3 mb-2 mt-5">Content</p>
@@ -568,6 +569,122 @@
           </tbody>
         </table>
       </div>
+    </div>
+  </section>
+
+  {{-- ═══ COUPONS PANEL ═══ --}}
+  <section id="panel-coupons" class="panel p-6 fadein">
+    <div class="flex items-center justify-between mb-6">
+      <div><h2 class="font-serif text-xl font-bold text-gray-800">Coupon Codes</h2><p class="text-gray-400 text-sm mt-0.5">Create and manage discount codes for books</p></div>
+      <button onclick="showPanel('books')" class="inline-flex items-center gap-2 border border-gray-200 text-gray-600 hover:border-primary hover:text-primary text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"><i data-lucide="arrow-left" class="w-4 h-4"></i> Books</button>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6">
+
+      {{-- Create coupon form --}}
+      <div class="lg:col-span-1">
+        <form method="POST" action="{{ route('admin.coupons.store') }}" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          @csrf
+          <h3 class="font-semibold text-gray-800 mb-5 flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4 text-gold"></i> New Coupon</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Code <span class="text-gray-300 normal-case font-normal">(leave blank to auto-generate)</span></label>
+              <input type="text" name="code" placeholder="e.g. FRIEND50" maxlength="50" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold uppercase placeholder-gray-300 transition-all" style="text-transform:uppercase" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Discount</label>
+              <div class="grid grid-cols-3 gap-2">
+                @foreach([25, 50, 100] as $pct)
+                <label class="relative cursor-pointer">
+                  <input type="radio" name="discount_percent" value="{{ $pct }}" class="sr-only peer" {{ $pct === 100 ? 'checked' : '' }} />
+                  <span class="block text-center border-2 rounded-xl py-2.5 text-sm font-bold transition-colors border-gray-200 text-gray-500 peer-checked:border-primary peer-checked:text-primary peer-checked:bg-primary/5">{{ $pct }}%</span>
+                </label>
+                @endforeach
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Book <span class="text-gray-300 normal-case font-normal">(leave blank = all books)</span></label>
+              <select name="book_id" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-gold transition-all">
+                <option value="">— All Books —</option>
+                @foreach($books as $b)
+                <option value="{{ $b->id }}">{{ $b->title }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Assigned To <span class="text-gray-300 normal-case font-normal">(your reference)</span></label>
+              <input type="text" name="assigned_to" placeholder="e.g. Jane Smith / jane@email.com" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all placeholder-gray-300" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Max Uses</label>
+                <input type="number" name="max_uses" value="1" min="1" max="9999" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Expires</label>
+                <input type="date" name="expires_at" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-all" />
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="mt-5 w-full bg-primary hover:bg-primary-light text-white text-sm font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"><i data-lucide="ticket" class="w-4 h-4"></i> Create Coupon</button>
+        </form>
+      </div>
+
+      {{-- Coupon list --}}
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead><tr class="border-b border-gray-100 bg-gray-50/60">
+                <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Code</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Discount</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Book</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden lg:table-cell">Assigned</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Uses</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+                <th class="px-5 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
+              </tr></thead>
+              <tbody class="divide-y divide-gray-50">
+                @forelse($bookCoupons as $coupon)
+                <tr id="couponrow-{{ $coupon->id }}">
+                  <td class="px-5 py-3.5">
+                    <span class="font-mono font-bold text-gray-800 text-sm tracking-wider">{{ $coupon->code }}</span>
+                    @if($coupon->expires_at)<p class="text-xs text-gray-400 mt-0.5">Expires {{ $coupon->expires_at->format('d M Y') }}</p>@endif
+                  </td>
+                  <td class="px-4 py-3.5">
+                    @php $cls = match($coupon->discount_percent) { 100 => 'bg-emerald-50 text-emerald-700', 50 => 'bg-blue-50 text-blue-700', default => 'bg-amber-50 text-amber-700' }; @endphp
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-full {{ $cls }}">{{ $coupon->discount_percent }}% off</span>
+                  </td>
+                  <td class="px-4 py-3.5 hidden md:table-cell text-gray-600 text-xs">{{ $coupon->book?->title ?? 'All books' }}</td>
+                  <td class="px-4 py-3.5 hidden lg:table-cell text-gray-500 text-xs max-w-[140px] truncate">{{ $coupon->assigned_to ?? '—' }}</td>
+                  <td class="px-4 py-3.5 text-sm text-gray-600">{{ $coupon->use_count }} / {{ $coupon->max_uses }}</td>
+                  <td class="px-4 py-3.5">
+                    @if(!$coupon->is_active)
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-500" id="couponbadge-{{ $coupon->id }}">Disabled</span>
+                    @elseif($coupon->use_count >= $coupon->max_uses)
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-50 text-red-500" id="couponbadge-{{ $coupon->id }}">Used up</span>
+                    @elseif($coupon->expires_at && $coupon->expires_at->isPast())
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-50 text-red-500" id="couponbadge-{{ $coupon->id }}">Expired</span>
+                    @else
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600" id="couponbadge-{{ $coupon->id }}">Active</span>
+                    @endif
+                  </td>
+                  <td class="px-5 py-3.5 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button onclick="toggleCoupon({{ $coupon->id }})" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors {{ $coupon->is_active ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100' }}" id="coupontoggle-{{ $coupon->id }}">{{ $coupon->is_active ? 'Disable' : 'Enable' }}</button>
+                      <form method="POST" action="{{ route('admin.coupons.destroy', $coupon) }}" class="inline" onsubmit="return confirm('Delete this coupon?')">@csrf @method('DELETE')<button type="submit" class="p-1.5 text-red-400 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></form>
+                    </div>
+                  </td>
+                </tr>
+                @empty
+                <tr><td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">No coupons yet. Create your first one.</td></tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -1882,6 +1999,23 @@
         if(row)row.dataset.status='rejected';
       });
   }
+  function toggleCoupon(id){
+    fetch('/admin/coupons/'+id+'/toggle',{method:'PATCH',headers:{'X-CSRF-TOKEN':csrfToken,'Content-Type':'application/json'}})
+      .then(r=>r.json()).then(data=>{
+        const active=data.active;
+        const badge=document.getElementById('couponbadge-'+id);
+        const btn=document.getElementById('coupontoggle-'+id);
+        if(badge){
+          badge.textContent=active?'Active':'Disabled';
+          badge.className='text-xs font-semibold px-2.5 py-1 rounded-full '+(active?'bg-emerald-50 text-emerald-600':'bg-gray-100 text-gray-500');
+        }
+        if(btn){
+          btn.textContent=active?'Disable':'Enable';
+          btn.className='text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors '+(active?'bg-amber-50 text-amber-600 hover:bg-amber-100':'bg-emerald-50 text-emerald-600 hover:bg-emerald-100');
+        }
+      });
+  }
+
   function filterOrders(tab){
     document.querySelectorAll('.order-tab').forEach(t=>{
       const active=t.id==='ordertab-'+tab;

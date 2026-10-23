@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BlogComment;
 use App\Models\BlogPost;
 use App\Models\Book;
+use App\Models\BookCoupon;
 use App\Models\BookOrder;
 use App\Models\ContactMessage;
 use App\Models\Course;
@@ -43,6 +44,7 @@ class DashboardController extends Controller
         $messages        = ContactMessage::latest()->get();
         $books           = Book::orderBy('sort_order')->orderBy('id')->get();
         $bookOrders      = BookOrder::with('book')->latest()->get();
+        $bookCoupons     = BookCoupon::with('book')->latest()->get();
         $courses         = Course::with('modules')->orderBy('sort_order')->orderBy('id')->get();
         $organizations   = Organization::orderBy('sort_order')->get();
         $services        = Service::orderBy('sort_order')->get();
@@ -67,7 +69,7 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact(
             'stats', 'recentMessages', 'recentPosts',
             'posts', 'testimonials', 'messages', 'comments',
-            'books', 'bookOrders', 'courses', 'organizations', 'services', 'settings', 'panel',
+            'books', 'bookOrders', 'bookCoupons', 'courses', 'organizations', 'services', 'settings', 'panel',
             'partnerCourses', 'partnerConfigured', 'partnerFailed', 'hiddenPartnerSlugs'
         ));
     }
