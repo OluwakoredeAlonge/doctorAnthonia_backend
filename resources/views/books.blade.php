@@ -40,6 +40,12 @@
     #order-overlay.open{display:flex;}
     #success-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:110;align-items:center;justify-content:center;}
     #success-overlay.open{display:flex;}
+    #desc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:120;align-items:flex-end;justify-content:center;padding-bottom:0;}
+    #desc-overlay.open{display:flex;}
+    @media(min-width:640px){#desc-overlay{align-items:center;padding-bottom:0;}}
+    .desc-sheet{transform:translateY(100%);transition:transform .35s cubic-bezier(.32,1,.46,1);}
+    #desc-overlay.open .desc-sheet{transform:translateY(0);}
+    @media(min-width:640px){.desc-sheet{transform:translateY(0) scale(.96);transition:transform .3s cubic-bezier(.32,1,.46,1),opacity .3s;opacity:0;}#desc-overlay.open .desc-sheet{transform:scale(1);opacity:1;}}
   </style>
 </head>
 <body class="bg-cream antialiased">
@@ -117,7 +123,18 @@
         <div class="p-5 flex flex-col flex-1">
           <span class="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full inline-block mb-3 self-start font-medium">{{ $book->category }}</span>
           <h3 class="font-serif text-lg font-bold text-gray-900 mb-2 leading-snug">{{ $book->title }}</h3>
-          <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ $book->description }}</p>
+          <div class="flex-1">
+            <p class="text-gray-500 text-sm leading-relaxed line-clamp-3" id="desc-{{ $book->id }}">{{ $book->description }}</p>
+            @if(strlen($book->description) > 160)
+            <button
+              onclick="openDescModal(this)"
+              data-title="{{ e($book->title) }}"
+              data-cover="{{ e($book->cover_image ?? '') }}"
+              data-desc="{{ e($book->description) }}"
+              class="mt-1 text-xs font-semibold text-primary hover:underline focus:outline-none"
+            >Read more</button>
+            @endif
+          </div>
 
           <div class="mt-5 pt-4 border-t border-gray-100">
             <div class="flex items-start justify-between gap-3 mb-3">
@@ -335,6 +352,33 @@
   </div>
 </div>
 
+<!-- DESCRIPTION MODAL -->
+<div id="desc-overlay" onclick="closeDescModal(event)">
+  <div class="desc-sheet bg-white w-full sm:max-w-lg sm:mx-4 sm:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden" style="max-height:90vh;" onclick="event.stopPropagation()">
+    {{-- Drag handle (mobile) --}}
+    <div class="sm:hidden flex justify-center pt-3 pb-1">
+      <div class="w-10 h-1 bg-gray-200 rounded-full"></div>
+    </div>
+    {{-- Header --}}
+    <div class="flex items-start gap-4 px-6 pt-4 pb-5 border-b border-gray-100">
+      <div id="dm-cover-wrap" class="flex-shrink-0 hidden">
+        <img id="dm-cover" src="" alt="" class="w-16 h-20 object-contain rounded-xl border border-gray-100 bg-gray-50" />
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-primary font-semibold uppercase tracking-wide mb-1">About this book</p>
+        <h3 id="dm-title" class="font-serif text-xl font-bold text-gray-900 leading-snug"></h3>
+      </div>
+      <button onclick="closeDescModal()" class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors mt-0.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    {{-- Body --}}
+    <div class="px-6 py-5 overflow-y-auto" style="max-height:55vh;">
+      <p id="dm-body" class="text-gray-600 text-sm leading-relaxed whitespace-pre-line"></p>
+    </div>
+  </div>
+</div>
+
 <script>
   lucide.createIcons();
 
@@ -525,6 +569,30 @@
     btn.disabled = false;
     btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 7H4l1-7z"/></svg> Place Order';
   });
+
+  function openDescModal(btn) {
+    const d = btn.dataset;
+    document.getElementById('dm-title').textContent = d.title;
+    document.getElementById('dm-body').textContent  = d.desc;
+    const coverWrap = document.getElementById('dm-cover-wrap');
+    const coverImg  = document.getElementById('dm-cover');
+    if (d.cover) {
+      coverImg.src = d.cover;
+      coverImg.alt = d.title;
+      coverWrap.classList.remove('hidden');
+    } else {
+      coverWrap.classList.add('hidden');
+    }
+    document.getElementById('desc-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDescModal(e) {
+    if (!e || e.target === document.getElementById('desc-overlay')) {
+      document.getElementById('desc-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
 </script>
 </body>
 </html>
